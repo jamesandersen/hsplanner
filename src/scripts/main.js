@@ -5,4 +5,5 @@ var angular = require('angular'); // That's right! We can just require angular a
 var WelcomeCtrl = require('./controllers/WelcomeCtrl'); // We can use our WelcomeCtrl.js as a module. Rainbows.
 
 var app = angular.module('myApp', []);
+app.constant('CLIENT_SECRET', '<!-- @secret client_secret -->');
 app.controller('WelcomeCtrl', ['$scope', WelcomeCtrl]);
