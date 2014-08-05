@@ -2,6 +2,7 @@ var angular = require('angular');
 modName = 'hsAuth',
 mod = angular.module('hsAuth', []);
 
+// TODO: Update for Google+ sign-in flow: https://developers.google.com/+/web/signin/javascript-flow
 mod.factory('hsAuthService', ['$window', '$location', '$log', '$http', 'AUTH_URI', 'TOKEN_URI', 'CLIENT_ID', 'CLIENT_SECRET',
     function ($window, $location, $log, $http, AUTH_URI, TOKEN_URI, CLIENT_ID, CLIENT_SECRET) {
 
