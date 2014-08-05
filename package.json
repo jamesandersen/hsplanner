@@ -17,7 +17,8 @@
     "grunt-run": "~0.2.2",
     "grunt-mkdir": "~0.1.2",
     "grunt-string-replace": "~0.2.7",
-    "grunt-contrib-clean": "~0.6.0"
+    "grunt-contrib-clean": "~0.6.0",
+    "grunt-connect-rewrite": "~0.2.1"
   },
   "dependencies": {
     "angular": "~1.2.19"

@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-
+    var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest;
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -7,7 +7,7 @@ module.exports = function (grunt) {
         copy: {
             index: {
                 src: 'src/index.html',
-                dest: '<%= pkg.buildDir %>/index_temp.html',
+                dest: '<%= pkg.buildDir %>/index.html',
             },
             views: {
                 src: 'src/views/*',
@@ -48,7 +48,7 @@ module.exports = function (grunt) {
         },
         run: {
             browserify_lib: {
-                exec: 'browserify ./src/scripts/noop.js --require angular -p [minifyify --map libs.map.json --output <%= pkg.buildDir %>/js/libs.map.json] > ./<%= pkg.buildDir %>/js/libs.js'
+                exec: 'browserify ./src/scripts/noop.js --require angular -p [minifyify --map libs.map.json --output <%= pkg.buildDir %>/js/libs.map.json --minify false] > ./<%= pkg.buildDir %>/js/libs.js'
             },
             browserify_app: {
                 exec: 'browserify ./src/scripts/app.js --external angular -d -p [minifyify --map app.map.json --output <%= pkg.buildDir %>/js/app.map.json] > <%= pkg.buildDir %>/js/app.js',
@@ -63,8 +63,8 @@ module.exports = function (grunt) {
         },
         watch: {
             js: {
-                files: ['src/scripts/**/*.js'],
-                tasks: ['run:browserify_app'],
+                files: ['src/scripts/**/*.js', '!src/scripts/app.js'],
+                tasks: ['build-js-app'],
                 options: {
                     livereload: true,
                 },
@@ -78,18 +78,46 @@ module.exports = function (grunt) {
             },
             html: {
                 files: ['src/index.html', 'src/views/**/*.html'],
-                tasks: ['copy-with-secrets'],
+                tasks: ['copy'],
                 options: {
                     livereload: true,
                 },
             }
         },
         connect: {
+            rules: [
+                // Internal rewrite
+                {
+                    from: '^/oauth2callback',
+                    to: '/index.html'
+                }
+            ],
             server: {
                 options: {
                     port: 9001,
                     base: 'dist',
-                    livereload: true
+                    livereload: true,
+                    middleware: function (connect, options) {
+                        var middlewares = [];
+
+                        // RewriteRules support
+                        middlewares.push(rewriteRulesSnippet);
+
+                        if (!Array.isArray(options.base)) {
+                            options.base = [options.base];
+                        }
+
+                        var directory = options.directory || options.base[options.base.length - 1];
+                        options.base.forEach(function (base) {
+                            // Serve static files.
+                            middlewares.push(connect.static(base));
+                        });
+
+                        // Make directory browse-able.
+                        middlewares.push(connect.directory(directory));
+
+                        return middlewares;
+                    }
                 }
             }
         }
@@ -99,6 +127,7 @@ module.exports = function (grunt) {
 
     // Load grunt plugins
     grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-connect-rewrite');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -110,8 +139,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
 
     // Default task(s).
-    grunt.registerTask('copy-with-secrets', ['copy', 'string-replace', 'clean:js_with_secrets']);
-    grunt.registerTask('default', ['build', 'connect', 'watch']);
-    grunt.registerTask('build', ['mkdir', 'run', 'less', 'copy-with-secrets']);
+    grunt.registerTask('build-js-lib', ['mkdir', 'run:browserify_lib']);
+    grunt.registerTask('build-js-app', ['mkdir', 'string-replace', 'run:browserify_app', 'clean:js_with_secrets']);
+
+    grunt.registerTask('build', ['build-js-lib', 'build-js-app', 'less']);
+
+    grunt.registerTask('default', ['build', 'configureRewriteRules', 'connect', 'watch']);
+
+
 
 };
