@@ -1,63 +1,86 @@
 var angular = require('angular');
 modName = 'hsAuth',
-mod = angular.module('hsAuth', []);
+mod = angular.module(modName, []);
 
-// TODO: Update for Google+ sign-in flow: https://developers.google.com/+/web/signin/javascript-flow
-mod.factory('hsAuthService', ['$window', '$location', '$log', '$http', 'AUTH_URI', 'TOKEN_URI', 'CLIENT_ID', 'CLIENT_SECRET',
-    function ($window, $location, $log, $http, AUTH_URI, TOKEN_URI, CLIENT_ID, CLIENT_SECRET) {
+mod.factory('hsAuthService', ['$window', '$document', '$location', '$q', '$log', '$http', 'CLIENT_ID',
+    function ($window, $document, $location, $q, $log, $http, CLIENT_ID) {
 
         var access_token = null,
             refresh_token = null,
-            expiration = null;
+            expiration = null,
+            gplusAPILoaded = false,
+            gplusSignInParams = {
+                'clientid': CLIENT_ID,
+                'cookiepolicy': 'single_host_origin',
+                'callback': 'onAuthResult',
+                'scope': 'profile https://www.googleapis.com/auth/calendar'
+            },
+            pendingTokenDeferred;
 
-        function login() {
-            var url = AUTH_URI + '?' +
-                'scope=profile&' +
-                'state=app_specific_state&' +
-                'redirect_uri=http%3A%2F%2Flocalhost:9001%2Foauth2callback&' +
-                'response_type=code&' +
-                'client_id=' + CLIENT_ID;
-
-            $window.location = url;
+        function getToken() {
+            if (access_token && expiration > new Date()) {
+                return $q.when(access_token);
+            } else if (pendingTokenDeferred) {
+                return pendingTokenDeferred.promise;
+            } else {
+                return $q.reject("no token available, please login");
+            }
         }
 
-        function handleOAuth2Callback() {
-            var path = $location.path();
-            $log.log('initializing application; path=' + path);
-            if (path.indexOf('/oauth2callback') == 0) {
-                // handle OAuth2 callback
-                var params = $location.search(),
-                    state = params.state;
+        function login() {
+            if (gplusAPILoaded) {
+                pendingTokenDeferred = $q.defer();
+                gapi.auth.signIn(gplusSignInParams);
+            }
+        }
 
-                if (params.error) {
-                    $log.error('Error on OAuth2 callback: ' + params.error);
-                } else if (params.code) {
-                    // exchange for token
-                    var url = TOKEN_URI + '?' +
-                        'code=' + params.code + '&' +
-                        'client_id=' + CLIENT_ID + '&' +
-                        'client_secret=' + CLIENT_SECRET + '&' +
-                        'redirect_uri=http%3A%2F%2Flocalhost:9001%2Foauth2callback&' +
-                        'grant_type=authorization_code';
-                    $http.post(url).success(function (data, status, headers, config, statusText) {
-                        access_token = data.access_token;
-                        refresh_token = data.refresh_token;
-                        expiration = new Date();
-                        expiration.setMilliseconds(expiration.getMilliseconds + data.expires_in);
-                        $log.info('successful login; access token expires at ' + expiration.toLocaleTimeString());
-                        $location.path('/');
-                    });
+        function initGooglePlusAuth() {
+            // global function for the API to callback
+            $window.onAPILoad = onGooglePlusAPILoad;
+            $window.onAuthResult = onGooglePlusAuthCallback;
 
+            var po = $document[0].createElement('script');
+            po.type = 'text/javascript';
+            po.async = true;
+            po.setAttribute('parsetags', 'explicit');
+            po.src = 'https://apis.google.com/js/client:plusone.js?onload=onAPILoad';
+            var s = $document[0].getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(po, s);
+        }
+
+        function onGooglePlusAPILoad() {
+            $log.info('google plus API loaded');
+            gplusAPILoaded = true;
+            delete $window.onAPILoad;
+            gapi.signin.render('google-login')
+        }
+
+        function onGooglePlusAuthCallback(result) {
+            $log.debug('google plus API auth callback: ' + JSON.stringify(result));
+            if (!result['status']['signed_in']) {
+                // for some reason result.hasOwnProperty is undefined
+                $log.error('authentication error: ' + result.error);
+                if (pendingTokenDeferred) {
+                    pendingTokenDeferred.reject(result.error);
+                }
+            } else {
+                access_token = result.access_token;
+                expiration = new Date();
+                expiration.setMilliseconds(expiration.getMilliseconds() + result.expires_in);
+                $log.info('successful login; access token expires at ' + expiration.toLocaleTimeString());
+                if (pendingTokenDeferred) {
+                    pendingTokenDeferred.resolve(access_token);
                 }
             }
         }
 
         return {
             login: login,
-            checkOAuth2: handleOAuth2Callback,
+            loadGoogleAPI: initGooglePlusAuth,
+            getToken: getToken,
             test: 'foo bar from auth'
         };
-            }]);
+    }]);
 
-mod.name = 'hsAuth';
+mod.name = modName;
 module.exports = mod;

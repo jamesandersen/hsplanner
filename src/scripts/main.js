@@ -2,12 +2,10 @@
 
 var angular = require('angular');
 var authModule = require('./auth/authService');
+var calendarModule = require('./calendar/calendarService');
 
-var app = angular.module('myApp', [authModule.name]);
-angular.module(authModule.name).constant('AUTH_URI', '<!-- @secret auth_uri -->');
-angular.module(authModule.name).constant('TOKEN_URI', '<!-- @secret token_uri -->');
+var app = angular.module('myApp', [authModule.name, calendarModule.name]);
 angular.module(authModule.name).constant('CLIENT_ID', '<!-- @secret client_id -->');
-angular.module(authModule.name).constant('CLIENT_SECRET', '<!-- @secret client_secret -->');
 app.controller('WelcomeCtrl', require('./controllers/WelcomeCtrl'));
 
 app.config(['$locationProvider',
@@ -32,5 +30,5 @@ app.config(['$locationProvider',
 
 app.run(['hsAuthService',
     function (auth) {
-        auth.checkOAuth2();
+        auth.loadGoogleAPI();
     }]);

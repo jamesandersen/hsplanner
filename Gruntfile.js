@@ -4,24 +4,18 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         secrets: grunt.file.readJSON('client_secret.json'),
-        copy: {
-            index: {
-                src: 'src/index.html',
-                dest: '<%= pkg.buildDir %>/index.html',
-            },
-            views: {
-                src: 'src/views/*',
-                dest: '<%= pkg.buildDir %>/views/',
-            },
-            media: {
-                src: 'src/media/*',
-                dest: '<%= pkg.buildDir %>/media/',
+        mkdir: {
+            all: {
+                options: {
+                    create: ['./<%= pkg.buildDir %>/js']
+                },
             },
         },
         'string-replace': {
             client_auth: {
                 files: {
-                    'src/scripts/app.js': 'src/scripts/main.js'
+                    'src/scripts/app.js': 'src/scripts/main.js',
+                    'src/index_temp.html': 'src/index.html'
                 },
                 options: {
                     replacements: [{
@@ -33,18 +27,25 @@ module.exports = function (grunt) {
                 }
             }
         },
+        copy: {
+            index: {
+                src: 'src/index_temp.html',
+                dest: '<%= pkg.buildDir %>/index.html',
+            },
+            views: {
+                src: 'src/views/*',
+                dest: '<%= pkg.buildDir %>/views/',
+            },
+            media: {
+                src: 'src/media/*',
+                dest: '<%= pkg.buildDir %>/media/',
+            },
+        },
         clean: {
-            js_with_secrets: ["src/scripts/app.js"]
+            secrets: ["src/scripts/app.js", "src/index_temp.html"]
         },
         jshint: {
             all: ['Gruntfile.js', 'src/scripts/**/*.js', 'test/**/*.js']
-        },
-        mkdir: {
-            all: {
-                options: {
-                    create: ['./<%= pkg.buildDir %>/js']
-                },
-            },
         },
         run: {
             browserify_lib: {
@@ -78,7 +79,7 @@ module.exports = function (grunt) {
             },
             html: {
                 files: ['src/index.html', 'src/views/**/*.html'],
-                tasks: ['copy'],
+                tasks: ['string-replace', 'copy', 'clean'],
                 options: {
                     livereload: true,
                 },
@@ -140,9 +141,9 @@ module.exports = function (grunt) {
 
     // Default task(s).
     grunt.registerTask('build-js-lib', ['mkdir', 'run:browserify_lib']);
-    grunt.registerTask('build-js-app', ['mkdir', 'string-replace', 'run:browserify_app', 'clean:js_with_secrets']);
-
-    grunt.registerTask('build', ['build-js-lib', 'build-js-app', 'less']);
+    grunt.registerTask('build-js-app', ['mkdir', 'string-replace', 'run:browserify_app', 'clean:secrets']);
+    grunt.registerTask('build-html', ['mkdir', 'string-replace', 'copy', 'clean:secrets']);
+    grunt.registerTask('build', ['build-html', 'build-js-lib', 'build-js-app', 'less']);
 
     grunt.registerTask('default', ['build', 'configureRewriteRules', 'connect', 'watch']);
 
