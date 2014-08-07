@@ -33,8 +33,10 @@ module.exports = function (grunt) {
                 dest: '<%= pkg.buildDir %>/index.html',
             },
             views: {
-                src: 'src/views/*',
-                dest: '<%= pkg.buildDir %>/views/',
+                expand: true,
+                cwd: 'src/views/',
+                src: ['**'],
+                dest: '<%= pkg.buildDir %>/views/'
             },
             media: {
                 src: 'src/media/*',
@@ -47,13 +49,38 @@ module.exports = function (grunt) {
         jshint: {
             all: ['Gruntfile.js', 'src/scripts/**/*.js', 'test/**/*.js']
         },
-        run: {
-            browserify_lib: {
-                exec: 'browserify ./src/scripts/noop.js --require angular -p [minifyify --map libs.map.json --output <%= pkg.buildDir %>/js/libs.map.json --minify false] > ./<%= pkg.buildDir %>/js/libs.js'
+        uglify: {
+            lib_dev: {
+                options: {
+                    sourceMap: true,
+                    mangle: false,
+                    compress: false
+                },
+                files: {
+                    '<%= pkg.buildDir %>/js/libs.js': [
+                        'bower_components/angular/angular.js',
+                        'bower_components/angular-route/angular-route.js',
+                        'bower_components/angular-animate/angular-animate.js',
+                        'bower_components/angular-touch/angular-touch.js',
+                    ]
+                }
             },
-            browserify_app: {
-                exec: 'browserify ./src/scripts/app.js --external angular -d -p [minifyify --map app.map.json --output <%= pkg.buildDir %>/js/app.map.json] > <%= pkg.buildDir %>/js/app.js',
-            },
+            dev: {
+                options: {
+                    sourceMap: true,
+                    beautify: true,
+                    mangle: false,
+                    compress: false
+                },
+                files: {
+                    '<%= pkg.buildDir %>/js/app.js': [
+                        'src/scripts/auth/*.js',
+                        'src/scripts/calendar/*.js',
+                        'src/scripts/app.js',
+                        'src/scripts/app/*.js',
+                    ]
+                }
+            }
         },
         less: {
             development: {
@@ -78,8 +105,8 @@ module.exports = function (grunt) {
                 },
             },
             html: {
-                files: ['src/index.html', 'src/views/**/*.html'],
-                tasks: ['string-replace', 'copy', 'clean'],
+                files: ['src/index.html', 'src/views/*.html', 'src/views/**/*.html'],
+                tasks: ['build-html'],
                 options: {
                     livereload: true,
                 },
@@ -133,6 +160,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-string-replace');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-run');
@@ -140,8 +168,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
 
     // Default task(s).
-    grunt.registerTask('build-js-lib', ['mkdir', 'run:browserify_lib']);
-    grunt.registerTask('build-js-app', ['mkdir', 'string-replace', 'run:browserify_app', 'clean:secrets']);
+    grunt.registerTask('build-js-lib', ['mkdir', 'uglify:lib_dev']);
+    grunt.registerTask('build-js-app', ['mkdir', 'string-replace', 'uglify:dev', 'clean:secrets']);
     grunt.registerTask('build-html', ['mkdir', 'string-replace', 'copy', 'clean:secrets']);
     grunt.registerTask('build', ['build-html', 'build-js-lib', 'build-js-app', 'less']);
 

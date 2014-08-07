@@ -1,31 +1,28 @@
 'use strict';
 
-var angular = require('angular');
-var authModule = require('./auth/authService');
-var calendarModule = require('./calendar/calendarService');
+var app = angular.module('myApp', ['ngRoute', 'hsAuth', 'hsCalendar']);
+angular.module('hsAuth').constant('CLIENT_ID', '<!-- @secret client_id -->');
 
-var app = angular.module('myApp', [authModule.name, calendarModule.name]);
-angular.module(authModule.name).constant('CLIENT_ID', '<!-- @secret client_id -->');
-app.controller('WelcomeCtrl', require('./controllers/WelcomeCtrl'));
-
-app.config(['$locationProvider',
-    function ($locationProvider) {
+app.config(['$locationProvider', '$routeProvider',
+    function ($locationProvider, $routeProvider) {
         $locationProvider.html5Mode(true);
 
-        /*$routeProvider
-    .when('/', {
-      templateUrl: '/partials/template1.html', 
-      controller: 'ctrl1'
-    })
-    .when('/tags/:tagId', {
+        $routeProvider
+            .when('/', {
+                templateUrl: '/views/main.html',
+                controller: 'WelcomeCtrl'
+            })
+        /*.when('/tags/:tagId', {
       templateUrl: '/partials/template2.html', 
       controller:  'ctrl2'
-    })
-    .when('/another', {
-      templateUrl: '/partials/template1.html', 
-      controller:  'ctrl1'
-    })
-    .otherwise({ redirectTo: '/' }); */
+    })*/
+        .when('/login', {
+            templateUrl: '/views/login.html',
+            controller: 'LoginCtrl'
+        })
+            .otherwise({
+                redirectTo: '/'
+            });
 }]);
 
 app.run(['hsAuthService',

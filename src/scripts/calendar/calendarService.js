@@ -1,9 +1,4 @@
-var angular = require('angular');
-var authModule = require('../auth/authService');
-modName = 'hsCalendar',
-mod = angular.module(modName, [authModule.name]);
-
-mod.factory('hsCalendarService', ['$http', '$q', '$log', 'hsAuthService',
+angular.module('hsCalendar', ['hsAuth']).factory('hsCalendarService', ['$http', '$q', '$log', 'hsAuthService',
     function ($http, $q, $log, auth) {
         var baseUri = 'https://www.googleapis.com/calendar/v3';
 
@@ -39,6 +34,3 @@ mod.factory('hsCalendarService', ['$http', '$q', '$log', 'hsAuthService',
             getCalendarList: getCalendarList
         };
     }]);
-
-mod.name = modName;
-module.exports = mod;

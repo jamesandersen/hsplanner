@@ -10,13 +10,15 @@
     <meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar" />
 </head>
 
-<body ng-controller='WelcomeCtrl'>
-    <h1>My Awesome App</h1>
-    <p>{{testVar}}</p>
-    <div id="google-login" data-width="200" data-height="30"></div>
+<body>
+    <header>
+        <div id="google-login" data-width="200" data-height="30"></div>
+    </header>
+    <h1>Home School Planner</h1>
+    <div ng-view></div>
+
     <br/>
-    <button ng-click="getData()">Get Data</button>
-    <div ng-repeat="item in data.items">{{item.summary}}</div>
+
     <script src="js/libs.js"></script>
     <script src="js/app.js"></script>
 </body>
