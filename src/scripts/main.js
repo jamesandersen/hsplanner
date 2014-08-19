@@ -16,14 +16,10 @@ app.config(['$locationProvider', '$routeProvider',
                 templateUrl: '/views/main.html',
                 controller: 'WelcomeCtrl'
             })
-        /*.when('/tags/:tagId', {
-      templateUrl: '/partials/template2.html', 
-      controller:  'ctrl2'
-    })*/
-        .when('/login', {
-            templateUrl: '/views/login.html',
-            controller: 'LoginCtrl'
-        })
+            .when('/login', {
+                templateUrl: '/views/login.html',
+                controller: 'LoginCtrl'
+            })
             .otherwise({
                 redirectTo: '/'
             });
@@ -33,6 +29,7 @@ app.run(['hsAuthService', '$location', '$log',
     function (auth, $location, $log) {
         auth.trySignOn().then(function (accessToken) {
             // signed in
+            $location.path('/main');
         }, function (rejection) {
             $log.warn('not signed in at startup: ' + rejection);
             // not signed in, redirect to login screen

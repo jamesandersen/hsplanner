@@ -52,7 +52,7 @@ module.exports = function (grunt) {
         uglify: {
             lib_dev: {
                 options: {
-                    sourceMap: true,
+                    sourceMap: false,
                     mangle: false,
                     compress: false
                 },
@@ -119,7 +119,15 @@ module.exports = function (grunt) {
                 {
                     from: '^/oauth2callback',
                     to: '/index.html'
-                }
+                },
+                {
+                    from: '^/main',
+                    to: '/index.html'
+                },
+                {
+                    from: '^/login',
+                    to: '/index.html'
+                },
             ],
             server: {
                 options: {

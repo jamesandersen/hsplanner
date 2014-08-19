@@ -61,7 +61,6 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
                     // Could customize the experience if we know they're a google user
                     // but not yet signed into our app
                 }
-
                 // not signed in so we need the login button
                 gapi.signin.render('google-login');
             } else {
