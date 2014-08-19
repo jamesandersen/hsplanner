@@ -67,13 +67,14 @@ module.exports = function (grunt) {
             },
             dev: {
                 options: {
-                    sourceMap: true,
+                    sourceMap: false,
                     beautify: true,
                     mangle: false,
                     compress: false
                 },
                 files: {
                     '<%= pkg.buildDir %>/js/app.js': [
+                        'src/scripts/auth/authService.js',
                         'src/scripts/auth/*.js',
                         'src/scripts/calendar/*.js',
                         'src/scripts/app.js',
@@ -163,7 +164,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-string-replace');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-run');
     grunt.loadNpmTasks('grunt-mkdir');
     grunt.loadNpmTasks('grunt-contrib-clean');
 

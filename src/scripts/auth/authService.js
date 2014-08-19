@@ -11,7 +11,8 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
                 'callback': 'onAuthResult',
                 'scope': 'profile https://www.googleapis.com/auth/calendar'
             },
-            pendingTokenDeferred = null;
+            pendingTokenDeferred = null,
+            pendingLoginDeferred = null;
 
         function initGooglePlusAuth() {
             // global function for the API to callback
@@ -29,6 +30,8 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
             // we may be able to resolve the token promise right
             // when the gapi loads and invokes the auth callback
             pendingTokenDeferred = $q.defer();
+
+            return pendingTokenDeferred.promise;
         }
 
         function onGooglePlusAPILoad() {
@@ -37,11 +40,18 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
             delete $window.onAPILoad;
         }
 
+        /* will be called once immediately after google api is loaded */
         function onGooglePlusAuthCallback(result) {
             $log.debug('google plus API auth callback: ' + JSON.stringify(result));
             if (!result['status']['signed_in']) {
                 // for some reason result.hasOwnProperty is undefined
                 $log.error('authentication error: ' + result.error);
+
+                if (pendingLoginDeferred) {
+                    pendingLoginDeferred.reject(result.error);
+                    pendingLoginDeferred = null;
+                }
+
                 if (pendingTokenDeferred) {
                     pendingTokenDeferred.reject(result.error);
                     pendingTokenDeferred = null;
@@ -59,6 +69,12 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
                 expiration = new Date();
                 expiration.setMilliseconds(expiration.getMilliseconds() + result.expires_in);
                 $log.info('successful login; access token expires at ' + expiration.toLocaleTimeString());
+
+                if (pendingLoginDeferred) {
+                    pendingLoginDeferred.resolve(access_token);
+                    pendingLoginDeferred = null;
+                }
+
                 if (pendingTokenDeferred) {
                     pendingTokenDeferred.resolve(access_token);
                     pendingTokenDeferred = null;
@@ -69,6 +85,15 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
         function login() {
             if (gplusAPILoaded) {;
                 gapi.auth.signIn(gplusSignInParams);
+            }
+        }
+
+        function afterLogin() {
+            if (gplusAPILoaded) {
+                pendingLoginDeferred = $q.defer();
+                return pendingLoginDeferred.promise;
+            } else {
+                return $q.reject('google api not loaded');
             }
         }
 
@@ -96,8 +121,9 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
 
         return {
             login: login,
+            afterLogin: afterLogin,
             logout: logout,
-            loadGoogleAPI: initGooglePlusAuth,
+            trySignOn: initGooglePlusAuth,
             getToken: getToken
         };
     }]);

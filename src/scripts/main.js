@@ -9,6 +9,10 @@ app.config(['$locationProvider', '$routeProvider',
 
         $routeProvider
             .when('/', {
+                templateUrl: '/views/entry.html',
+                controller: 'EntryCtrl'
+            })
+            .when('/main', {
                 templateUrl: '/views/main.html',
                 controller: 'WelcomeCtrl'
             })
@@ -25,7 +29,13 @@ app.config(['$locationProvider', '$routeProvider',
             });
 }]);
 
-app.run(['hsAuthService',
-    function (auth) {
-        auth.loadGoogleAPI();
+app.run(['hsAuthService', '$location', '$log',
+    function (auth, $location, $log) {
+        auth.trySignOn().then(function (accessToken) {
+            // signed in
+        }, function (rejection) {
+            $log.warn('not signed in at startup: ' + rejection);
+            // not signed in, redirect to login screen
+            $location.path('/login');
+        });
     }]);
