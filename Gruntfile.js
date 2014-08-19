@@ -38,9 +38,17 @@ module.exports = function (grunt) {
                 src: ['**'],
                 dest: '<%= pkg.buildDir %>/views/'
             },
+            fonts: {
+                expand: true,
+                cwd: 'bower_components/bootstrap/fonts/',
+                src: ['**'],
+                dest: '<%= pkg.buildDir %>/fonts/'
+            },
             media: {
-                src: 'src/media/*',
-                dest: '<%= pkg.buildDir %>/media/',
+                expand: true,
+                cwd: 'src/media/',
+                src: ['**'],
+                dest: '<%= pkg.buildDir %>/media/'
             },
         },
         clean: {
@@ -117,17 +125,9 @@ module.exports = function (grunt) {
             rules: [
                 // Internal rewrite
                 {
-                    from: '^/oauth2callback',
+                    from: '^/(main|login|profile)',
                     to: '/index.html'
-                },
-                {
-                    from: '^/main',
-                    to: '/index.html'
-                },
-                {
-                    from: '^/login',
-                    to: '/index.html'
-                },
+                }
             ],
             server: {
                 options: {

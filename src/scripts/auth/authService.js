@@ -11,6 +11,7 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
                 'callback': 'onAuthResult',
                 'scope': 'profile https://www.googleapis.com/auth/calendar'
             },
+            pendingGoogleAPIDeferred = null,
             pendingTokenDeferred = null,
             pendingLoginDeferred = null;
 
@@ -27,17 +28,21 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
             var s = $document[0].getElementsByTagName('script')[0];
             s.parentNode.insertBefore(po, s);
 
+            pendingGoogleAPIDeferred = $q.defer();
+
             // we may be able to resolve the token promise right
             // when the gapi loads and invokes the auth callback
             pendingTokenDeferred = $q.defer();
 
-            return pendingTokenDeferred.promise;
+            return pendingGoogleAPIDeferred.promise;
         }
 
         function onGooglePlusAPILoad() {
             $log.info('google plus API loaded');
             gplusAPILoaded = true;
             delete $window.onAPILoad;
+
+            pendingGoogleAPIDeferred.resolve(true);
         }
 
         /* will be called once immediately after google api is loaded */
@@ -47,7 +52,7 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
                 // for some reason result.hasOwnProperty is undefined
                 $log.error('authentication error: ' + result.error);
 
-                if (pendingLoginDeferred) {
+                if (pendingLoginDeferred && result.error != 'immediate_failed') {
                     pendingLoginDeferred.reject(result.error);
                     pendingLoginDeferred = null;
                 }
@@ -61,8 +66,6 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
                     // Could customize the experience if we know they're a google user
                     // but not yet signed into our app
                 }
-                // not signed in so we need the login button
-                gapi.signin.render('google-login');
             } else {
                 access_token = result.access_token;
                 expiration = new Date();
@@ -88,18 +91,22 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
         }
 
         function afterLogin() {
-            if (gplusAPILoaded) {
-                pendingLoginDeferred = $q.defer();
+            return pendingGoogleAPIDeferred.promise.then(function () {
+                if (!pendingLoginDeferred) {
+                    pendingLoginDeferred = $q.defer();
+                }
+
                 return pendingLoginDeferred.promise;
-            } else {
-                return $q.reject('google api not loaded');
-            }
+            }, function (rejection) {
+                return $q.reject(rejection);
+            });
         }
 
         function logout() {
-            if (gplusAPILoaded) {;
+            if (gplusAPILoaded) {
                 gapi.auth.signOut();
                 access_token = expiration = null;
+                $location.path('/login');
             }
         }
 
@@ -122,7 +129,7 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
             login: login,
             afterLogin: afterLogin,
             logout: logout,
-            trySignOn: initGooglePlusAuth,
+            loadGoogleAPI: initGooglePlusAuth,
             getToken: getToken
         };
     }]);
