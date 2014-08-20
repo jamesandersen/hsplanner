@@ -2,7 +2,7 @@
 <html lang="en" ng-app="myApp">
 
 <head>
-    <title>My Awesome App</title>
+    <title>Home School Planner</title>
     <link rel="stylesheet" href="css/styles.css" />
     <meta name="google-signin-clientid" content="<!-- @secret client_id -->" />
     <meta name="google-signin-cookiepolicy" content="single_host_origin" />
@@ -11,10 +11,13 @@
 </head>
 
 <body>
-    <header ng-controller="HeaderCtrl">
-        <a href="" ng-click="logout()">Logout</a>
+    <header ng-controller="HeaderCtrl" class="bg-primary">
+        <span id="app-name">Home School Planner</span>
+        <div class="header-right pull-right">
+            <a href="" ng-click="logout()">Logout</a>
+        </div>
     </header>
-    <h1>Home School Planner</h1>
+
     <div ng-view></div>
 
     <br/>
