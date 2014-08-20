@@ -40,7 +40,7 @@ module.exports = function (grunt) {
             },
             fonts: {
                 expand: true,
-                cwd: 'bower_components/bootstrap/fonts/',
+                cwd: 'bower_components/fontawesome/fonts/',
                 src: ['**'],
                 dest: '<%= pkg.buildDir %>/fonts/'
             },
@@ -70,6 +70,8 @@ module.exports = function (grunt) {
                         'bower_components/angular-route/angular-route.js',
                         'bower_components/angular-animate/angular-animate.js',
                         'bower_components/angular-touch/angular-touch.js',
+                        'bower_components/angular-bootstrap/ui-bootstrap.js',
+                        'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
                     ]
                 }
             },

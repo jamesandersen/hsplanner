@@ -9,10 +9,6 @@ app.config(['$locationProvider', '$routeProvider',
 
         $routeProvider
             .when('/', {
-                templateUrl: '/views/entry.html',
-                controller: 'EntryCtrl'
-            })
-            .when('/main', {
                 templateUrl: '/views/main.html',
                 controller: 'WelcomeCtrl'
             })
