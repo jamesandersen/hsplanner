@@ -1,15 +1,20 @@
-angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '$location', '$q', '$log', '$http', 'CLIENT_ID',
-    function ($window, $document, $location, $q, $log, $http, CLIENT_ID) {
+var authModule = angular.module('hsAuth', []);
+
+authModule.constant('authEvents', { AUTHENTICATION_CHANGE: 'AUTHENTICATION_CHANGE' });
+
+authModule.factory('hsAuthService', ['$window', '$document', '$location', '$rootScope', '$q', '$log', '$http', 'CLIENT_ID', 'authEvents',
+    function ($window, $document, $location, $rootScope, $q, $log, $http, CLIENT_ID, authEvents) {
 
         var access_token = null,
-            refresh_token = null,
+            profile = null,
+            signed_in = false,
             expiration = null,
             gplusAPILoaded = false,
             gplusSignInParams = {
                 'clientid': CLIENT_ID,
                 'cookiepolicy': 'single_host_origin',
                 'callback': 'onAuthResult',
-                'scope': 'profile https://www.googleapis.com/auth/calendar'
+                'scope': 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/calendar'
             },
             pendingGoogleAPIDeferred = null,
             pendingTokenDeferred = null,
@@ -51,7 +56,7 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
             if (!result['status']['signed_in']) {
                 // for some reason result.hasOwnProperty is undefined
                 $log.error('authentication error: ' + result.error);
-
+                updateSignedIn(false);
                 if (pendingLoginDeferred && result.error != 'immediate_failed') {
                     pendingLoginDeferred.reject(result.error);
                     pendingLoginDeferred = null;
@@ -71,6 +76,24 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
                 expiration = new Date();
                 expiration.setMilliseconds(expiration.getMilliseconds() + result.expires_in);
                 $log.info('successful login; access token expires at ' + expiration.toLocaleTimeString());
+
+
+                $http.get('https://www.googleapis.com/plus/v1/people/me', {
+                    headers: {
+                        Authorization: 'Bearer ' + access_token
+                    }
+                })
+                .success(function(data, status, headers, config) {
+                  // this callback will be called asynchronously
+                  // when the response is available
+                    profile = data;
+                    updateSignedIn(true);
+                }).
+                error(function(data, status, headers, config) {
+                  // called asynchronously if an error occurs
+                  // or server returns response with an error status.
+                    $log.error('Error getting profile information');
+                });
 
                 if (pendingLoginDeferred) {
                     pendingLoginDeferred.resolve(access_token);
@@ -110,6 +133,21 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
             }
         }
 
+        function updateSignedIn(isSignedIn) {
+            var change = false;
+            if(isSignedIn && !signed_in) {
+                signed_in = true;
+                change = true;
+            } else if(!isSignedIn && signed_in) {
+                signed_in = false;
+                change = true;
+            }
+
+            if(change) {
+                $rootScope.$broadcast(authEvents.AUTHENTICATION_CHANGE, signed_in);
+            }
+        }
+
         function getToken() {
             if (access_token && expiration > new Date()) {
                 return $q.when(access_token);
@@ -125,11 +163,16 @@ angular.module('hsAuth', []).factory('hsAuthService', ['$window', '$document', '
             }
         }
 
+        function getProfile() {
+            return profile;
+        }
+
         return {
             login: login,
             afterLogin: afterLogin,
             logout: logout,
             loadGoogleAPI: initGooglePlusAuth,
-            getToken: getToken
+            getToken: getToken,
+            getProfile: getProfile
         };
     }]);

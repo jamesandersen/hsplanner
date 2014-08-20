@@ -13,8 +13,11 @@
 <body>
     <header ng-controller="HeaderCtrl" class="bg-primary">
         <span id="app-name">Home School Planner</span>
-        <div class="header-right pull-right">
-            <a href="" ng-click="logout()">Logout</a>
+        <div ng-if="signed_in" class="header-right pull-right">
+            <img class="profile-img" ng-src="{{profileImgSrc}}"/>
+            <span ng-bind="profile.displayName"></span>
+
+            <a href="" ng-click="logout()"><i class="fa fa-sign-out fa-2x"></i></a>
         </div>
     </header>
 

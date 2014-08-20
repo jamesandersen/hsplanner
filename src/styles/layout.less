@@ -6,6 +6,16 @@ header {
     border-bottom: solid 1px@gray-dark;
     height: @header-height;
     line-height: @header-height;
+
+    .header-right {
+        padding: 0 10px;
+        i.fa { vertical-align: middle; padding-left: 3px; }
+        .profile-img { border-radius: (@header-height - 4) / 2; padding-right: 3px; }
+    }
+
+    a {
+        color: @body-bg;
+    }
 }
 
 #app-name {
