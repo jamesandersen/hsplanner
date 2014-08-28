@@ -1,0 +1,92 @@
+.schedule {
+    position: relative;
+    height: 600px;
+    width: 850px;
+    margin: 0 auto;
+}
+
+.student-schedule {
+    float: left;
+    height: 100%;
+    width: 200px;
+    border: solid 1px #BBB;
+    margin-right: 8px;
+
+    &.active {
+        background-color: @brand-secondary;
+
+        h3.name { color: @brand-primary; }
+    }
+
+    h3.name {
+        font-size: 3rem;
+        height: 3rem;
+        width: 100%;
+        text-align: center;
+        line-height: 3rem;
+        cursor: pointer;
+
+        &:hover {
+            color: @brand-primary;
+        }
+
+        i.fa { display: none; }
+    }
+
+    .event {
+        border: solid 1px #999;
+        margin: 3px 2px;
+        padding: 2px;
+        background-color: #fcfcfc;
+
+        &:first-of-type {
+            border-top: solid 2px #666;
+        }
+    }
+
+    &.non-student {
+        br, b { display: none; }
+        border: solid 0px #BBB;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .schedule {
+        width: 100%;
+    }
+    .student-schedule {
+        float: none;
+        width: 100%;
+        height: auto;
+        .event {
+            display: none;
+        }
+
+        &.active .event{
+            display: block;
+        }
+
+
+        &.non-student {
+            display: none;
+        }
+    }
+
+}
+
+@media screen and (min-width: 801px) {
+    .schedule.active-student {
+        .student-schedule:not(.active) {
+            display: none;
+        }
+
+        .student-schedule.active {
+            width: 100%;
+
+            i.fa { display: inline; }
+        }
+    }
+}
+
+
+
