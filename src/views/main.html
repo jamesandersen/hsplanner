@@ -1,7 +1,5 @@
-<!--
 <button ng-click="getData()">Get Data</button>
 <div ng-repeat="item in data.items">{{item.summary}}</div>
--->
 
 <div class="schedule" ng-class="{ 'active-student': activeStudent }">
     <div class="student-schedule" ng-repeat="student in students" ng-class="{ 'non-student': student.nonStudent, active: student.active }">

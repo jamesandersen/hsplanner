@@ -84,6 +84,7 @@ module.exports = function (grunt) {
                 },
                 files: {
                     '<%= pkg.buildDir %>/js/app.js': [
+                        'src/scripts/es6_polyfills.js',
                         'src/scripts/auth/authService.js',
                         'src/scripts/auth/*.js',
                         'src/scripts/calendar/*.js',
