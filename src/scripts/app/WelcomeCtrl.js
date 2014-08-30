@@ -45,13 +45,14 @@
             }
 
             function addEvent(student, eventResource) {
-                if(!student.events) student.events = [];
+                if (!student.events) student.events = [];
 
-                var date = new Date(Date.parse(eventResource.start.dateTime));
+                var start = moment(eventResource.start.dateTime);
                 student.events.push({
                     assignment: eventResource.summary,
-                   day: date.getDate(),
-                   time: date.getHours() * 60 + date.getMinutes()
+                    day: start.dayOfYear(),
+                    time: start.hours() * 60 + start.minutes(),
+                    fmtTime: start.format('hh:mma')
                 });
                 $log.log('creating ' + eventResource.summary + ' event for ' + student.name);
             }
