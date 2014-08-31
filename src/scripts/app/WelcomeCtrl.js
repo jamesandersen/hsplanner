@@ -1,8 +1,8 @@
 /*global angular: false */
 (function () {
     'use strict';
-    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', 'hsAuthService', 'hsCalendarService',
-        function ($scope, $log, $q, auth, calendars) {
+    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$modal', 'hsAuthService', 'hsCalendarService',
+        function ($scope, $log, $q, $modal, auth, calendars) {
             $scope.testVar = 'some scope data';
             $scope.login = function () {
                 auth.login();
@@ -34,7 +34,7 @@
                         $q.all(eventListPromises).then(function (resultsArray) {
                             angular.forEach(resultsArray, function (eventListResult) {
                                 angular.forEach(eventListResult.items, function (evtResource) {
-                                    addEvent(student, evtResource);
+                                    addEvent(student, eventListResult.calendarId, evtResource);
                                 });
                             });
                         }, function (rejections) {
@@ -44,7 +44,7 @@
                 });
             }
 
-            function addEvent(student, eventResource) {
+            function addEvent(student, calendarId, eventResource) {
                 if (!student.events) student.events = [];
 
                 var start = moment(eventResource.start.dateTime);
@@ -52,7 +52,10 @@
                     assignment: eventResource.summary,
                     day: start.dayOfYear(),
                     time: start.hours() * 60 + start.minutes(),
-                    fmtTime: start.format('hh:mma')
+                    fmtTime: start.format('hh:mma'),
+                    calendarId: calendarId,
+                    eventId: eventResource.id,
+                    etag: eventResource.etag,
                 });
                 $log.log('creating ' + eventResource.summary + ' event for ' + student.name);
             }
@@ -64,9 +67,25 @@
                 $scope.activeStudent = activeStudent;
             };
 
+            $scope.openEventModal = function (event) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'views/event_detail_modal.html',
+                    controller: 'ModalInstanceCtrl',
+                    resolve: {
+                        event: function () { return event; }
+                    }
+                });
+
+                modalInstance.result.then(function (selectedItem) {
+                    $scope.selected = selectedItem;
+                }, function () {
+                    $log.info('Modal dismissed at: ' + new Date());
+                });
+            };
+
             $scope.students = [
                 {
-                    name: null,
+                    name: "Aug 31",
                     nonStudent: true,
 
                     events: [
@@ -94,4 +113,26 @@
                 }
             ];
         }]);
+
+    angular.module('myApp').controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'hsCalendarService', 'event',
+        function ($scope, $modalInstance, calendars, event) {
+            $scope.event = event;
+
+            $scope.setSpanish = function() {
+                calendars.patchEvent(event.calendarId, event.eventId, event.etag, {
+                    extendedProperties: {
+                        private: { subject: 'Spanish' },
+                        shared: { }
+                    }
+                });
+            };
+
+            $scope.ok = function () {
+                $modalInstance.close(event);
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+    }]);
 }());

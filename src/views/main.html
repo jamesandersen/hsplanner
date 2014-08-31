@@ -1,5 +1,5 @@
 <button ng-click="getData()">Get Data</button>
-<div ng-repeat="item in data.items">{{item.summary}}</div>
+<!--<div ng-repeat="item in data.items">{{item.summary}}</div>-->
 
 <div class="schedule" ng-class="{ 'active-student': activeStudent }">
     <div class="student-schedule" ng-repeat="student in students" ng-class="{ 'non-student': student.nonStudent, active: student.active }">
@@ -10,7 +10,7 @@
         </h3>
 
         <div class="event" ng-repeat="evt in student.events">
-            <b>{{evt.fmtTime}}</b><br/>
+            <b>{{evt.fmtTime}}</b><i class="fa fa-pencil" ng-click="openEventModal(evt)"></i><br/>
             <span ng-bind="evt.assignment"></span>
         </div>
     </div>

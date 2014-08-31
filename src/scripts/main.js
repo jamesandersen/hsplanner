@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('myApp', ['ngRoute', 'hsAuth', 'hsCalendar']);
+var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap', 'hsAuth', 'hsCalendar']);
 angular.module('hsAuth').constant('CLIENT_ID', '<!-- @secret client_id -->');
 
 app.config(['$locationProvider', '$routeProvider',
@@ -23,6 +23,10 @@ app.config(['$locationProvider', '$routeProvider',
             .otherwise({
                 redirectTo: '/'
             });
+}]);
+
+app.config(["$httpProvider", function($httpProvider) {
+  $httpProvider.interceptors.push('calendarHttpInterceptor');
 }]);
 
 app.run(['hsAuthService', '$location', '$log',
