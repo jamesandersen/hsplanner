@@ -9,7 +9,7 @@
             <i class="fa fa-times" ng-click="setActiveList(null);$event.stopPropagation()"></i>
         </h3>
 
-        <div class="event" ng-repeat="evt in list.events">
+        <div class="event tblock-{{evt.blockOffset}}" ng-repeat="evt in list.events">
             <i class="fa fa-cog" ng-cloak ng-click="openEventModal(evt)"></i>
             <b>{{evt.fmtTime}}</b><br/>
             <span ng-bind="evt.assignment"></span>

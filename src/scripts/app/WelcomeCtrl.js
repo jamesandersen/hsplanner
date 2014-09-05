@@ -1,4 +1,4 @@
-/*jslint plusplus: true */
+/*jslint plusplus: true, es5: true */
 /*global angular: false, moment: false */
 
 (function () {
@@ -76,9 +76,10 @@
             function addNonStudentList() {
                 var minTime = 24 * 60 - 1,
                     maxTime = 0,
-                    minIncrement = 30,
+                    blockOffset = 0,
+                    minutesPerBlock = 30,
                     today = moment().startOf('day'),
-                    nonStudentList = { nonStudent: true, events: [] }; // what minutes increments to show
+                    nonStudentList = { nonStudent: true, events: [], student: { name: 'Today' } }; // what minutes increments to show
                 angular.forEach($scope.studentEventLists, function (list) {
                     angular.forEach(list.events, function (evt) {
                         minTime = Math.min(minTime, evt.startMinutes);
@@ -86,17 +87,30 @@
                     });
                 });
 
-                minTime = MathUtil.floor(minTime, minIncrement);
-                maxTime = MathUtil.ceiling(maxTime, minIncrement);
+                minTime = MathUtil.floor(minTime, minutesPerBlock);
+                maxTime = MathUtil.ceiling(maxTime, minutesPerBlock);
+
+                // set the blockOffset property on each event to indicate where it'll be positioned
+                angular.forEach($scope.studentEventLists, function (list) {
+                    angular.forEach(list.events, function (evt) {
+                        evt.blockOffset = Math.round(MathUtil.floor(evt.startMinutes - minTime, minutesPerBlock) / minutesPerBlock);
+                        minTime = Math.min(minTime, evt.startMinutes);
+                        maxTime = Math.max(maxTime, evt.endMinutes);
+                    });
+                });
+
                 today.add(minTime, 'minutes');
+
                 while (minTime < maxTime) {
                     nonStudentList.events.push({
                         time: minTime, // 8:30 * 60,
-                        assignment: today.format('hh:mma')
+                        assignment: today.format('hh:mma'),
+                        blockOffset: blockOffset
                     });
 
-                    minTime += minIncrement;
-                    today.add(minIncrement, 'minutes');
+                    blockOffset++;
+                    minTime += minutesPerBlock;
+                    today.add(minutesPerBlock, 'minutes');
                 }
 
                 $scope.studentEventLists.unshift(nonStudentList);
@@ -112,12 +126,8 @@
                 });
             };
 
-
-
-
-
             $scope.setActiveList = function (activeStudent) {
-                angular.forEach($scope.students, function (student) {
+                angular.forEach($scope.studentEventLists, function (student) {
                     student.active = student === activeStudent;
                 });
                 $scope.activeStudent = activeStudent;

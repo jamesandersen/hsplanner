@@ -167,8 +167,6 @@ module.exports = function (grunt) {
         }
     });
 
-
-
     // Load grunt plugins
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-connect-rewrite');
