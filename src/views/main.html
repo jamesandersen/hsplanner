@@ -2,15 +2,16 @@
 <!--<div ng-repeat="item in data.items">{{item.summary}}</div>-->
 
 <div class="schedule" ng-class="{ 'active-student': activeStudent }">
-    <div class="student-schedule" ng-repeat="student in students" ng-class="{ 'non-student': student.nonStudent, active: student.active }">
+    <div class="student-schedule" ng-repeat="list in studentEventLists" ng-class="{ 'non-student': list.nonStudent, active: list.active }">
 
-        <h3 class="name" ng-click="setActiveStudent(student)">
-            <span ng-bind="student.name"></span>
-            <i class="fa fa-times" ng-click="setActiveStudent(null);$event.stopPropagation()"></i>
+        <h3 class="name" ng-click="setActiveList(list)">
+            <span ng-bind="list.student.name"></span>
+            <i class="fa fa-times" ng-click="setActiveList(null);$event.stopPropagation()"></i>
         </h3>
 
-        <div class="event" ng-repeat="evt in student.events">
-            <b>{{evt.fmtTime}}</b><i class="fa fa-pencil" ng-click="openEventModal(evt)"></i><br/>
+        <div class="event" ng-repeat="evt in list.events">
+            <i class="fa fa-cog" ng-cloak ng-click="openEventModal(evt)"></i>
+            <b>{{evt.fmtTime}}</b><br/>
             <span ng-bind="evt.assignment"></span>
         </div>
     </div>

@@ -1,4 +1,6 @@
+/*global module: false, require: false,  es5: true */
 module.exports = function (grunt) {
+    'use strict';
     var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest;
     // Project configuration.
     grunt.initConfig({
@@ -8,8 +10,8 @@ module.exports = function (grunt) {
             all: {
                 options: {
                     create: ['./<%= pkg.buildDir %>/js']
-                },
-            },
+                }
+            }
         },
         'string-replace': {
             client_auth: {
@@ -30,7 +32,7 @@ module.exports = function (grunt) {
         copy: {
             index: {
                 src: 'src/index_temp.html',
-                dest: '<%= pkg.buildDir %>/index.html',
+                dest: '<%= pkg.buildDir %>/index.html'
             },
             views: {
                 expand: true,
@@ -49,7 +51,7 @@ module.exports = function (grunt) {
                 cwd: 'src/media/',
                 src: ['**'],
                 dest: '<%= pkg.buildDir %>/media/'
-            },
+            }
         },
         clean: {
             secrets: ["src/scripts/app.js", "src/index_temp.html"]
@@ -72,7 +74,7 @@ module.exports = function (grunt) {
                         'bower_components/angular-animate/angular-animate.js',
                         'bower_components/angular-touch/angular-touch.js',
                         'bower_components/angular-bootstrap/ui-bootstrap.js',
-                        'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+                        'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
                     ]
                 }
             },
@@ -87,10 +89,11 @@ module.exports = function (grunt) {
                     '<%= pkg.buildDir %>/js/app.js': [
                         'src/scripts/es6_polyfills.js',
                         'src/scripts/auth/authService.js',
+                        'src/scripts/util/*.js',
                         'src/scripts/auth/*.js',
                         'src/scripts/calendar/*.js',
                         'src/scripts/app.js',
-                        'src/scripts/app/*.js',
+                        'src/scripts/app/*.js'
                     ]
                 }
             }
@@ -107,22 +110,22 @@ module.exports = function (grunt) {
                 files: ['src/scripts/**/*.js', '!src/scripts/app.js'],
                 tasks: ['build-js-app'],
                 options: {
-                    livereload: true,
-                },
+                    livereload: true
+                }
             },
             css: {
                 files: ['src/styles/**/*.less'],
                 tasks: ['less'],
                 options: {
-                    livereload: true,
-                },
+                    livereload: true
+                }
             },
             html: {
                 files: ['src/index.html', 'src/views/*.html', 'src/views/**/*.html'],
                 tasks: ['build-html'],
                 options: {
-                    livereload: true,
-                },
+                    livereload: true
+                }
             }
         },
         connect: {
