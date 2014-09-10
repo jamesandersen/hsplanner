@@ -153,12 +153,17 @@
 
         }]);
 
-    angular.module('myApp').controller('ModalInstanceCtrl', ['$scope', '$modalInstance', '$q', 'UserData', 'hsCalendarService', 'evt',
-        function ($scope, $modalInstance, $q, UserData, calendars, evt) {
+    angular.module('myApp').controller('ModalInstanceCtrl', ['$scope', '$modalInstance', '$q', 'UserData', 'hsCalendarService', 'Util', 'evt',
+        function ($scope, $modalInstance, $q, UserData, calendars, Util, evt) {
 
             function setupEvent(anEvent) {
-                var subjectId = anEvent['extendedProperties']['private']['subjectId'];
-                anEvent.subject = UserData.subjects.find(function (sub) { return sub.id === subjectId; });
+                var subjectId = Util.safeRead(anEvent, 'extendedProperties', 'private', 'subjectId');
+                if (angular.isUndefined(subjectId)) {
+                    anEvent.extendedProperties = anEvent.extendedProperties || {};
+                    anEvent.extendedProperties.private = anEvent.extendedProperties.private || {};
+                } else {
+                    anEvent.subject = UserData.subjects.find(function (sub) { return sub.id === subjectId; });
+                }
 
                 return anEvent;
             }
