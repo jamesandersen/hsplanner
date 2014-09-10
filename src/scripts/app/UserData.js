@@ -18,6 +18,11 @@
                 calendarIDs: ["jander.me_1e0uquv8m1lh260s4b0i7h2s7o@group.calendar.google.com"]
             }
         ],
-        subjects: ['Spanish', 'Writing', 'History', 'Math']
+        subjects: [
+            { id: 'abc', summary: 'Spanish' },
+            { id: 'def', summary: 'Writing' },
+            { id: 'ghi', summary: 'History' },
+            { id: 'jkl', summary: 'Math' }
+        ]
     });
 }());

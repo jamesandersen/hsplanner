@@ -1,4 +1,4 @@
-/*global angular: false */
+/*global angular: false, moment: false */
 (function () {
     'use strict';
 
@@ -26,8 +26,14 @@
                         });
             }
 
-            function getEventList(calendarId) {
-                return $http.get(baseUri + '/calendars/' + calendarId + '/events').
+            function getEventList(calendarId, timeMin, timeMax) {
+                var now = null;
+                return $http.get(baseUri + '/calendars/' + calendarId + '/events', {
+                    params: {
+                        timeMin: timeMin || moment().startOf('day').format(),
+                        timeMax: timeMax || moment().endOf('day').format()
+                    }
+                }).
                     success(function (data, status, headers, config) {
                         // this callback will be called asynchronously
                         // when the response is available

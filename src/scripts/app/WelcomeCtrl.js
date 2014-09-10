@@ -8,7 +8,6 @@
             $scope.testVar = 'some scope data';
             $scope.login = auth.login;
 
-            $scope.subjects = ['Spanish', 'Writing', 'History', 'Math'];
             $scope.studentEventLists = [];
 
             function addEvent(studentEventList, calendarId, eventResource) {
@@ -24,7 +23,8 @@
                     fmtTime: start.format('hh:mma'),
                     calendarId: calendarId,
                     eventId: eventResource.id,
-                    etag: eventResource.etag
+                    etag: eventResource.etag,
+                    extendedProperties: eventResource.extendedProperties
                 });
                 $log.log('creating ' + eventResource.summary + ' event for ' + studentEventList.student.name);
             }
@@ -138,7 +138,7 @@
                     templateUrl: 'views/event_detail_modal.html',
                     controller: 'ModalInstanceCtrl',
                     resolve: {
-                        event: function () {
+                        evt: function () {
                             return event;
                         }
                     }
@@ -153,27 +153,43 @@
 
         }]);
 
-    angular.module('myApp').controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'hsCalendarService', 'event',
-        function ($scope, $modalInstance, calendars, event) {
-            $scope.event = event;
+    angular.module('myApp').controller('ModalInstanceCtrl', ['$scope', '$modalInstance', '$q', 'UserData', 'hsCalendarService', 'evt',
+        function ($scope, $modalInstance, $q, UserData, calendars, evt) {
 
-            $scope.setSpanish = function () {
-                calendars.patchEvent(event.calendarId, event.eventId, event.etag, {
-                    extendedProperties: {
-                        private: {
-                            subject: 'Spanish'
-                        },
-                        shared: {}
-                    }
-                });
+            function setupEvent(anEvent) {
+                var subjectId = anEvent['extendedProperties']['private']['subjectId'];
+                anEvent.subject = UserData.subjects.find(function (sub) { return sub.id === subjectId; });
+
+                return anEvent;
+            }
+
+            var patch = { extendedProperties: { private: { } } };
+            $scope.subjects = UserData.subjects;
+            $scope.evt = setupEvent(evt);
+
+            $scope.onSubjectChange = function () {
+                if ($scope.evt.subject) {
+                    patch.extendedProperties.private.subjectId = $scope.evt.subject.id;
+                }
             };
 
             $scope.ok = function () {
-                $modalInstance.close(event);
+                ($scope.evtForm.$dirty && $scope.evtForm.$valid
+                     ? calendars.patchEvent(evt.calendarId, evt.eventId, evt.etag, patch)
+                     : $q.when(false))
+                    .then(function (result) {
+                        if (result) {
+                            evt.etag = result.etag;
+                            angular.extend(evt.extendedProperties, result.extendedProperties);
+                        }
+                        $modalInstance.close(evt);
+                    });
             };
 
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };
+
+
         }]);
 }());
