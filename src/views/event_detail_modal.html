@@ -4,6 +4,13 @@
 <div class="modal-body">
     <form name="$parent.evtForm">
         <div class="form-group">
+            <label for="subject">Description</label>
+            <textarea name="description"
+                    class="form-control"
+                    ng-model="evt.resource.description">
+            </textarea>
+        </div>
+        <div class="form-group">
             <label for="subject">Subject</label>
             <select name="subject"
                     class="form-control"

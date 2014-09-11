@@ -3,18 +3,21 @@
 
 (function () {
     'use strict';
-    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$modal', 'UserData', 'MathUtil', 'hsAuthService', 'hsCalendarService',
-        function ($scope, $log, $q, $modal, UserData, MathUtil, auth, calendars) {
-            $scope.testVar = 'some scope data';
-            $scope.login = auth.login;
+    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$modal', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+        function ($scope, $log, $q, $modal, UserData, Util, MathUtil, auth, calendars) {
+            var startRange = moment().startOf('day'),
+                endRange = moment().endOf('day'),
+                calendarList = null;
 
-            $scope.studentEventLists = [];
+            function getSubject(evtResource) {
+                var subjectId = Util.safeRead(evtResource, 'extendedProperties', 'private', 'subjectId');
+                return UserData.subjects.find(function (sub) { return sub.id === subjectId; });
+            }
 
             function addEvent(studentEventList, calendarId, eventResource) {
                 var start = moment(eventResource.start.dateTime),
                     end = moment(eventResource.end.dateTime);
                 studentEventList.events.push({
-                    assignment: eventResource.summary,
                     day: start.dayOfYear(),
                     start: start,
                     end: end,
@@ -22,14 +25,14 @@
                     endMinutes: end.hours() * 60 + end.minutes(),
                     fmtTime: start.format('hh:mma'),
                     calendarId: calendarId,
-                    eventId: eventResource.id,
-                    etag: eventResource.etag,
-                    extendedProperties: eventResource.extendedProperties
+                    subject: getSubject(eventResource),
+                    resource: eventResource
                 });
                 $log.log('creating ' + eventResource.summary + ' event for ' + studentEventList.student.name);
             }
 
             function fetchStudentEvents(calendarList, nextSyncToken) {
+                $scope.studentEventLists = [];
                 var deferred = $q.defer(),
                     pendingStudents = 0;
                 angular.forEach(UserData.students, function (student) {
@@ -44,7 +47,7 @@
                             return cal.id === studentCalendarId;
                         });
                         if (calendar) {
-                            eventListPromises.push(calendars.getEventList(calendar.id));
+                            eventListPromises.push(calendars.getEventList(calendar.id, startRange.format(), endRange.format()));
                         }
                     });
 
@@ -72,14 +75,20 @@
                 return deferred.promise;
             }
 
-                        /** Determine the time range of the events and add a "non student" list  */
+            /** Determine the time range of the events and add a "non student" list  */
             function addNonStudentList() {
                 var minTime = 24 * 60 - 1,
                     maxTime = 0,
                     blockOffset = 0,
                     minutesPerBlock = 30,
                     today = moment().startOf('day'),
-                    nonStudentList = { nonStudent: true, events: [], student: { name: 'Today' } }; // what minutes increments to show
+                    nonStudentList = {
+                        nonStudent: true,
+                        events: [],
+                        student: {
+                            name: startRange.format('ddd MMM D')
+                        }
+                    }; // what minutes increments to show
                 angular.forEach($scope.studentEventLists, function (list) {
                     angular.forEach(list.events, function (evt) {
                         minTime = Math.min(minTime, evt.startMinutes);
@@ -104,7 +113,9 @@
                 while (minTime < maxTime) {
                     nonStudentList.events.push({
                         time: minTime, // 8:30 * 60,
-                        assignment: today.format('hh:mma'),
+                        resource: {
+                            summary: today.format('hh:mma')
+                        },
                         blockOffset: blockOffset
                     });
 
@@ -116,11 +127,22 @@
                 $scope.studentEventLists.unshift(nonStudentList);
             }
 
+            $scope.testVar = 'some scope data';
+            $scope.login = auth.login;
+
+            $scope.studentEventLists = [];
+
+            $scope.changeDay = function (increment) {
+                startRange.add('days', increment);
+                endRange.add('days', increment);
+                fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(addNonStudentList);
+            };
+
             $scope.getData = function () {
-                $scope.studentEventLists = [];
+
                 calendars.getCalendarList().then(function (data) {
-                    $scope.data = data;
-                    fetchStudentEvents(data.items, data.nextSyncToken).then(addNonStudentList);
+                    calendarList = data;
+                    fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(addNonStudentList);
                 }, function (error) {
                     $log.error(error);
                 });
@@ -157,18 +179,24 @@
         function ($scope, $modalInstance, $q, UserData, calendars, Util, evt) {
 
             function setupEvent(anEvent) {
-                var subjectId = Util.safeRead(anEvent, 'extendedProperties', 'private', 'subjectId');
+                var subjectId = Util.safeRead(anEvent, 'resource', 'extendedProperties', 'private', 'subjectId');
                 if (angular.isUndefined(subjectId)) {
-                    anEvent.extendedProperties = anEvent.extendedProperties || {};
-                    anEvent.extendedProperties.private = anEvent.extendedProperties.private || {};
+                    anEvent.resource.extendedProperties = anEvent.resource.extendedProperties || {};
+                    anEvent.resource.extendedProperties.private = anEvent.resource.extendedProperties.private || {};
                 } else {
-                    anEvent.subject = UserData.subjects.find(function (sub) { return sub.id === subjectId; });
+                    anEvent.subject = UserData.subjects.find(function (sub) {
+                        return sub.id === subjectId;
+                    });
                 }
 
                 return anEvent;
             }
 
-            var patch = { extendedProperties: { private: { } } };
+            var patch = {
+                extendedProperties: {
+                    private: {}
+                }
+            };
             $scope.subjects = UserData.subjects;
             $scope.evt = setupEvent(evt);
 
@@ -179,14 +207,8 @@
             };
 
             $scope.ok = function () {
-                ($scope.evtForm.$dirty && $scope.evtForm.$valid
-                     ? calendars.patchEvent(evt.calendarId, evt.eventId, evt.etag, patch)
-                     : $q.when(false))
+                ($scope.evtForm.$dirty && $scope.evtForm.$valid ? calendars.patchEvent(evt.calendarId, evt.resource, patch) : $q.when(false))
                     .then(function (result) {
-                        if (result) {
-                            evt.etag = result.etag;
-                            angular.extend(evt.extendedProperties, result.extendedProperties);
-                        }
                         $modalInstance.close(evt);
                     });
             };

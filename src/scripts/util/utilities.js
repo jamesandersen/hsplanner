@@ -1,4 +1,6 @@
 /*global angular: false */
+/*jslint plusplus: true */
+
 (function () {
     'use strict';
 

@@ -1,18 +1,18 @@
 <button ng-click="getData()">Get Data</button>
-<!--<div ng-repeat="item in data.items">{{item.summary}}</div>-->
-
 <div class="schedule" ng-class="{ 'active-student': activeStudent }">
     <div class="student-schedule" ng-repeat="list in studentEventLists" ng-class="{ 'non-student': list.nonStudent, active: list.active }">
 
         <h3 class="name" ng-click="setActiveList(list)">
+            <i class="fa fa-angle-left" ng-click="changeDay(-1);$event.stopPropagation()"></i>
             <span ng-bind="list.student.name"></span>
+            <i class="fa fa-angle-right" ng-click="changeDay(1);$event.stopPropagation()"></i>
             <i class="fa fa-times" ng-click="setActiveList(null);$event.stopPropagation()"></i>
         </h3>
 
         <div class="event tblock-{{evt.blockOffset}}" ng-repeat="evt in list.events">
             <i class="fa fa-cog" ng-cloak ng-click="openEventModal(evt)"></i>
-            <b>{{evt.fmtTime}}</b><br/>
-            <span ng-bind="evt.assignment"></span>
+            <b>{{evt.fmtTime}}</b>&nbsp;<span ng-bind="evt.subject.summary"></span><br/>
+            <span ng-bind="evt.resource.summary"></span>
         </div>
     </div>
 </div>

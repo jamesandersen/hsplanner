@@ -9,6 +9,8 @@
     calendarModule.factory('hsCalendarService', ['$http', '$q', '$log', 'hsAuthService', 'CALENDAR_BASE_URI',
         function ($http, $q, $log, auth, baseUri) {
 
+            var localEvents = {};
+
             function getCalendarList() {
                 return $http.get(baseUri + '/users/me/calendarList').
                     success(function (data, status, headers, config) {
@@ -37,12 +39,15 @@
                     success(function (data, status, headers, config) {
                         // this callback will be called asynchronously
                         // when the response is available
+                        angular.forEach(data.items, function (evt) {
+                            localEvents[evt.id] = evt;
+                        });
+                        data.calendarId = calendarId;
                     }).
                     error(function (data, status, headers, config) {
                         // called asynchronously if an error occurs
                         // or server returns response with an error status.
                     }).then(function (result) {
-                        result.data.calendarId = calendarId;
                         return result.data;
                     },
                         function (error) {
@@ -50,18 +55,21 @@
                         });
             }
 
-            function patchEvent(calendarId, eventId, etag, patch) {
+            function patchEvent(calendarId, evtResource, patch) {
                 return $http({
-                    url: baseUri + '/calendars/' + calendarId + '/events/' + eventId,
+                    url: baseUri + '/calendars/' + calendarId + '/events/' + evtResource.id,
                     method: 'PATCH',
                     headers: {
-                        'If-Match': etag
+                        'If-Match': evtResource.etag
                     },
                     data: patch
                 }).
                     success(function (data, status, headers, config, statusText) {
                         // this callback will be called asynchronously
                         // when the response is available
+                        if (evtResource.id in localEvents) {
+                            angular.extend(localEvents[evtResource.id], data);
+                        }
                     }).
                     error(function (data, status, headers, config, statusText) {
                         // called asynchronously if an error occurs
