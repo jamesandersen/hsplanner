@@ -55,7 +55,23 @@
                         });
             }
 
-            function patchEvent(calendarId, evtResource, patch) {
+            function getEvent(eventId) {
+                if (angular.isUndefined(eventId)) { return null; }
+
+                return eventId in localEvents ? localEvents[eventId] : null;
+            }
+
+            function patchEvent(calendarId, evtResourceOrId, patch) {
+                var evtResource = evtResourceOrId;
+                // attempt to used a cached event resource if only an id is passed in
+                if (angular.isString(evtResourceOrId)) {
+                    if (evtResourceOrId in localEvents) {
+                        evtResource = localEvents[evtResourceOrId];
+                    } else {
+                        return $q.reject('Cached event with id ' + evtResourceOrId + ' not found');
+                    }
+                }
+
                 return $http({
                     url: baseUri + '/calendars/' + calendarId + '/events/' + evtResource.id,
                     method: 'PATCH',
@@ -85,6 +101,7 @@
             return {
                 getCalendarList: getCalendarList,
                 getEventList: getEventList,
+                getEvent: getEvent,
                 patchEvent: patchEvent
             };
         }]);

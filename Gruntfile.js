@@ -1,7 +1,18 @@
+/*jslint es5: true */
 /*global module: false, require: false,  es5: true */
 module.exports = function (grunt) {
     'use strict';
-    var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest;
+    var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest,
+        appFiles = [
+            'src/scripts/es6_polyfills.js',
+            'src/scripts/auth/authService.js',
+            'src/scripts/util/*.js',
+            'src/scripts/auth/*.js',
+            'src/scripts/calendar/*.js',
+            'src/scripts/main.js',
+            'src/scripts/app/*.js'
+        ];
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -21,7 +32,7 @@ module.exports = function (grunt) {
                 },
                 options: {
                     replacements: [{
-                        pattern: /<!-- @secret (.*?) -->/ig,
+                        pattern: /<!-- @secret (\w*?) -->/ig,
                         replacement: function (match, p1, offset, string) {
                             return grunt.config.get('secrets').web[p1];
                         }
@@ -59,6 +70,19 @@ module.exports = function (grunt) {
         jshint: {
             all: ['Gruntfile.js', 'src/scripts/**/*.js', 'test/**/*.js']
         },
+        jasmine: {
+            customTemplate: {
+                src: appFiles,
+                options: {
+                    specs: 'src/tests/*_tests.js',
+                    helpers: 'src/tests/*_helper.js',
+                    vendor: [
+                        "bower_components/angular/angular.js",
+                        "bower_components/angular-mocks/angular-mocks.js"
+                    ]
+                }
+            }
+        },
         uglify: {
             lib_dev: {
                 options: {
@@ -86,15 +110,7 @@ module.exports = function (grunt) {
                     compress: false
                 },
                 files: {
-                    '<%= pkg.buildDir %>/js/app.js': [
-                        'src/scripts/es6_polyfills.js',
-                        'src/scripts/auth/authService.js',
-                        'src/scripts/util/*.js',
-                        'src/scripts/auth/*.js',
-                        'src/scripts/calendar/*.js',
-                        'src/scripts/app.js',
-                        'src/scripts/app/*.js'
-                    ]
+                    '<%= pkg.buildDir %>/js/app.js': appFiles
                 }
             }
         },
@@ -142,7 +158,8 @@ module.exports = function (grunt) {
                     base: 'dist',
                     livereload: true,
                     middleware: function (connect, options) {
-                        var middlewares = [];
+                        var middlewares = [],
+                            directory;
 
                         // RewriteRules support
                         middlewares.push(rewriteRulesSnippet);
@@ -151,7 +168,7 @@ module.exports = function (grunt) {
                             options.base = [options.base];
                         }
 
-                        var directory = options.directory || options.base[options.base.length - 1];
+                        directory = options.directory || options.base[options.base.length - 1];
                         options.base.forEach(function (base) {
                             // Serve static files.
                             middlewares.push(connect.static(base));
@@ -179,6 +196,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-mkdir');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-jasmine');
 
     // Default task(s).
     grunt.registerTask('build-js-lib', ['mkdir', 'uglify:lib_dev']);

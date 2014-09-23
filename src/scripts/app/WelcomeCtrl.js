@@ -174,49 +174,4 @@
             };
 
         }]);
-
-    angular.module('myApp').controller('ModalInstanceCtrl', ['$scope', '$modalInstance', '$q', 'UserData', 'hsCalendarService', 'Util', 'evt',
-        function ($scope, $modalInstance, $q, UserData, calendars, Util, evt) {
-
-            function setupEvent(anEvent) {
-                var subjectId = Util.safeRead(anEvent, 'resource', 'extendedProperties', 'private', 'subjectId');
-                if (angular.isUndefined(subjectId)) {
-                    anEvent.resource.extendedProperties = anEvent.resource.extendedProperties || {};
-                    anEvent.resource.extendedProperties.private = anEvent.resource.extendedProperties.private || {};
-                } else {
-                    anEvent.subject = UserData.subjects.find(function (sub) {
-                        return sub.id === subjectId;
-                    });
-                }
-
-                return anEvent;
-            }
-
-            var patch = {
-                extendedProperties: {
-                    private: {}
-                }
-            };
-            $scope.subjects = UserData.subjects;
-            $scope.evt = setupEvent(evt);
-
-            $scope.onSubjectChange = function () {
-                if ($scope.evt.subject) {
-                    patch.extendedProperties.private.subjectId = $scope.evt.subject.id;
-                }
-            };
-
-            $scope.ok = function () {
-                ($scope.evtForm.$dirty && $scope.evtForm.$valid ? calendars.patchEvent(evt.calendarId, evt.resource, patch) : $q.when(false))
-                    .then(function (result) {
-                        $modalInstance.close(evt);
-                    });
-            };
-
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-
-
-        }]);
 }());
