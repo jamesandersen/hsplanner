@@ -86,7 +86,7 @@
                         nonStudent: true,
                         events: [],
                         student: {
-                            name: startRange.format('ddd MMM D')
+                            name: startRange.format('ddd M/D')
                         }
                     }; // what minutes increments to show
                 angular.forEach($scope.studentEventLists, function (list) {

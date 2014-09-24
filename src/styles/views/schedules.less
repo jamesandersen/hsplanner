@@ -1,39 +1,90 @@
 @schedule-name-height: 55px;
+@student-schedule-width: 190px;
+@student-schedule-margin: 7px;
+@schedule-width: (4 * (@student-schedule-width + (2 * @student-schedule-margin)) + 16px); // scrollbar width
 
 .schedule {
     position: relative;
-    height: 600px;
-    width: 890px;
+    .box-sizing(border-box);
+    margin-top: -@schedule-name-height - 10px;
+    padding-top: @schedule-name-height + 10px;
+    height: 100%;
+    max-width: @schedule-width;
     margin: 0 auto;
+
+    &.active-student {
+        .student-schedule:not(.active), .student-schedule-header:not(.active) {
+            display: none;
+        }
+
+        .student-schedule.active, .student-schedule-header.active {
+            width: 100%;
+
+            i.fa.fa-times { display: inline; }
+        }
+    }
 }
 
-.student-schedule {
-    float: left;
+.header-container {
+    margin-top: -@schedule-name-height;
+    height: @schedule-name-height;
+    max-width: @schedule-width;
+}
+
+.event-container {
+
     height: 100%;
-    width: 200px;
+    max-width: @schedule-width;
+    overflow-y: auto;
+}
+
+.student-schedule, .student-schedule-header {
+    float: left;
+    .box-sizing(border-box);
+    margin: 0px @student-schedule-margin 0px @student-schedule-margin;
+    padding-right: 8px;
+    width: @student-schedule-width;
     border: solid 1px #BBB;
-    margin-right: 8px;
     position: relative;
+    .box-shadow(0px 0px 5px 0px #333);
+    /*&.non-student {
+        width: 225px;
+    }*/
+}
 
-    &.active {
-        background-color: @brand-secondary;
-
-        h3.name { color: @brand-primary; }
-    }
-
+.student-schedule-header {
+    height: @schedule-name-height;
     h3.name {
-        font-size: 3rem;
+        font-size: 2.5rem;
         height: @schedule-name-height;
         width: 100%;
         text-align: center;
-        line-height: 3rem;
+        line-height: 2rem;
         cursor: pointer;
-
+        margin-top: 1rem;
+        margin-bottom: 0px;
         &:hover {
             color: @brand-primary;
         }
 
         i.fa { display: none; }
+    }
+
+    &.non-student {
+        h3.name {
+            text-align: left;
+            i[class*='fa-angle-'] { display: inline; }
+        }
+    }
+}
+
+.student-schedule {
+    height: 125%;
+
+    &.active {
+        background-color: @brand-secondary;
+
+        h3.name { color: @brand-primary; }
     }
 
     .event {
@@ -54,22 +105,18 @@
 
     &.non-student {
         br, b { display: none; }
-        h3.name {
-            text-align: left;
-            i[class*='fa-angle-'] { display: inline; }
-        }
         border: solid 0px #BBB;
-        width: 225px;
 
         .fa-cog { display: none; }
     }
 }
 
-@media screen and (max-width: 800px) {
-    .schedule {
+@media screen and (max-width: @schedule-width) {
+    .header-container, .event-container, .schedule {
         width: 100%;
     }
-    .student-schedule {
+
+    .student-schedule, .student-schedule-header {
         float: none;
         width: 100%;
         height: auto;
@@ -81,24 +128,8 @@
             display: block;
         }
 
-
         &.non-student {
             display: none;
-        }
-    }
-
-}
-
-@media screen and (min-width: 801px) {
-    .schedule.active-student {
-        .student-schedule:not(.active) {
-            display: none;
-        }
-
-        .student-schedule.active {
-            width: 100%;
-
-            i.fa.fa-times { display: inline; }
         }
     }
 }
@@ -110,6 +141,6 @@
 .generate-time-classes(12);
 
 .generate-time-classes(@n, @i: 0) when (@i =< @n) {
-  .tblock-@{i} { top: @schedule-name-height + (@i * @pixelsPerBlock * 1px); }
+  .tblock-@{i} { top: (@i * @pixelsPerBlock * 1px); }
   .generate-time-classes(@n, (@i + 1));
 }
