@@ -85,8 +85,9 @@
                     nonStudentList = {
                         nonStudent: true,
                         events: [],
+                        summary: startRange.format('dddd'),
                         student: {
-                            name: startRange.format('ddd M/D')
+                            name: startRange.format('M/D')
                         }
                     }; // what minutes increments to show
                 angular.forEach($scope.studentEventLists, function (list) {
@@ -96,8 +97,8 @@
                     });
                 });
 
-                minTime = MathUtil.floor(minTime, minutesPerBlock);
-                maxTime = MathUtil.ceiling(maxTime, minutesPerBlock);
+                minTime = MathUtil.floor(minTime, minutesPerBlock * 2);
+                maxTime = MathUtil.ceiling(maxTime, minutesPerBlock * 2);
 
                 // set the blockOffset property on each event to indicate where it'll be positioned
                 angular.forEach($scope.studentEventLists, function (list) {
@@ -114,14 +115,14 @@
                     nonStudentList.events.push({
                         time: minTime, // 8:30 * 60,
                         resource: {
-                            summary: today.format('hh:mma')
+                            summary: today.format('ha')
                         },
                         blockOffset: blockOffset
                     });
 
-                    blockOffset++;
-                    minTime += minutesPerBlock;
-                    today.add(minutesPerBlock, 'minutes');
+                    blockOffset += 2;
+                    minTime += minutesPerBlock * 2;
+                    today.add(minutesPerBlock * 2, 'minutes');
                 }
 
                 $scope.studentEventLists.unshift(nonStudentList);
