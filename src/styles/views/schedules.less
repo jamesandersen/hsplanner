@@ -182,11 +182,13 @@
 
 //=======  event top offsets ==========
 @blocks: 48;
-@pixelsPerBlock: 50;
+@pixelsPerFifteenMin: 25px;
 
-.generate-time-classes(12);
+.generate-time-classes(24);
 
 .generate-time-classes(@n, @i: 0) when (@i =< @n) {
-  .tblock-@{i} { top: (@i * @pixelsPerBlock * 1px); }
-  .generate-time-classes(@n, (@i + 1));
+    @time: @i * 15;
+    .duration-@{time} { height: @i * @pixelsPerFifteenMin; }
+    .toffset-@{i} { top: (@i * @pixelsPerFifteenMin); }
+    .generate-time-classes(@n, (@i + 1));
 }

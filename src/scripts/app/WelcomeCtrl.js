@@ -80,7 +80,7 @@
                 var minTime = 24 * 60 - 1,
                     maxTime = 0,
                     blockOffset = 0,
-                    minutesPerBlock = 30,
+                    minutesPerBlock = 15,
                     today = moment().startOf('day'),
                     nonStudentList = {
                         nonStudent: true,
@@ -97,13 +97,14 @@
                     });
                 });
 
-                minTime = MathUtil.floor(minTime, minutesPerBlock * 2);
-                maxTime = MathUtil.ceiling(maxTime, minutesPerBlock * 2);
+                minTime = MathUtil.floor(minTime, minutesPerBlock * 4);
+                maxTime = MathUtil.ceiling(maxTime, minutesPerBlock * 4);
 
                 // set the blockOffset property on each event to indicate where it'll be positioned
                 angular.forEach($scope.studentEventLists, function (list) {
                     angular.forEach(list.events, function (evt) {
                         evt.blockOffset = Math.round(MathUtil.floor(evt.startMinutes - minTime, minutesPerBlock) / minutesPerBlock);
+                        evt.duration = MathUtil.floor(evt.endMinutes - evt.startMinutes, minutesPerBlock);
                         minTime = Math.min(minTime, evt.startMinutes);
                         maxTime = Math.max(maxTime, evt.endMinutes);
                     });
@@ -120,9 +121,9 @@
                         blockOffset: blockOffset
                     });
 
-                    blockOffset += 2;
-                    minTime += minutesPerBlock * 2;
-                    today.add(minutesPerBlock * 2, 'minutes');
+                    blockOffset += 4;
+                    minTime += minutesPerBlock * 4;
+                    today.add(minutesPerBlock * 4, 'minutes');
                 }
 
                 $scope.studentEventLists.unshift(nonStudentList);
