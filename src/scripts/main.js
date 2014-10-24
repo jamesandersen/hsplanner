@@ -1,36 +1,49 @@
-'use strict';
+/*global angular: false */
+(function () {
+    'use strict';
 
-var angular = require('angular');
-var authModule = require('./auth/authService');
+    var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap', 'hsUtilities', 'hsAuth', 'hsCalendar']);
+    angular.module('hsAuth').constant('CLIENT_ID', '<!-- @secret client_id -->');
 
-var app = angular.module('myApp', [authModule.name]);
-angular.module(authModule.name).constant('AUTH_URI', '<!-- @secret auth_uri -->');
-angular.module(authModule.name).constant('TOKEN_URI', '<!-- @secret token_uri -->');
-angular.module(authModule.name).constant('CLIENT_ID', '<!-- @secret client_id -->');
-angular.module(authModule.name).constant('CLIENT_SECRET', '<!-- @secret client_secret -->');
-app.controller('WelcomeCtrl', require('./controllers/WelcomeCtrl'));
+    app.config(['$locationProvider', '$routeProvider',
+        function ($locationProvider, $routeProvider) {
+            $locationProvider.html5Mode(true);
 
-app.config(['$locationProvider',
-    function ($locationProvider) {
-        $locationProvider.html5Mode(true);
+            $routeProvider
+                .when('/', {
+                    templateUrl: '/views/main.html',
+                    controller: 'WelcomeCtrl'
+                })
+                .when('/profile', {
+                    templateUrl: '/views/profile.html',
+                    controller: 'ProfileCtrl'
+                })
+                .when('/login', {
+                    templateUrl: '/views/login.html',
+                    controller: 'LoginCtrl'
+                })
+                .otherwise({
+                    redirectTo: '/'
+                });
+        }]);
 
-        /*$routeProvider
-    .when('/', {
-      templateUrl: '/partials/template1.html', 
-      controller: 'ctrl1'
-    })
-    .when('/tags/:tagId', {
-      templateUrl: '/partials/template2.html', 
-      controller:  'ctrl2'
-    })
-    .when('/another', {
-      templateUrl: '/partials/template1.html', 
-      controller:  'ctrl1'
-    })
-    .otherwise({ redirectTo: '/' }); */
-}]);
+    app.config(["$httpProvider",
+        function ($httpProvider) {
+            $httpProvider.interceptors.push('calendarHttpInterceptor');
+        }]);
 
-app.run(['hsAuthService',
-    function (auth) {
-        auth.checkOAuth2();
-    }]);
+    app.run(['hsAuthService', '$location', '$log',
+        function (auth, $location, $log) {
+            auth.loadGoogleAPI().then(function (isGoogleAPILoaded) {
+                auth.getToken().then(function (accessToken) {
+                    // token is available so we're signed in
+                }, function (authError) {
+                    $log.warn('not signed in at startup: ' + authError);
+                    // not signed in, redirect to login screen
+                    $location.url('/login?dst=' + encodeURIComponent($location.url()));
+                });
+            }, function (rejection) {
+                $log.warn('google api not loaded: ' + rejection);
+            });
+        }]);
+}());

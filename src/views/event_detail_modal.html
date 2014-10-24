@@ -1,0 +1,41 @@
+<div class="modal-header">
+    <h3 class="modal-title" ng-bind="evt.assignment"></h3>
+</div>
+<div class="modal-body">
+    <form name="$parent.evtForm">
+        <div class="form-group">
+            <label for="subject">Description</label>
+            <textarea name="description"
+                    class="form-control"
+                    ng-model="evt.resource.description"
+                      ng-change="onDescriptionChange()"
+                      ng-disabled="!evt.resource.recurringEventId">
+            </textarea>
+        </div>
+        <div class="form-group">
+            <label for="subject">Summary</label>
+            <textarea name="description"
+                    class="form-control"
+                    ng-model="evt.resource.summary"
+                      ng-change="onSummaryChange()"
+                      ng-disabled="!evt.resource.recurringEventId">
+            </textarea>
+        </div>
+        <div class="form-group">
+            <label for="subject">Subject</label>
+            <select name="subject"
+                    class="form-control"
+                    ng-model="evt.subject"
+                    ng-options="subject.summary for subject in subjects"
+                    ng-change="onSubjectChange()">
+                <option value="">-- Choose Subject --</option>
+            </select>
+        </div>
+    </form>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()"><span ng-show="!evtForm.$dirty">Done</span><span ng-show="evtForm.$dirty">Save</span>
+    </button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

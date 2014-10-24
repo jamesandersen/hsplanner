@@ -2,14 +2,28 @@
 <html lang="en" ng-app="myApp">
 
 <head>
-    <title>My Awesome App</title>
+    <title>Home School Planner</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <base href="http://localhost:9001/" />
+    <meta name="google-signin-clientid" content="<!-- @secret client_id -->" />
+    <meta name="google-signin-cookiepolicy" content="single_host_origin" />
+    <meta name="google-signin-callback" content="onAuthResult" />
+    <meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar" />
 </head>
 
-<body ng-controller='WelcomeCtrl'>
-    <h1>My Awesome App</h1>
-    <p>{{testVar}}</p>
-    <button ng-click="login()">Login with Google!</button>
+<body>
+    <header ng-controller="HeaderCtrl" class="bg-primary">
+        <span id="app-name">Home School Planner</span>
+        <div ng-if="signed_in" class="header-right pull-right">
+            <img class="profile-img" ng-src="{{profileImgSrc}}"/>
+            <span ng-bind="profile.displayName"></span>
+
+            <a href="" ng-click="logout()"><i class="fa fa-sign-out fa-2x"></i></a>
+        </div>
+    </header>
+
+    <div ng-view></div>
+
     <script src="js/libs.js"></script>
     <script src="js/app.js"></script>
 </body>

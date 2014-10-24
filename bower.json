@@ -1,0 +1,30 @@
+{
+  "name": "chromeapp",
+  "version": "0.0.1",
+  "authors": [
+    "James Andersen <james.andersen@universalmind.com>"
+  ],
+  "description": "Home School Planner",
+  "main": "main.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.3.x",
+    "angular-route": "~1.3.x",
+    "angular-animate": "~1.3.x",
+    "angular-touch": "~1.3.x",
+    "angular-mocks": "~1.3.x",
+    "fontawesome": "~4.1.0",
+    "angular-bootstrap": "~0.11.x",
+    "moment": "~2.8.2"
+  },
+  "resolutions": {
+    "angular": "1.3.x"
+  }
+}
