@@ -14,10 +14,12 @@
                 return UserData.subjects.find(function (sub) { return sub.id === subjectId; });
             }
 
-            function addEvent(studentEventList, calendarId, eventResource) {
+            function buildEvent(calendarId, eventResource) {
                 var start = moment(eventResource.start.dateTime),
                     end = moment(eventResource.end.dateTime);
-                studentEventList.events.push({
+
+                $log.log('creating ' + eventResource.summary + ' event');
+                return {
                     day: start.dayOfYear(),
                     start: start,
                     end: end,
@@ -27,21 +29,20 @@
                     calendarId: calendarId,
                     subject: getSubject(eventResource),
                     resource: eventResource
-                });
-                $log.log('creating ' + eventResource.summary + ' event for ' + studentEventList.student.name);
+                };
             }
 
             function fetchStudentEvents(calendarList, nextSyncToken) {
-                $scope.studentEventLists = [];
                 var deferred = $q.defer(),
+                    eventsByStudentID = {},
                     pendingStudents = 0;
+
+                // loop over students to fetch events for each
                 angular.forEach(UserData.students, function (student) {
-                    var studentEventList = {
-                            student: student,
-                            events: []
-                        },
-                        eventListPromises = [];
-                    $scope.studentEventLists.push(studentEventList);
+                    eventsByStudentID[student.id] = [];
+                    var eventListPromises = [];
+
+                    // build up a list of promises for events from the student's calendar(s)
                     angular.forEach(student.calendarIDs, function (studentCalendarId) {
                         var calendar = calendarList.find(function (cal, idx) {
                             return cal.id === studentCalendarId;
@@ -52,19 +53,20 @@
                     });
 
                     if (eventListPromises.length) {
-                        // fetch the events for the student's calendars
+                        // fetch the events for the student's calendar(s)
                         pendingStudents++;
                         $q.all(eventListPromises).then(function (resultsArray) {
                             deferred.notify(student.name + ' data retrieved');
                             pendingStudents--;
                             angular.forEach(resultsArray, function (eventListResult) {
                                 angular.forEach(eventListResult.items, function (evtResource) {
-                                    addEvent(studentEventList, eventListResult.calendarId, evtResource);
+                                    eventsByStudentID[student.id].push(buildEvent(eventListResult.calendarId, evtResource));
                                 });
                             });
 
                             if (pendingStudents === 0) {
-                                deferred.resolve(true);
+                                // we've now retrieved data from all students
+                                deferred.resolve(eventsByStudentID);
                             }
                         }, function (rejections) {
                             deferred.reject('Error fetching events for ' + student.name + ': ' + rejections);
@@ -76,22 +78,39 @@
             }
 
             /** Determine the time range of the events and add a "non student" list  */
-            function addNonStudentList() {
+            function prepareEvents(eventsByStudentID) {
                 var minTime = 24 * 60 - 1,
                     maxTime = 0,
                     blockOffset = 0,
                     minutesPerBlock = 15,
                     today = moment().startOf('day'),
-                    nonStudentList = {
-                        nonStudent: true,
-                        events: [],
-                        summary: startRange.format('dddd'),
-                        student: {
-                            name: startRange.format('M/D')
-                        }
-                    }; // what minutes increments to show
-                angular.forEach($scope.studentEventLists, function (list) {
-                    angular.forEach(list.events, function (evt) {
+                    lists = $scope.studentEventLists.slice(0), // a copy of the current data
+                    timeAxis = lists.find(function (evtList, idx) { return evtList.isTimeAxis; });
+
+                // ensure we have a "non-student" list which is the time axis
+                if (!timeAxis) {
+                    timeAxis = {
+                        isTimeAxis: true,
+                        student: { }
+                    };
+                    lists.unshift(timeAxis);
+                }
+
+                timeAxis.summary = startRange.format('dddd');
+                timeAxis.student.name = startRange.format('M/D');
+
+                angular.forEach(eventsByStudentID, function (events, studentId) {
+                    var list = lists.find(function (evtList, idx) { return evtList.student.id === studentId; });
+                    if (!list) {
+                        // we don't have an event list created for this student yet
+                        lists.push({
+                            student: UserData.students.find(function (stdnt) { return stdnt.id === studentId; }),
+                            events: []
+                        });
+                    }
+
+                    // calculate min/max time for events
+                    angular.forEach(events, function (evt) {
                         minTime = Math.min(minTime, evt.startMinutes);
                         maxTime = Math.max(maxTime, evt.endMinutes);
                     });
@@ -101,19 +120,28 @@
                 maxTime = MathUtil.ceiling(maxTime, minutesPerBlock * 4);
 
                 // set the blockOffset property on each event to indicate where it'll be positioned
-                angular.forEach($scope.studentEventLists, function (list) {
-                    angular.forEach(list.events, function (evt) {
+                angular.forEach(lists, function (list) {
+                    if (list.isTimeAxis) { return; }
+
+                    list.events = [];
+                    angular.forEach(eventsByStudentID[list.student.id], function (evt) {
                         evt.blockOffset = Math.round(MathUtil.floor(evt.startMinutes - minTime, minutesPerBlock) / minutesPerBlock);
                         evt.duration = MathUtil.floor(evt.endMinutes - evt.startMinutes, minutesPerBlock);
                         minTime = Math.min(minTime, evt.startMinutes);
                         maxTime = Math.max(maxTime, evt.endMinutes);
+
+                        // now that the evt has blockOffset and duration add it to the list array
+                        // delaying this as long as possible this helps avoid unsightly flicker in the UI
+                        list.events.push(evt);
                     });
                 });
 
                 today.add(minTime, 'minutes');
 
+                // generate axis events
+                timeAxis.events = [];
                 while (minTime < maxTime) {
-                    nonStudentList.events.push({
+                    timeAxis.events.push({
                         time: minTime, // 8:30 * 60,
                         resource: {
                             summary: today.format('ha')
@@ -126,10 +154,9 @@
                     today.add(minutesPerBlock * 4, 'minutes');
                 }
 
-                $scope.studentEventLists.unshift(nonStudentList);
+                return lists;
             }
 
-            $scope.testVar = 'some scope data';
             $scope.login = auth.login;
 
             $scope.studentEventLists = [];
@@ -137,14 +164,18 @@
             $scope.changeDay = function (increment) {
                 startRange.add('days', increment);
                 endRange.add('days', increment);
-                fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(addNonStudentList);
+                fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(prepareEvents).then(function (updatedLists) {
+                    $scope.studentEventLists = updatedLists;
+                });
             };
 
             $scope.getData = function () {
 
                 calendars.getCalendarList().then(function (data) {
                     calendarList = data;
-                    fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(addNonStudentList);
+                    fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(prepareEvents).then(function (updatedLists) {
+                        $scope.studentEventLists = updatedLists;
+                    });
                 }, function (error) {
                     $log.error(error);
                 });
