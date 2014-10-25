@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap', 'hsUtilities', 'hsAuth', 'hsCalendar']);
+    var app = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'hsUtilities', 'hsAuth', 'hsCalendar']);
     angular.module('hsAuth').constant('CLIENT_ID', '<!-- @secret client_id -->');
 
     app.config(['$locationProvider', '$routeProvider',

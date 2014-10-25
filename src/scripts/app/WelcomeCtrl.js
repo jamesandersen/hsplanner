@@ -3,11 +3,13 @@
 
 (function () {
     'use strict';
-    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$modal', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
-        function ($scope, $log, $q, $modal, UserData, Util, MathUtil, auth, calendars) {
+    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$timeout', '$modal', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+        function ($scope, $log, $q, $timeout, $modal, UserData, Util, MathUtil, auth, calendars) {
             var startRange = moment().startOf('day'),
                 endRange = moment().endOf('day'),
-                calendarList = null;
+                calendarList = null,
+                lastMinTime,
+                lastMaxTime;
 
             function getSubject(evtResource) {
                 var subjectId = Util.safeRead(evtResource, 'extendedProperties', 'private', 'subjectId');
@@ -120,6 +122,14 @@
                 maxTime = MathUtil.ceiling(maxTime, minutesPerBlock * 4);
 
                 // set the blockOffset property on each event to indicate where it'll be positioned
+                if (minTime < maxTime) {
+                    lastMinTime = minTime;
+                    lastMaxTime = maxTime;
+                } else {
+                    minTime = lastMinTime;
+                    maxTime = lastMaxTime;
+                }
+
                 angular.forEach(lists, function (list) {
                     if (list.isTimeAxis) { return; }
 
@@ -158,15 +168,31 @@
             }
 
             $scope.login = auth.login;
-
+            $scope.animateForward = false;
             $scope.studentEventLists = [];
 
             $scope.changeDay = function (increment) {
                 startRange.add('days', increment);
                 endRange.add('days', increment);
-                fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(prepareEvents).then(function (updatedLists) {
-                    $scope.studentEventLists = updatedLists;
-                });
+
+                // change direction of animation
+                $scope.animateForward = increment > 0;
+
+                // use $timeout to ensure the animation direction is set before
+                // triggering animation
+                $timeout(function () {
+                    // set a flag which will be used by a filter applied to the repeater
+                    // to artificially hide the event lists so leave animations are triggered
+                    $scope.studentEventLists.suppressEvents = true;
+                    var start = new Date();
+                    fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(prepareEvents).then(function (updatedLists) {
+                        var elapsed = (new Date()).getTime() - start.getTime();
+                        $timeout(function () {
+                            // then remove that flag to trigger enter animations
+                            $scope.studentEventLists = updatedLists;
+                        }, 500 - elapsed, true);
+                    });
+                }, 0, true);
             };
 
             $scope.getData = function () {
@@ -207,4 +233,10 @@
             };
 
         }]);
+
+    angular.module('myApp').filter('hasEvents', function () {
+        return function (eventLists) {
+            return eventLists.suppressEvents ? eventLists.filter(function (list) { return list.isTimeAxis; }) : eventLists;
+        };
+    });
 }());
