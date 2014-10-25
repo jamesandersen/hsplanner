@@ -190,7 +190,7 @@
                         $timeout(function () {
                             // then remove that flag to trigger enter animations
                             $scope.studentEventLists = updatedLists;
-                        }, 500 - elapsed, true);
+                        }, Math.max(0, 500 - elapsed), true);
                     });
                 }, 0, true);
             };
