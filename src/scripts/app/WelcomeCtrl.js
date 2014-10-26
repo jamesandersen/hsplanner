@@ -12,7 +12,7 @@
                 lastMaxTime;
 
             function getSubject(evtResource) {
-                var subjectId = Util.safeRead(evtResource, 'extendedProperties', 'private', 'subjectId');
+                var subjectId = Util.safeRead(evtResource, 'extendedProperties.private.subjectId');
                 return UserData.subjects.find(function (sub) { return sub.id === subjectId; });
             }
 

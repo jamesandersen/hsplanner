@@ -22,10 +22,10 @@
             }
         ],
         subjects: [
-            { id: 'abc', summary: 'Spanish' },
-            { id: 'def', summary: 'Writing' },
-            { id: 'ghi', summary: 'History' },
-            { id: 'jkl', summary: 'Math' }
+            { id: 'abc', summary: 'Spanish', bgcolor: '#33691e' },
+            { id: 'def', summary: 'Writing', bgcolor: '#ff5722 ' },
+            { id: 'ghi', summary: 'History', bgcolor: '#004d40 ' },
+            { id: 'jkl', summary: 'Math', bgcolor: '#0091ea ' }
         ]
     });
 }());
