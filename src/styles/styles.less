@@ -1,10 +1,11 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,700);
 @import 'bootstrap-imports.less';
 @import 'font-awesome-imports.less';
 
 //===== Bootstrap Overrides ================
 // http://www.google.com/design/spec/style/color.html#color-ui-color-palette
-@brand-primary:         #00bcd4;
-@brand-secondary:       lighten(@brand-primary, 30%);
+@brand-primary:         #03a9f4;
+@brand-secondary:       #01579b;
 @brand-success:         #5cb85c;
 @brand-info:            #5bc0de;
 @brand-warning:         #f0ad4e;
@@ -12,8 +13,13 @@
 
 @paper-color:           #f9f9f9;
 
+html, body {
+  font-family: 'Roboto', sans-serif;
+}
+
 @import 'layout.less';
 @import 'animations.less';
+@import 'material-design.less';
 
 @import 'views/login.less';
 @import 'views/schedules.less';
