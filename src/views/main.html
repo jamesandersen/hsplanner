@@ -12,7 +12,7 @@
             </h3>
         </div>
     </div>
-    <div class="event-container">
+    <div class="event-container" ng-class="{ animating: changingDay }">
         <div class="student-schedule"
              ng-style="{ height: scheduleTotalBlocks }"
              ng-repeat="list in studentEventLists | hasEvents"

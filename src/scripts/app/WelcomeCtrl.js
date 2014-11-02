@@ -181,7 +181,7 @@
 
                 // change direction of animation
                 $scope.animateForward = increment > 0;
-
+                $scope.changingDay = true;
                 // use $timeout to ensure the animation direction is set before
                 // triggering animation
                 $timeout(function () {
@@ -194,6 +194,7 @@
                         $timeout(function () {
                             // then remove that flag to trigger enter animations
                             $scope.studentEventLists = updatedLists;
+                            $scope.changingDay = false;
                         }, Math.max(0, 500 - elapsed), true);
                     });
                 }, 0, true);

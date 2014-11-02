@@ -51,7 +51,11 @@
     max-width: @schedule-width;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 2px
+    padding-bottom: 2px;
+
+    &.animating {
+        overflow-y: hidden;
+    }
 }
 
 .student-schedule, .student-schedule-header {
