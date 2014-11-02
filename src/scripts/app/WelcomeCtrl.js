@@ -85,6 +85,7 @@
                     maxTime = 0,
                     blockOffset = 0,
                     minutesPerBlock = 15,
+                    pixelsPerBlock = 25,
                     today = moment().startOf('day'),
                     lists = $scope.studentEventLists.slice(0), // a copy of the current data
                     timeAxis = lists.find(function (evtList, idx) { return evtList.isTimeAxis; });
@@ -120,6 +121,7 @@
 
                 minTime = MathUtil.floor(minTime, minutesPerBlock * 4);
                 maxTime = MathUtil.ceiling(maxTime, minutesPerBlock * 4);
+                $scope.scheduleTotalBlocks = Math.round(maxTime - minTime) / minutesPerBlock * pixelsPerBlock + 'px';
 
                 // set the blockOffset property on each event to indicate where it'll be positioned
                 if (minTime < maxTime) {
@@ -135,8 +137,8 @@
 
                     list.events = [];
                     angular.forEach(eventsByStudentID[list.student.id], function (evt) {
-                        evt.blockOffset = Math.round(MathUtil.floor(evt.startMinutes - minTime, minutesPerBlock) / minutesPerBlock);
-                        evt.duration = MathUtil.floor(evt.endMinutes - evt.startMinutes, minutesPerBlock);
+                        evt.blockOffset = Math.round(MathUtil.floor(evt.startMinutes - minTime, minutesPerBlock) / minutesPerBlock) * pixelsPerBlock + 'px';
+                        evt.duration = MathUtil.floor(evt.endMinutes - evt.startMinutes, minutesPerBlock) / minutesPerBlock *  pixelsPerBlock + 'px';
                         minTime = Math.min(minTime, evt.startMinutes);
                         maxTime = Math.max(maxTime, evt.endMinutes);
 
@@ -152,11 +154,11 @@
                 timeAxis.events = [];
                 while (minTime < maxTime) {
                     timeAxis.events.push({
-                        time: minTime, // 8:30 * 60,
+                        time: minTime * pixelsPerBlock + 'px', // 8:30 * 60,
                         resource: {
                             summary: today.format('ha')
                         },
-                        blockOffset: blockOffset
+                        blockOffset: blockOffset * pixelsPerBlock + 'px'
                     });
 
                     blockOffset += 4;
