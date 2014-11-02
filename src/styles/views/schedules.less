@@ -1,4 +1,5 @@
 @schedule-name-height: 55px;
+@schedule-height-gutter: 5px;
 @student-schedule-width: 250px;
 @non-student-col-width: 118px;
 @student-schedule-margin: 7px;
@@ -10,8 +11,9 @@
 .schedule {
     position: relative;
     .box-sizing(border-box);
-    margin-top: -@schedule-name-height - 10px;
-    padding-top: @schedule-name-height + 10px;
+    margin-top: -@schedule-name-height - @schedule-height-gutter - 10px;
+    padding-top: @schedule-name-height + @schedule-height-gutter + 10px;
+    padding-bottom: 10px;
     height: 100%;
     max-width: @schedule-width;
     margin: 0 auto;
@@ -30,8 +32,8 @@
 }
 
 .header-container {
-    margin-top: -@schedule-name-height;
-    height: @schedule-name-height;
+    margin-top: -@schedule-name-height - @schedule-height-gutter;
+    height: @schedule-name-height + @schedule-height-gutter;
     max-width: @schedule-width;
 }
 
@@ -41,8 +43,7 @@
     max-width: @schedule-width;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 5px;
-    margin-top: 5px;
+    padding-bottom: 2px
 }
 
 .student-schedule, .student-schedule-header {
