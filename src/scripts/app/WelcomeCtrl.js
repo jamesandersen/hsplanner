@@ -8,8 +8,10 @@
             var startRange = moment().startOf('day'),
                 endRange = moment().endOf('day'),
                 calendarList = null,
-                lastMinTime,
-                lastMaxTime;
+
+                // reasonable defaults
+                lastMinTime = 480, // 8am
+                lastMaxTime = 1020; // 5pm
 
             function getSubject(evtResource) {
                 var subjectId = Util.safeRead(evtResource, 'extendedProperties.private.subjectId');
@@ -148,13 +150,13 @@
                     });
                 });
 
-                today.add(minTime, 'minutes');
+                today.minutes(minTime);
 
                 // generate axis events
                 timeAxis.events = [];
                 while (minTime < maxTime) {
                     timeAxis.events.push({
-                        time: minTime * pixelsPerBlock + 'px', // 8:30 * 60,
+                        duration: 4 * pixelsPerBlock + 'px', // 8:30 * 60,
                         resource: {
                             summary: today.format('ha')
                         },
