@@ -193,20 +193,38 @@
         width: 100%;
     }
 
-    .student-schedule, .student-schedule-header {
-        float: none;
-        width: 100%;
-        height: auto;
-        .event {
+    .schedule {
+
+        .student-schedule, .event-container, .student-schedule-header.non-student{
             display: none;
         }
 
-        &.active .event{
-            display: block;
+        .student-schedule-header:not(.non-student) {
+            width: 100%;
+            margin: 0;
+            padding: 0 @student-schedule-margin 0 @student-schedule-margin;
         }
 
-        &.non-student {
-            display: none;
+        &.active-student {
+            .student-schedule.active {
+                float: none;
+                display: inline-block;
+                vertical-align: top;
+            }
+
+            .event-container {
+                display: block;
+            }
+
+            .student-schedule:not(.active), .student-schedule-header:not(.active) {
+                display: none;
+            }
+
+            .student-schedule.active, .student-schedule-header.active {
+                padding-left: @student-schedule-margin;
+                padding-right: @student-schedule-margin;
+                margin: 0;
+            }
         }
     }
 }
