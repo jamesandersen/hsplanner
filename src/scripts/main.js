@@ -18,6 +18,10 @@
                     templateUrl: '/views/profile.html',
                     controller: 'ProfileCtrl'
                 })
+                .when('/event-detail', {
+                    templateUrl: '/views/event_detail.html',
+                    controller: 'EventDetailCtrl'
+                })
                 .when('/login', {
                     templateUrl: '/views/login.html',
                     controller: 'LoginCtrl'

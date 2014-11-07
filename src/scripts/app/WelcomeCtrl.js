@@ -3,8 +3,8 @@
 
 (function () {
     'use strict';
-    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$timeout', '$modal', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
-        function ($scope, $log, $q, $timeout, $modal, UserData, Util, MathUtil, auth, calendars) {
+    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$timeout', '$location', '$modal', 'ActiveEvent', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+        function ($scope, $log, $q, $timeout, $location, $modal, ActiveEvent, UserData, Util, MathUtil, auth, calendars) {
             var startRange = moment().startOf('day'),
                 endRange = moment().endOf('day'),
                 calendarList = null,
@@ -220,6 +220,10 @@
             };
 
             $scope.openEventModal = function (event) {
+                ActiveEvent.setActiveEvent(event.resource, startRange, endRange);
+                $location.url('/event-detail');
+
+                /*
                 var modalInstance = $modal.open({
                     templateUrl: 'views/event_detail_modal.html',
                     controller: 'ModalInstanceCtrl',
@@ -234,7 +238,7 @@
                     $scope.selected = selectedItem;
                 }, function () {
                     $log.info('Modal dismissed at: ' + new Date());
-                });
+                });*/
             };
 
         }]);

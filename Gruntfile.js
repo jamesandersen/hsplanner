@@ -148,7 +148,7 @@ module.exports = function (grunt) {
             rules: [
                 // Internal rewrite
                 {
-                    from: '^/(main|login|profile)',
+                    from: '^/(main|login|profile|event-detail)',
                     to: '/index.html'
                 }
             ],
