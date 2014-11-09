@@ -2,7 +2,7 @@
 /*global angular: false, moment: false */
 (function () {
     'use strict';
-    angular.module('hsp.schedule').controller('HeaderCtrl', ['$scope', '$log', 'hsAuthService', 'authEvents',
+    angular.module('hsp.auth').controller('HeaderCtrl', ['$scope', '$log', 'hsAuthService', 'authEvents',
         function ($scope, $log, auth, authEvents) {
 
             $scope.signed_in = false;
