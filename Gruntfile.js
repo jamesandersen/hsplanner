@@ -8,7 +8,8 @@ module.exports = function (grunt) {
             'src/scripts/common/**/*.js',
             'src/scripts/auth/**/*.js',
             'src/scripts/schedule/**/*.js',
-            'src/scripts/app_.js'
+            'src/scripts/app_.js',
+            '!src/scripts/**/*_tests.js',
         ];
 
     // Project configuration.
@@ -43,11 +44,11 @@ module.exports = function (grunt) {
                 src: 'src/index_temp.html',
                 dest: '<%= pkg.buildDir %>/index.html'
             },
-            views: {
+            partials: {
                 expand: true,
-                cwd: 'src/views/',
+                cwd: 'src/partials/',
                 src: ['**'],
-                dest: '<%= pkg.buildDir %>/views/'
+                dest: '<%= pkg.buildDir %>/partials/'
             },
             fonts: {
                 expand: true,
@@ -121,7 +122,7 @@ module.exports = function (grunt) {
         },
         watch: {
             js: {
-                files: ['src/scripts/**/*.js', '!src/scripts/app.js'],
+                files: ['src/scripts/**/*.js', '!src/scripts/app_.js'],
                 tasks: ['build-js-app'],
                 options: {
                     livereload: true

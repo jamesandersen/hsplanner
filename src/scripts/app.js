@@ -11,19 +11,19 @@
 
             $routeProvider
                 .when('/', {
-                    templateUrl: '/views/main.html',
+                    templateUrl: '/partials/schedule/schedule.html',
                     controller: 'WelcomeCtrl'
                 })
                 .when('/profile', {
-                    templateUrl: '/views/profile.html',
+                    templateUrl: '/partials/auth/profile.html',
                     controller: 'ProfileCtrl'
                 })
                 .when('/event-detail', {
-                    templateUrl: '/views/event_detail.html',
+                    templateUrl: '/partials/schedule/event_detail.html',
                     controller: 'EventDetailCtrl'
                 })
                 .when('/login', {
-                    templateUrl: '/views/login.html',
+                    templateUrl: '/partials/auth/login.html',
                     controller: 'LoginCtrl'
                 })
                 .otherwise({
