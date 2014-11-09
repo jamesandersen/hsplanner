@@ -2,7 +2,7 @@
 /*global angular: false, moment: false */
 (function () {
     'use strict';
-    angular.module('hsp.schedule').controller('ProfileCtrl', ['$scope', '$log', 'hsAuthService',
+    angular.module('hsp.auth').controller('ProfileCtrl', ['$scope', '$log', 'hsAuthService',
         function ($scope, $log, auth) {
             $scope.getData = function () {
                 $log.log('get data');
