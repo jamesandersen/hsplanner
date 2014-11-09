@@ -3,14 +3,18 @@
 
 (function () {
     'use strict';
-    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$modal', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
-        function ($scope, $log, $q, $modal, UserData, Util, MathUtil, auth, calendars) {
+    angular.module('hsp.schedule').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$timeout', '$location', '$modal', 'ActiveEvent', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+        function ($scope, $log, $q, $timeout, $location, $modal, ActiveEvent, UserData, Util, MathUtil, auth, calendars) {
             var startRange = moment().startOf('day'),
                 endRange = moment().endOf('day'),
-                calendarList = null;
+                calendarList = null,
+
+                // reasonable defaults
+                lastMinTime = 480, // 8am
+                lastMaxTime = 1020; // 5pm
 
             function getSubject(evtResource) {
-                var subjectId = Util.safeRead(evtResource, 'extendedProperties', 'private', 'subjectId');
+                var subjectId = Util.safeRead(evtResource, 'extendedProperties.private.subjectId');
                 return UserData.subjects.find(function (sub) { return sub.id === subjectId; });
             }
 
@@ -83,6 +87,7 @@
                     maxTime = 0,
                     blockOffset = 0,
                     minutesPerBlock = 15,
+                    pixelsPerBlock = 25,
                     today = moment().startOf('day'),
                     lists = $scope.studentEventLists.slice(0), // a copy of the current data
                     timeAxis = lists.find(function (evtList, idx) { return evtList.isTimeAxis; });
@@ -118,15 +123,24 @@
 
                 minTime = MathUtil.floor(minTime, minutesPerBlock * 4);
                 maxTime = MathUtil.ceiling(maxTime, minutesPerBlock * 4);
+                $scope.scheduleTotalBlocks = Math.round(maxTime - minTime) / minutesPerBlock * pixelsPerBlock + 'px';
 
                 // set the blockOffset property on each event to indicate where it'll be positioned
+                if (minTime < maxTime) {
+                    lastMinTime = minTime;
+                    lastMaxTime = maxTime;
+                } else {
+                    minTime = lastMinTime;
+                    maxTime = lastMaxTime;
+                }
+
                 angular.forEach(lists, function (list) {
                     if (list.isTimeAxis) { return; }
 
                     list.events = [];
                     angular.forEach(eventsByStudentID[list.student.id], function (evt) {
-                        evt.blockOffset = Math.round(MathUtil.floor(evt.startMinutes - minTime, minutesPerBlock) / minutesPerBlock);
-                        evt.duration = MathUtil.floor(evt.endMinutes - evt.startMinutes, minutesPerBlock);
+                        evt.blockOffset = Math.round(MathUtil.floor(evt.startMinutes - minTime, minutesPerBlock) / minutesPerBlock) * pixelsPerBlock + 'px';
+                        evt.duration = MathUtil.floor(evt.endMinutes - evt.startMinutes, minutesPerBlock) / minutesPerBlock *  pixelsPerBlock + 'px';
                         minTime = Math.min(minTime, evt.startMinutes);
                         maxTime = Math.max(maxTime, evt.endMinutes);
 
@@ -136,17 +150,17 @@
                     });
                 });
 
-                today.add(minTime, 'minutes');
+                today.minutes(minTime);
 
                 // generate axis events
                 timeAxis.events = [];
                 while (minTime < maxTime) {
                     timeAxis.events.push({
-                        time: minTime, // 8:30 * 60,
+                        duration: 4 * pixelsPerBlock + 'px', // 8:30 * 60,
                         resource: {
                             summary: today.format('ha')
                         },
-                        blockOffset: blockOffset
+                        blockOffset: blockOffset * pixelsPerBlock + 'px'
                     });
 
                     blockOffset += 4;
@@ -158,15 +172,32 @@
             }
 
             $scope.login = auth.login;
-
+            $scope.animateForward = false;
             $scope.studentEventLists = [];
 
             $scope.changeDay = function (increment) {
                 startRange.add('days', increment);
                 endRange.add('days', increment);
-                fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(prepareEvents).then(function (updatedLists) {
-                    $scope.studentEventLists = updatedLists;
-                });
+
+                // change direction of animation
+                $scope.animateForward = increment > 0;
+                $scope.changingDay = true;
+                // use $timeout to ensure the animation direction is set before
+                // triggering animation
+                $timeout(function () {
+                    // set a flag which will be used by a filter applied to the repeater
+                    // to artificially hide the event lists so leave animations are triggered
+                    $scope.studentEventLists.suppressEvents = true;
+                    var start = new Date();
+                    fetchStudentEvents(calendarList.items, calendarList.nextSyncToken).then(prepareEvents).then(function (updatedLists) {
+                        var elapsed = (new Date()).getTime() - start.getTime();
+                        $timeout(function () {
+                            // then remove that flag to trigger enter animations
+                            $scope.studentEventLists = updatedLists;
+                            $scope.changingDay = false;
+                        }, Math.max(0, 500 - elapsed), true);
+                    });
+                }, 0, true);
             };
 
             $scope.getData = function () {
@@ -189,21 +220,8 @@
             };
 
             $scope.openEventModal = function (event) {
-                var modalInstance = $modal.open({
-                    templateUrl: 'views/event_detail_modal.html',
-                    controller: 'ModalInstanceCtrl',
-                    resolve: {
-                        evt: function () {
-                            return event;
-                        }
-                    }
-                });
-
-                modalInstance.result.then(function (selectedItem) {
-                    $scope.selected = selectedItem;
-                }, function () {
-                    $log.info('Modal dismissed at: ' + new Date());
-                });
+                ActiveEvent.setActiveEvent(event.resource, startRange, endRange);
+                $location.url('/event-detail');
             };
 
         }]);

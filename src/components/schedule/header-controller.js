@@ -1,6 +1,8 @@
+/*jslint plusplus: true, es5: true */
+/*global angular: false, moment: false */
 (function () {
     'use strict';
-    angular.module('myApp').controller('HeaderCtrl', ['$scope', '$log', 'hsAuthService', 'authEvents',
+    angular.module('hsp.schedule').controller('HeaderCtrl', ['$scope', '$log', 'hsAuthService', 'authEvents',
         function ($scope, $log, auth, authEvents) {
 
             $scope.signed_in = false;

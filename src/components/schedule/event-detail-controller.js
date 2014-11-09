@@ -3,8 +3,8 @@
 
 (function () {
     'use strict';
-    angular.module('myApp').controller('ModalInstanceCtrl', ['$scope', '$modalInstance', '$q', 'UserData', 'hsCalendarService', 'Util', 'evt',
-        function ($scope, $modalInstance, $q, UserData, calendars, Util, evt) {
+    angular.module('hsp.schedule').controller('EventDetailCtrl', ['$scope', '$location', '$q', '$modal', 'ActiveEvent', 'UserData', 'hsCalendarService', 'Util',
+        function ($scope, $location, $q, $modal, ActiveEvent, UserData, calendars, Util) {
             var patch = {
                     extendedProperties: {
                         private: {}
@@ -18,8 +18,8 @@
                 recurringParentPatchUpdated = false;
 
             function setupEvent(anEvent) {
-                var parentEvt = calendars.getEvent(anEvent.resource.recurringEventId),
-                    subjectId = Util.safeRead(parentEvt || anEvent.resource, 'extendedProperties.private.subjectId');
+                var parentEvt = calendars.getEvent(anEvent.recurringEventId),
+                    subjectId = Util.safeRead(parentEvt || anEvent, 'extendedProperties.private.subjectId');
                 if (angular.isDefined(subjectId)) {
                     anEvent.subject = UserData.subjects.find(function (sub) {
                         return sub.id === subjectId;
@@ -40,47 +40,58 @@
                 }
             }
 
+            $scope.subjects = UserData.subjects;
+            $scope.evt = setupEvent(ActiveEvent.getEvent());
+
             // create a patch object for the parent recurring event if applicable
-            if (evt.resource.recurringEventId) {
+            if ($scope.evt.recurringEventId) {
                 recurringParentPatch = angular.copy(patch);
             }
-
-            $scope.subjects = UserData.subjects;
-            $scope.evt = setupEvent(evt);
 
             $scope.onSubjectChange = function () {
                 setProperty('extendedProperties.private.subjectId', $scope.evt.subject ? $scope.evt.subject.id : null);
             };
 
             $scope.onSummaryChange = function () {
-                setProperty('summary', $scope.evt.resource.summary);
+                setProperty('summary', $scope.evt.summary);
             };
 
             $scope.onDescriptionChange = function () {
-                setProperty('description', $scope.evt.resource.description);
+                setProperty('description', $scope.evt.description);
+            };
+
+            $scope.setCompleted = function () {
+                calendars.patchEvent($scope.evt.calendarId, $scope.evt, {
+                    extendedProperties: {
+                        private: {
+                            completeDateTime: 'foo'
+                        }
+                    }
+                }, false, ActiveEvent.getStart(), ActiveEvent.getEnd());
             };
 
             $scope.ok = function () {
                 var finishPromise = $q.when(false),
-                    patches = [];
+                    patches = [],
+                    evt = $scope.evt;
                 if ((patchUpdated || recurringParentPatchUpdated) && $scope.evtForm.$valid) {
                     if (patchUpdated) {
-                        patches.push(calendars.patchEvent(evt.calendarId, evt.resource, patch));
+                        patches.push(calendars.patchEvent(evt.calendarId, evt, patch));
                     }
 
                     if (recurringParentPatchUpdated) {
-                        patches.push(calendars.patchEvent(evt.calendarId, evt.resource.recurringEventId, recurringParentPatch));
+                        patches.push(calendars.patchEvent(evt.calendarId, evt.recurringEventId, recurringParentPatch));
                     }
                     finishPromise = $q.all(patches);
                 }
 
                 finishPromise.then(function (results) {
-                    $modalInstance.close(evt);
+                    $location.url('/');
                 });
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $location.url('/');
             };
 
 

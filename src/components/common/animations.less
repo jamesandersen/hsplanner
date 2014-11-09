@@ -1,0 +1,73 @@
+.schedule {
+    &-back, &-forward {
+        &.ng-enter {
+            -webkit-transition: 0.6s cubic-bezier(.35,.9,.57,1) all; /* Safari/Chrome */
+            transition: 0.6s cubic-bezier(.35,.9,.57,1) all; /* All other modern browsers and IE10+ */
+        }
+
+        &.ng-leave {
+            -webkit-transition: 0.4s cubic-bezier(.61,.14,.92,.33) all; /* Safari/Chrome */
+            transition: 0.4s cubic-bezier(.61,.14,.92,.33) all; /* All other modern browsers and IE10+ */
+        }
+    }
+
+    &-forward {
+        &.ng-enter {
+            /* The animation preparation code */
+            -webkit-transform: translate3d(0, 1800px, 0);
+            transform: translate3d(0, 1800px, 0);
+            //opacity: 0.7;
+
+            &.ng-enter-active {
+                /* The animation code itself */
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+                //opacity: 1;
+            }
+        }
+
+        &.ng-leave {
+            /* The animation preparation code */
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            //opacity: 1;
+
+            &.ng-leave-active {
+                /* The animation code itself */
+                -webkit-transform: translate3d(0, -2400px, 0);
+                transform: translate3d(0, -2400px, 0);
+                //opacity: 0.7;
+            }
+        }
+    }
+
+    &-back {
+        &.ng-enter {
+            /* The animation preparation code */
+            -webkit-transform: translate3d(0, -1800px, 0);
+            transform: translate3d(0, -1800px, 0);
+            //opacity: 0.7;
+
+            &.ng-enter-active {
+                /* The animation code itself */
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+                //opacity: 1;
+            }
+        }
+
+        &.ng-leave {
+            /* The animation preparation code */
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            //opacity: 1;
+
+            &.ng-leave-active {
+                /* The animation code itself */
+                -webkit-transform: translate3d(0, 2400px, 0);
+                transform: translate3d(0, 2400px, 0);
+                //opacity: 0.7;
+            }
+        }
+    }
+}

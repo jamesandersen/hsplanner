@@ -2,8 +2,8 @@
 (function () {
     'use strict';
 
-    var app = angular.module('myApp', ['ngRoute', 'ui.bootstrap', 'hsUtilities', 'hsAuth', 'hsCalendar']);
-    angular.module('hsAuth').constant('CLIENT_ID', '<!-- @secret client_id -->');
+    var app = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
+    angular.module('hsp.auth').constant('CLIENT_ID', '653295052579-6017j2a7ine0cn35dpinu9j5uv0mftk3.apps.googleusercontent.com');
 
     app.config(['$locationProvider', '$routeProvider',
         function ($locationProvider, $routeProvider) {
@@ -11,15 +11,19 @@
 
             $routeProvider
                 .when('/', {
-                    templateUrl: '/views/main.html',
+                    templateUrl: '/components/schedule/schedule.html',
                     controller: 'WelcomeCtrl'
                 })
                 .when('/profile', {
-                    templateUrl: '/views/profile.html',
+                    templateUrl: '/components/auth/profile.html',
                     controller: 'ProfileCtrl'
                 })
+                .when('/event-detail', {
+                    templateUrl: '/components/schedule/event_detail.html',
+                    controller: 'EventDetailCtrl'
+                })
                 .when('/login', {
-                    templateUrl: '/views/login.html',
+                    templateUrl: '/components/auth/login.html',
                     controller: 'LoginCtrl'
                 })
                 .otherwise({

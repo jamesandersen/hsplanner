@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h3 class="modal-title" ng-bind="evt.assignment"></h3>
+    <h3 class="modal-title" ng-bind="evt.description"></h3>
 </div>
 <div class="modal-body">
     <form name="$parent.evtForm">
@@ -7,7 +7,7 @@
             <label for="subject">Description</label>
             <textarea name="description"
                     class="form-control"
-                    ng-model="evt.resource.description"
+                    ng-model="evt.description"
                       ng-change="onDescriptionChange()"
                       ng-disabled="!evt.resource.recurringEventId">
             </textarea>
@@ -16,9 +16,9 @@
             <label for="subject">Summary</label>
             <textarea name="description"
                     class="form-control"
-                    ng-model="evt.resource.summary"
+                    ng-model="evt.summary"
                       ng-change="onSummaryChange()"
-                      ng-disabled="!evt.resource.recurringEventId">
+                      ng-disabled="!evt.recurringEventId">
             </textarea>
         </div>
         <div class="form-group">
@@ -32,7 +32,7 @@
             </select>
         </div>
     </form>
-
+    <button ng-click="setCompleted()">Set Complete</button>
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" ng-click="ok()"><span ng-show="!evtForm.$dirty">Done</span><span ng-show="evtForm.$dirty">Save</span>

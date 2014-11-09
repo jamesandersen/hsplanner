@@ -1,4 +1,5 @@
 @schedule-name-height: 55px;
+@schedule-height-gutter: 5px;
 @student-schedule-width: 250px;
 @non-student-col-width: 118px;
 @student-schedule-margin: 7px;
@@ -10,49 +11,61 @@
 .schedule {
     position: relative;
     .box-sizing(border-box);
-    margin-top: -@schedule-name-height - 10px;
-    padding-top: @schedule-name-height + 10px;
+    margin-top: -@schedule-name-height - @schedule-height-gutter - 10px;
+    padding-top: @schedule-name-height + @schedule-height-gutter + 10px;
+    padding-bottom: 10px;
     height: 100%;
     max-width: @schedule-width;
     margin: 0 auto;
 
     &.active-student {
-        .student-schedule:not(.active), .student-schedule-header:not(.active) {
+        .student-schedule, .student-schedule-header {
+            float: none;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .student-schedule:not(.active):not(.non-student), .student-schedule-header:not(.active):not(.non-student) {
             display: none;
         }
 
         .student-schedule.active, .student-schedule-header.active {
             width: 100%;
-
+            margin-left: -@non-student-col-width - (2 * @student-schedule-margin) - @scrollbar-width;
+            padding-left: @non-student-col-width + (3 * @student-schedule-margin) + @scrollbar-width;
+            padding-right: @student-schedule-margin;
+            margin-right: 0px;
             i.fa.fa-times { display: inline; }
         }
     }
 }
 
 .header-container {
-    margin-top: -@schedule-name-height;
-    height: @schedule-name-height;
+    margin-top: -@schedule-name-height - @schedule-height-gutter;
+    height: @schedule-name-height + @schedule-height-gutter;
     max-width: @schedule-width;
 }
 
 .event-container {
-
+    -webkit-perspective: 800;
     height: 100%;
     max-width: @schedule-width;
     overflow-y: auto;
     overflow-x: hidden;
+    padding-bottom: 2px;
+
+    &.animating {
+        overflow-y: hidden;
+    }
 }
 
 .student-schedule, .student-schedule-header {
     float: left;
     .box-sizing(border-box);
     margin: 0px @student-schedule-margin 0px @student-schedule-margin;
-    padding-right: 8px;
+    //padding-right: 8px;
     width: @student-schedule-width;
-    border: solid 1px #BBB;
+    //border: solid 1px #BBB;
     position: relative;
-    background-color: @paper-color;
-    .box-shadow(0px 0px 5px 0px #333);
 
     &.non-student {
         background-color: transparent;
@@ -65,6 +78,9 @@
 
 .student-schedule-header {
     height: @schedule-name-height;
+    color: @btn-primary-color;
+
+
     div.list-summary {
         text-align: right;
         text-transform: uppercase;
@@ -72,14 +88,17 @@
     }
 
     h3.name {
+        .boxShadowHelper(3);
         font-size: 2.8rem;
         height: @schedule-name-height;
+        background-color: @brand-secondary;
         width: 100%;
         text-align: center;
         line-height: @schedule-name-height;
         cursor: pointer;
         margin-top: 0px;
         margin-bottom: 0px;
+
         &:hover {
             color: @brand-primary;
         }
@@ -88,12 +107,14 @@
     }
 
     &.non-student {
-
+        color: @gray-dark;
         padding-top: 8px;
         h3.name {
+            box-shadow: none;
             line-height: 2rem;
             cursor: default;
             text-align: right;
+            background-color: transparent;
             i[class*='fa-angle-'] {
                 display: inline;
                 cursor: pointer;
@@ -108,17 +129,22 @@
 }
 
 .student-schedule {
-    height: 120%;
+    //height: 100%;
+
+    .inner-container {
+        height: 100%;
+        .boxShadowHelper(1);
+        background-color: @paper-color;
+        position: relative;
+    }
 
     &.active {
-        background-color: @brand-secondary;
-
         h3.name { color: @brand-primary; }
     }
 
     .event {
         border: solid 1px #999;
-        margin: 3px 2px;
+        margin: 0px 3px 2px 3px;
         padding: 2px;
         color: white;
         background-color: #4bbaff;
@@ -133,6 +159,11 @@
     &.non-student {
         br, b { display: none; }
         border: solid 0px #BBB;
+
+        .inner-container {
+            box-shadow: none;
+            background-color: transparent;
+        }
 
         .fa-cog { display: none; }
 
@@ -162,24 +193,43 @@
         width: 100%;
     }
 
-    .student-schedule, .student-schedule-header {
-        float: none;
-        width: 100%;
-        height: auto;
-        .event {
+    .schedule {
+
+        .student-schedule, .event-container, .student-schedule-header.non-student{
             display: none;
         }
 
-        &.active .event{
-            display: block;
+        .student-schedule-header:not(.non-student) {
+            width: 100%;
+            margin: 0;
+            padding: 0 @student-schedule-margin 0 @student-schedule-margin;
         }
 
-        &.non-student {
-            display: none;
+        &.active-student {
+            .student-schedule.active {
+                float: none;
+                display: inline-block;
+                vertical-align: top;
+            }
+
+            .event-container {
+                display: block;
+            }
+
+            .student-schedule:not(.active), .student-schedule-header:not(.active) {
+                display: none;
+            }
+
+            .student-schedule.active, .student-schedule-header.active {
+                padding-left: @student-schedule-margin;
+                padding-right: @student-schedule-margin;
+                margin: 0;
+            }
         }
     }
 }
 
+/*
 //=======  event top offsets ==========
 @blocks: 48;
 @pixelsPerFifteenMin: 25px;
@@ -192,3 +242,4 @@
     .toffset-@{i} { top: (@i * @pixelsPerFifteenMin); }
     .generate-time-classes(@n, (@i + 1));
 }
+*/
