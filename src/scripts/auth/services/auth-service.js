@@ -1,4 +1,4 @@
-/*global angular: false, gapi: false, onGooglePlusAPILoad: false, onGooglePlusAuthCallback: false, updateSignedIn: false */
+/*global angular: false, gapi: false */
 (function () {
     'use strict';
 
@@ -24,35 +24,27 @@
                 pendingTokenDeferred = null,
                 pendingLoginDeferred = null;
 
-            function initGooglePlusAuth() {
-                // global function for the API to callback
-                $window.onAPILoad = onGooglePlusAPILoad;
-                $window.onAuthResult = onGooglePlusAuthCallback;
-
-                var po = $document[0].createElement('script'),
-                    s = $document[0].getElementsByTagName('script')[0];
-                po.type = 'text/javascript';
-                po.async = true;
-                po.setAttribute('parsetags', 'explicit');
-                po.src = 'https://apis.google.com/js/client:plusone.js?onload=onAPILoad';
-
-                s.parentNode.insertBefore(po, s);
-
-                pendingGoogleAPIDeferred = $q.defer();
-
-                // we may be able to resolve the token promise right
-                // when the gapi loads and invokes the auth callback
-                pendingTokenDeferred = $q.defer();
-
-                return pendingGoogleAPIDeferred.promise;
-            }
-
             function onGooglePlusAPILoad() {
                 $log.info('google plus API loaded');
                 gplusAPILoaded = true;
                 delete $window.onAPILoad;
 
                 pendingGoogleAPIDeferred.resolve(true);
+            }
+
+            function updateSignedIn(isSignedIn) {
+                var change = false;
+                if (isSignedIn && !signed_in) {
+                    signed_in = true;
+                    change = true;
+                } else if (!isSignedIn && signed_in) {
+                    signed_in = false;
+                    change = true;
+                }
+
+                if (change) {
+                    $rootScope.$broadcast(authEvents.AUTHENTICATION_CHANGE, signed_in);
+                }
             }
 
             /* will be called once immediately after google api is loaded */
@@ -112,6 +104,29 @@
                 }
             }
 
+            function initGooglePlusAuth() {
+                // global function for the API to callback
+                $window.onAPILoad = onGooglePlusAPILoad;
+                $window.onAuthResult = onGooglePlusAuthCallback;
+
+                var po = $document[0].createElement('script'),
+                    s = $document[0].getElementsByTagName('script')[0];
+                po.type = 'text/javascript';
+                po.async = true;
+                po.setAttribute('parsetags', 'explicit');
+                po.src = 'https://apis.google.com/js/client:plusone.js?onload=onAPILoad';
+
+                s.parentNode.insertBefore(po, s);
+
+                pendingGoogleAPIDeferred = $q.defer();
+
+                // we may be able to resolve the token promise right
+                // when the gapi loads and invokes the auth callback
+                pendingTokenDeferred = $q.defer();
+
+                return pendingGoogleAPIDeferred.promise;
+            }
+
             function login() {
                 if (gplusAPILoaded) {
                     gapi.auth.signIn(gplusSignInParams);
@@ -135,21 +150,6 @@
                     gapi.auth.signOut();
                     access_token = expiration = null;
                     $location.path('/login');
-                }
-            }
-
-            function updateSignedIn(isSignedIn) {
-                var change = false;
-                if (isSignedIn && !signed_in) {
-                    signed_in = true;
-                    change = true;
-                } else if (!isSignedIn && signed_in) {
-                    signed_in = false;
-                    change = true;
-                }
-
-                if (change) {
-                    $rootScope.$broadcast(authEvents.AUTHENTICATION_CHANGE, signed_in);
                 }
             }
 
