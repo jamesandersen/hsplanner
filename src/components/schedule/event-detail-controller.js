@@ -3,8 +3,8 @@
 
 (function () {
     'use strict';
-    angular.module('hsp.schedule').controller('EventDetailCtrl', ['$scope', '$location', '$q', '$modal', 'ActiveEvent', 'UserData', 'hsCalendarService', 'Util',
-        function ($scope, $location, $q, $modal, ActiveEvent, UserData, calendars, Util) {
+    angular.module('hsp.schedule').controller('EventDetailCtrl', ['$scope', '$location', '$q', '$modal', 'ScheduleModel', 'UserData', 'hsCalendarService', 'Util',
+        function ($scope, $location, $q, $modal, ScheduleModel, UserData, calendars, Util) {
             var patch = {
                     extendedProperties: {
                         private: {}
@@ -41,7 +41,7 @@
             }
 
             $scope.subjects = UserData.subjects;
-            $scope.evt = setupEvent(ActiveEvent.getEvent());
+            $scope.evt = setupEvent(ScheduleModel.getEvent());
 
             // create a patch object for the parent recurring event if applicable
             if ($scope.evt.recurringEventId) {
@@ -67,7 +67,7 @@
                             completeDateTime: 'foo'
                         }
                     }
-                }, false, ActiveEvent.getStart(), ActiveEvent.getEnd());
+                }, false, ScheduleModel.getStart(), ScheduleModel.getEnd());
             };
 
             $scope.ok = function () {

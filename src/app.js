@@ -19,7 +19,7 @@
                     controller: 'ProfileCtrl'
                 })
                 .when('/event-detail', {
-                    templateUrl: '/components/schedule/event_detail.html',
+                    templateUrl: '/components/schedule/event-detail.html',
                     controller: 'EventDetailCtrl'
                 })
                 .when('/login', {
