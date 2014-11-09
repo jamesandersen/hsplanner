@@ -3,7 +3,7 @@
     'use strict';
 
     var app = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
-    angular.module('hsp.auth').constant('CLIENT_ID', '<!-- @secret client_id -->');
+    angular.module('hsp.auth').constant('CLIENT_ID', '653295052579-6017j2a7ine0cn35dpinu9j5uv0mftk3.apps.googleusercontent.com');
 
     app.config(['$locationProvider', '$routeProvider',
         function ($locationProvider, $routeProvider) {
@@ -11,19 +11,19 @@
 
             $routeProvider
                 .when('/', {
-                    templateUrl: '/partials/schedule/schedule.html',
+                    templateUrl: '/components/schedule/schedule.html',
                     controller: 'WelcomeCtrl'
                 })
                 .when('/profile', {
-                    templateUrl: '/partials/auth/profile.html',
+                    templateUrl: '/components/auth/profile.html',
                     controller: 'ProfileCtrl'
                 })
                 .when('/event-detail', {
-                    templateUrl: '/partials/schedule/event_detail.html',
+                    templateUrl: '/components/schedule/event_detail.html',
                     controller: 'EventDetailCtrl'
                 })
                 .when('/login', {
-                    templateUrl: '/partials/auth/login.html',
+                    templateUrl: '/components/auth/login.html',
                     controller: 'LoginCtrl'
                 })
                 .otherwise({

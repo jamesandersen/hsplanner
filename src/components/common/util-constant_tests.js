@@ -3,7 +3,7 @@
 
 describe("Utilities Modules", function () {
     'use strict';
-    beforeEach(module('hsUtilities'));
+    beforeEach(module('hsp.common'));
     //beforeEach(angular.mock.module('App'));
 
     it('should pass a test', function () {

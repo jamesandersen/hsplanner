@@ -4,12 +4,12 @@ module.exports = function (grunt) {
     'use strict';
     var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest,
         appFiles = [
-            'src/scripts/es6_polyfills.js',
-            'src/scripts/common/**/*.js',
-            'src/scripts/auth/**/*.js',
-            'src/scripts/schedule/**/*.js',
-            'src/scripts/app_.js',
-            '!src/scripts/**/*_tests.js',
+            'src/es6_polyfills.js',
+            'src/components/common/**/*.js',
+            'src/components/auth/**/*.js',
+            'src/components/schedule/**/*.js',
+            'src/app_.js',
+            '!src/**/*_tests.js',
         ];
 
     // Project configuration.
@@ -26,8 +26,8 @@ module.exports = function (grunt) {
         'string-replace': {
             client_auth: {
                 files: {
-                    'src/scripts/app_.js': 'src/scripts/app.js',
-                    'src/index_temp.html': 'src/index.html'
+                    'src/app_.js': 'src/app.js',
+                    'src/index_.html': 'src/index.html'
                 },
                 options: {
                     replacements: [{
@@ -41,14 +41,14 @@ module.exports = function (grunt) {
         },
         copy: {
             index: {
-                src: 'src/index_temp.html',
+                src: 'src/index_.html',
                 dest: '<%= pkg.buildDir %>/index.html'
             },
             partials: {
                 expand: true,
-                cwd: 'src/partials/',
-                src: ['**'],
-                dest: '<%= pkg.buildDir %>/partials/'
+                cwd: 'src/components/',
+                src: ['**/*.html'],
+                dest: '<%= pkg.buildDir %>/components/'
             },
             fonts: {
                 expand: true,
@@ -56,25 +56,19 @@ module.exports = function (grunt) {
                 src: ['**'],
                 dest: '<%= pkg.buildDir %>/fonts/'
             },
-            media: {
-                expand: true,
-                cwd: 'src/media/',
-                src: ['**'],
-                dest: '<%= pkg.buildDir %>/media/'
-            }
         },
         clean: {
-            secrets: ["src/scripts/app_.js", "src/index_temp.html"]
+            secrets: ["src/app_.js", "src/index_.html"]
         },
         jshint: {
-            all: ['Gruntfile.js', 'src/scripts/**/*.js', 'test/**/*.js']
+            all: ['Gruntfile.js', 'src/**/*.js']
         },
         jasmine: {
             customTemplate: {
                 src: appFiles,
                 options: {
-                    specs: 'src/tests/*_tests.js',
-                    helpers: 'src/tests/*_helper.js',
+                    specs: 'src/**/*_tests.js',
+                    helpers: 'src/**/*_helper.js',
                     vendor: [
                         "bower_components/angular/angular.js",
                         "bower_components/angular-mocks/angular-mocks.js"
@@ -90,7 +84,7 @@ module.exports = function (grunt) {
                     compress: false
                 },
                 files: {
-                    '<%= pkg.buildDir %>/js/libs.js': [
+                    '<%= pkg.buildDir %>/libs.js': [
                         'bower_components/moment/moment.js',
                         'bower_components/angular/angular.js',
                         'bower_components/angular-route/angular-route.js',
@@ -109,34 +103,34 @@ module.exports = function (grunt) {
                     compress: false
                 },
                 files: {
-                    '<%= pkg.buildDir %>/js/app.js': appFiles
+                    '<%= pkg.buildDir %>/app.js': appFiles
                 }
             }
         },
         less: {
             development: {
                 files: {
-                    '<%= pkg.buildDir %>/css/styles.css': 'src/styles/styles.less'
+                    '<%= pkg.buildDir %>/styles.css': 'src/styles.less'
                 }
             }
         },
         watch: {
             js: {
-                files: ['src/scripts/**/*.js', '!src/scripts/app_.js'],
+                files: ['src/**/*.js', '!src/app_.js'],
                 tasks: ['build-js-app'],
                 options: {
                     livereload: true
                 }
             },
             css: {
-                files: ['src/styles/**/*.less'],
+                files: ['src/**/*.less'],
                 tasks: ['less'],
                 options: {
                     livereload: true
                 }
             },
             html: {
-                files: ['src/index.html', 'src/views/*.html', 'src/views/**/*.html'],
+                files: ['src/**/*.html'],
                 tasks: ['build-html'],
                 options: {
                     livereload: true

@@ -12,7 +12,7 @@ describe("hsCalendar Module", function () {
             "description": "This calendar is my personal calendar"
         }];
 
-    beforeEach(module('hsCalendar'));
+    beforeEach(module('hsp.schedule'));
     beforeEach(module('ngMock'));
 
     beforeEach(inject(function ($injector) {
