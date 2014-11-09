@@ -2,8 +2,8 @@
 (function () {
     'use strict';
 
-    var app = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'hsUtilities', 'hsAuth', 'hsCalendar']);
-    angular.module('hsAuth').constant('CLIENT_ID', '<!-- @secret client_id -->');
+    var app = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
+    angular.module('hsp.auth').constant('CLIENT_ID', '<!-- @secret client_id -->');
 
     app.config(['$locationProvider', '$routeProvider',
         function ($locationProvider, $routeProvider) {

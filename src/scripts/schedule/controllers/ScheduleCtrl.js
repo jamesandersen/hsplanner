@@ -3,7 +3,7 @@
 
 (function () {
     'use strict';
-    angular.module('myApp').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$timeout', '$location', '$modal', 'ActiveEvent', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+    angular.module('hsp.schedule').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$timeout', '$location', '$modal', 'ActiveEvent', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
         function ($scope, $log, $q, $timeout, $location, $modal, ActiveEvent, UserData, Util, MathUtil, auth, calendars) {
             var startRange = moment().startOf('day'),
                 endRange = moment().endOf('day'),
@@ -222,30 +222,7 @@
             $scope.openEventModal = function (event) {
                 ActiveEvent.setActiveEvent(event.resource, startRange, endRange);
                 $location.url('/event-detail');
-
-                /*
-                var modalInstance = $modal.open({
-                    templateUrl: 'views/event_detail_modal.html',
-                    controller: 'ModalInstanceCtrl',
-                    resolve: {
-                        evt: function () {
-                            return event;
-                        }
-                    }
-                });
-
-                modalInstance.result.then(function (selectedItem) {
-                    $scope.selected = selectedItem;
-                }, function () {
-                    $log.info('Modal dismissed at: ' + new Date());
-                });*/
             };
 
         }]);
-
-    angular.module('myApp').filter('hasEvents', function () {
-        return function (eventLists) {
-            return eventLists.suppressEvents ? eventLists.filter(function (list) { return list.isTimeAxis; }) : eventLists;
-        };
-    });
 }());

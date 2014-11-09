@@ -5,7 +5,7 @@
     'use strict';
 
     // keep track of data that will ultimately need to kept and retrieved from elsewhere
-    var utilMod = angular.module('hsUtilities', []);
+    var utilMod = angular.module('hsp.common');
     utilMod.constant('MathUtil', {
         ceiling: function (num, increment) {
             return Math.ceil(num / increment) * increment;

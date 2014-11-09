@@ -3,7 +3,7 @@
     'use strict';
 
     // keep track of data that will ultimately need to kept and retrieved from elsewhere
-    angular.module('myApp').constant('UserData', {
+    angular.module('hsp.auth').constant('UserData', {
         students: [
             {
                 id: "2342342",

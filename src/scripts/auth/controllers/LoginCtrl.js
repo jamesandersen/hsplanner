@@ -1,6 +1,7 @@
+/*global angular: false, gapi: false, onLoginSuccess: false, onLoginFailed: false */
 (function () {
     'use strict';
-    angular.module('hsAuth').controller('LoginCtrl', ['$scope', '$location', '$log', 'hsAuthService',
+    angular.module('hsp.auth').controller('LoginCtrl', ['$scope', '$location', '$log', 'hsAuthService',
         function ($scope, $location, $log, auth) {
             auth.loadGoogleAPI().then(function (isGoogleAPILoaded) {
                 // not signed in so we need the login button

@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    var calendarModule = angular.module('hsCalendar', ['hsAuth']);
+    var calendarModule = angular.module('hsp.schedule');
 
     calendarModule.constant('CALENDAR_BASE_URI', 'https://www.googleapis.com/calendar/v3');
 
@@ -69,7 +69,7 @@
             function getEvent(eventId) {
                 if (angular.isUndefined(eventId)) { return null; }
 
-                return eventId in localEvents ? localEvents[eventId] : null;
+                return localEvents[eventId] !== undefined ? localEvents[eventId] : null;
             }
 
             /**
@@ -102,17 +102,18 @@
             * @return {Promise<event>}
             */
             function patchEvent(calendarId, evtResourceOrId, patch, patchParent, start, end) {
-                var evtResource = evtResourceOrId;
+                var evtResource = evtResourceOrId,
+                    resourceToPatch;
                 // attempt to used a cached event resource an id string is passed in
                 if (angular.isString(evtResource)) {
-                    if (evtResource in localEvents) {
+                    if (localEvents[evtResource] !== undefined) {
                         evtResource = localEvents[evtResource];
                     } else {
                         return $q.reject('Cached event with id ' + evtResource + ' not found');
                     }
                 }
 
-                var resourceToPatch = $q.when(evtResource);
+                resourceToPatch = $q.when(evtResource);
                 if (evtResource.recurrence && !patchParent) {
                     // we got a recurring event but only want to modify an instance
                     resourceToPatch = getInstance(calendarId, evtResource, start, end);
@@ -131,7 +132,7 @@
                         angular.extend(evt, data);
 
                         // keep cache updated
-                        if (evt.id in localEvents) {
+                        if (localEvents[evt.id] !== undefined) {
                             localEvents[evt.id] = evt;
                         }
 

@@ -5,12 +5,10 @@ module.exports = function (grunt) {
     var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest,
         appFiles = [
             'src/scripts/es6_polyfills.js',
-            'src/scripts/auth/authService.js',
-            'src/scripts/util/*.js',
-            'src/scripts/auth/*.js',
-            'src/scripts/calendar/*.js',
-            'src/scripts/main.js',
-            'src/scripts/app/*.js'
+            'src/scripts/common/**/*.js',
+            'src/scripts/auth/**/*.js',
+            'src/scripts/schedule/**/*.js',
+            'src/scripts/app_.js'
         ];
 
     // Project configuration.
@@ -27,7 +25,7 @@ module.exports = function (grunt) {
         'string-replace': {
             client_auth: {
                 files: {
-                    'src/scripts/app.js': 'src/scripts/main.js',
+                    'src/scripts/app_.js': 'src/scripts/app.js',
                     'src/index_temp.html': 'src/index.html'
                 },
                 options: {
@@ -65,7 +63,7 @@ module.exports = function (grunt) {
             }
         },
         clean: {
-            secrets: ["src/scripts/app.js", "src/index_temp.html"]
+            secrets: ["src/scripts/app_.js", "src/index_temp.html"]
         },
         jshint: {
             all: ['Gruntfile.js', 'src/scripts/**/*.js', 'test/**/*.js']

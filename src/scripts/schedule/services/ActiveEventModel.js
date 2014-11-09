@@ -3,7 +3,7 @@
 
 (function () {
     'use strict';
-    angular.module('myApp').factory('ActiveEvent', ['$q', '$modal', 'UserData', 'hsCalendarService', 'Util',
+    angular.module('hsp.schedule').factory('ActiveEvent', ['$q', '$modal', 'UserData', 'hsCalendarService', 'Util',
         function ($scope, $location, $routeParams, $q, $modal, UserData, calendars, Util) {
             var eventResource = null,
                 start = null,
