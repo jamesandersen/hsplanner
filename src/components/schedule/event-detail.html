@@ -25,14 +25,15 @@
             <label for="subject">Subject</label>
             <select name="subject"
                     class="form-control"
-                    ng-model="evt.subject"
+                    ng-model="evt.view.subject"
                     ng-options="subject.summary for subject in subjects"
                     ng-change="onSubjectChange()">
                 <option value="">-- Choose Subject --</option>
             </select>
         </div>
     </form>
-    <button ng-click="setCompleted()">Set Complete</button>
+    <input type="checkbox" ng-checked="evt.extendedProperties.private.completion"/>
+    <button ng-click="toggleCompletion()">Toggle Complete</button>
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" ng-click="ok()"><span ng-show="!evtForm.$dirty">Done</span><span ng-show="evtForm.$dirty">Save</span>

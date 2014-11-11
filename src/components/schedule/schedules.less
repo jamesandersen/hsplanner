@@ -153,6 +153,13 @@
         right: 0px;
         z-index: @event-z-index;
 
+        .fa-check, .fa-square-o, .fa-circle-o-notch {
+            float: left;
+            cursor: pointer;
+            font-size: 28px;
+            display: block;
+            padding: 6px;
+        }
         .fa-cog { float: right; cursor: pointer; }
     }
 
@@ -165,7 +172,7 @@
             background-color: transparent;
         }
 
-        .fa-cog { display: none; }
+        .fa-cog, .fa-check, .fa-square-o { display: none; }
 
         .event {
             background-color: transparent;

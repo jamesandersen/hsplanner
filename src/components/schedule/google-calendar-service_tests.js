@@ -1,6 +1,8 @@
 /*jslint es5: true */
 /*global angular: false, describe: false, it: false, beforeEach: false, afterEach: false, module: false, expect: false, inject: false, $httpBackend: false */
 
+angular.module('hsp.auth').constant('CLIENT_ID', 'CLIENT_ID');
+
 describe("hsCalendar Module", function () {
     'use strict';
 

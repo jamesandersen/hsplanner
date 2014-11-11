@@ -60,15 +60,7 @@
                 setProperty('description', $scope.evt.description);
             };
 
-            $scope.setCompleted = function () {
-                calendars.patchEvent($scope.evt.calendarId, $scope.evt, {
-                    extendedProperties: {
-                        private: {
-                            completeDateTime: 'foo'
-                        }
-                    }
-                }, false, ScheduleModel.getStart(), ScheduleModel.getEnd());
-            };
+            $scope.toggleCompletion = ScheduleModel.toggleCompletion.apply(null, [$scope.evt]);
 
             $scope.ok = function () {
                 var finishPromise = $q.when(false),
@@ -76,11 +68,11 @@
                     evt = $scope.evt;
                 if ((patchUpdated || recurringParentPatchUpdated) && $scope.evtForm.$valid) {
                     if (patchUpdated) {
-                        patches.push(calendars.patchEvent(evt.calendarId, evt, patch));
+                        patches.push(ScheduleModel.patchEvent(evt, patch, false));
                     }
 
                     if (recurringParentPatchUpdated) {
-                        patches.push(calendars.patchEvent(evt.calendarId, evt.recurringEventId, recurringParentPatch));
+                        patches.push(ScheduleModel.patchEvent(evt.recurringEventId, recurringParentPatch));
                     }
                     finishPromise = $q.all(patches);
                 }
@@ -93,7 +85,5 @@
             $scope.cancel = function () {
                 $location.url('/');
             };
-
-
         }]);
 }());

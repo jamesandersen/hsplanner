@@ -44,8 +44,8 @@
 
                     // calculate min/max time for events
                     angular.forEach(events, function (evt) {
-                        minTime = Math.min(minTime, evt.startMinutes);
-                        maxTime = Math.max(maxTime, evt.endMinutes);
+                        minTime = Math.min(minTime, evt.view.startMinutes);
+                        maxTime = Math.max(maxTime, evt.view.endMinutes);
                     });
                 });
 
@@ -67,10 +67,10 @@
 
                     list.events = [];
                     angular.forEach(eventsByStudentID[list.student.id], function (evt) {
-                        evt.blockOffset = Math.round(MathUtil.floor(evt.startMinutes - minTime, minutesPerBlock) / minutesPerBlock) * pixelsPerBlock + 'px';
-                        evt.duration = MathUtil.floor(evt.endMinutes - evt.startMinutes, minutesPerBlock) / minutesPerBlock *  pixelsPerBlock + 'px';
-                        minTime = Math.min(minTime, evt.startMinutes);
-                        maxTime = Math.max(maxTime, evt.endMinutes);
+                        evt.view.blockOffset = Math.round(MathUtil.floor(evt.view.startMinutes - minTime, minutesPerBlock) / minutesPerBlock) * pixelsPerBlock + 'px';
+                        evt.view.duration = MathUtil.floor(evt.view.endMinutes - evt.view.startMinutes, minutesPerBlock) / minutesPerBlock *  pixelsPerBlock + 'px';
+                        minTime = Math.min(minTime, evt.view.startMinutes);
+                        maxTime = Math.max(maxTime, evt.view.endMinutes);
 
                         // now that the evt has blockOffset and duration add it to the list array
                         // delaying this as long as possible this helps avoid unsightly flicker in the UI
@@ -84,11 +84,11 @@
                 timeAxis.events = [];
                 while (minTime < maxTime) {
                     timeAxis.events.push({
-                        duration: 4 * pixelsPerBlock + 'px', // 8:30 * 60,
-                        resource: {
-                            summary: today.format('ha')
-                        },
-                        blockOffset: blockOffset * pixelsPerBlock + 'px'
+                        summary: today.format('ha'),
+                        view: {
+                            duration: 4 * pixelsPerBlock + 'px', // 8:30 * 60,
+                            blockOffset: blockOffset * pixelsPerBlock + 'px'
+                        }
                     });
 
                     blockOffset += 4;
@@ -142,10 +142,12 @@
                 $scope.activeStudent = activeStudent;
             };
 
-            $scope.openEvent = function (event) {
-                ScheduleModel.setActiveEvent(event.resource);
+            $scope.openEvent = function (evt) {
+                ScheduleModel.setActiveEvent(evt);
                 $location.url('/event-detail');
             };
+
+            $scope.toggleComplete = ScheduleModel.toggleCompletion;
 
         }]);
 }());
