@@ -17,16 +17,16 @@
                 patchUpdated = false,
                 recurringParentPatchUpdated = false;
 
-            function setupEvent(anEvent) {
-                var parentEvt = calendars.getEvent(anEvent.recurringEventId),
-                    subjectId = Util.safeRead(parentEvt || anEvent, 'extendedProperties.private.subjectId');
+            function setupEvent(evtViewState) {
+                var parentEvt = calendars.getEvent(evtViewState.resource.recurringEventId),
+                    subjectId = Util.safeRead(parentEvt || evtViewState.resource, 'extendedProperties.private.subjectId');
                 if (angular.isDefined(subjectId)) {
-                    anEvent.subject = UserData.subjects.find(function (sub) {
+                    evtViewState.subject = UserData.subjects.find(function (sub) {
                         return sub.id === subjectId;
                     });
                 }
 
-                return anEvent;
+                return evtViewState;
             }
 
             function setProperty(propertyName, propertyValue) {
@@ -41,7 +41,7 @@
             }
 
             $scope.subjects = UserData.subjects;
-            $scope.evt = setupEvent(ScheduleModel.getEvent());
+            $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
 
             // create a patch object for the parent recurring event if applicable
             if ($scope.evt.recurringEventId) {

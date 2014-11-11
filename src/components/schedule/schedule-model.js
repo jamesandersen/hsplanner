@@ -6,7 +6,7 @@
     angular.module('hsp.schedule').factory('ScheduleModel', ['$q', '$log', 'UserData', 'hsCalendarService', 'Util',
         function ($q, $log, UserData, calendars, Util) {
             var userCalendarList = null,
-                eventResource = null,
+                activeEventViewState = null,
                 start = moment().startOf('day'),
                 end = moment().endOf('day');
 
@@ -29,12 +29,12 @@
                 return UserData.subjects.find(function (sub) { return sub.id === subjectId; });
             }
 
-            function setViewState(evtResource) {
+            function buildEventViewState(evtResource) {
                 var start = moment(evtResource.start.dateTime),
                     end = moment(evtResource.end.dateTime);
 
                 $log.log('creating ' + evtResource.summary + ' event');
-                evtResource.view = {
+                return {
                     day: start.dayOfYear(),
                     start: start,
                     end: end,
@@ -42,37 +42,37 @@
                     endMinutes: end.hours() * 60 + end.minutes(),
                     fmtTime: start.format('hh:mma'),
                     subject: getSubject(evtResource),
-                    completion: Util.safeRead(evtResource, 'extendedProperties.private.completion')
+                    completion: Util.safeRead(evtResource, 'extendedProperties.private.completion'),
+                    resource: evtResource
                 };
-                return evtResource;
             }
 
-            function patchEvent(evt, patch, patchParent) {
-                evt.view.updating = true;
-                return calendars.patchEvent(evt, patch, patchParent, start, end).then(function (evt) {
-                    setViewState(evt);
-                    evt.view.updating = false;
-                    return evt;
+            function patchEvent(evtViewState, patch, patchParent) {
+                evtViewState.updating = true;
+                return calendars.patchEvent(evtViewState.resource, patch, patchParent, start, end).then(function (evt) {
+                    evtViewState.resource = evt;
+                    evtViewState.updating = false;
+                    return evtViewState;
                 }, function (error) {
-                    evt.view.updating = false;
+                    evtViewState.updating = false;
                     return $q.reject(error);
                 });
             }
 
-            function toggleCompletion(evt) {
-                evt.view.updating = true;
-                return patchEvent(evt, {
+            function toggleCompletion(evtViewState) {
+                return patchEvent(evtViewState, {
                     extendedProperties: {
                         private: {
-                            completion: !Util.safeRead(evt, 'extendedProperties.private.completion')
+                            completion: !Util.safeRead(evtViewState.resource, 'extendedProperties.private.completion')
                                 ? moment().format()
                                 : null
                         }
                     }
-                }, false).then(function (updatedResource) {
-                    updatedResource.view.completion = Util.safeRead(updatedResource, 'extendedProperties.private.completion');
-                    return updatedResource;
-                }).finally(function () { evt.view.updating = false; });
+                }, false).then(function (updatedEvtViewState) {
+
+                    evtViewState.completion = Util.safeRead(updatedEvtViewState.resource, 'extendedProperties.private.completion');
+                    return evtViewState;
+                });
             }
 
             function fetchStudentEvents(calendarList, nextSyncToken) {
@@ -105,7 +105,7 @@
                                 angular.forEach(resultsArray, function (eventListResult) {
                                     angular.forEach(eventListResult.items, function (evtResource) {
 
-                                        eventsByStudentID[student.id].push(setViewState(evtResource));
+                                        eventsByStudentID[student.id].push(buildEventViewState(evtResource));
                                     });
                                 });
 
@@ -129,11 +129,11 @@
                     end.add('days', increment);
                 },
                 setActiveEvent: function (evt) {
-                    eventResource = evt;
+                    activeEventViewState = evt;
                 },
                 patchEvent: patchEvent,
                 toggleCompletion: toggleCompletion,
-                getEvent: function () { return eventResource; },
+                getActiveEventViewState: function () { return activeEventViewState; },
                 getStart: function () { return start; },
                 getEnd: function () { return end; }
             };
