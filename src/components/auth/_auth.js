@@ -1,2 +1,2 @@
 /*global angular: false */
-var authModule = angular.module('hsp.auth', []);
+var authModule = angular.module('hsp.auth', ['ngResource']);

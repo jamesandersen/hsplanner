@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
+    var app = angular.module('hsp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
     angular.module('hsp.auth').constant('CLIENT_ID', '<!-- @secret client_id -->');
 
     app.config(['$locationProvider', '$routeProvider',
@@ -12,7 +12,12 @@
             $routeProvider
                 .when('/', {
                     templateUrl: '/components/schedule/schedule.html',
-                    controller: 'WelcomeCtrl'
+                    controller: 'ScheduleCtrl',
+                    resolve: {
+                        token: ['hsAuthService', function (hsAuthService) {
+                            return hsAuthService.afterLogin();
+                        }]
+                    }
                 })
                 .when('/profile', {
                     templateUrl: '/components/auth/profile.html',
@@ -39,7 +44,7 @@
     app.run(['hsAuthService', '$location', '$log',
         function (auth, $location, $log) {
             auth.loadGoogleAPI().then(function (isGoogleAPILoaded) {
-                auth.getToken().then(function (accessToken) {
+                auth.afterLogin().then(function (accessToken) {
                     // token is available so we're signed in
                 }, function (authError) {
                     $log.warn('not signed in at startup: ' + authError);

@@ -3,8 +3,8 @@
 
 (function () {
     'use strict';
-    angular.module('hsp.schedule').factory('ScheduleModel', ['$q', '$log', 'UserData', 'hsCalendarService', 'Util',
-        function ($q, $log, UserData, calendars, Util) {
+    angular.module('hsp.schedule').factory('ScheduleModel', ['$q', '$log', 'hsAuthService', 'hsCalendarService', 'Util',
+        function ($q, $log, hsAuthService, calendars, Util) {
             var userCalendarList = null,
                 activeEventViewState = null,
                 start = moment().startOf('day'),
@@ -26,7 +26,7 @@
 
             function getSubject(evtResource) {
                 var subjectId = Util.safeRead(evtResource, 'extendedProperties.private.subjectId');
-                return UserData.subjects.find(function (sub) { return sub.id === subjectId; });
+                return hsAuthService.getUserData().subjects.find(function (sub) { return sub.id === subjectId; });
             }
 
             function buildEventViewState(evtResource) {
@@ -82,7 +82,7 @@
                         eventsByStudentID = {},
                         pendingStudents = 0;
                     // loop over students to fetch events for each
-                    angular.forEach(UserData.students, function (student) {
+                    angular.forEach(hsAuthService.getUserData().students, function (student) {
                         eventsByStudentID[student.id] = [];
                         var eventListPromises = [];
 

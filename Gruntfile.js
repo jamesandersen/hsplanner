@@ -9,6 +9,7 @@ module.exports = function (grunt) {
             'src/components/auth/**/*.js',
             'src/components/schedule/**/*.js',
             'src/app_.js',
+            'src/components/mock/**/*.js',
             '!src/**/*_tests.js',
         ];
 
@@ -90,6 +91,10 @@ module.exports = function (grunt) {
                         'bower_components/angular-route/angular-route.js',
                         'bower_components/angular-animate/angular-animate.js',
                         'bower_components/angular-touch/angular-touch.js',
+                        'bower_components/angular-resource/angular-resource.js',
+
+                        // TODO: figure out how to conditionally include this
+                        'bower_components/angular-mocks/angular-mocks.js',
                         'bower_components/angular-bootstrap/ui-bootstrap.js',
                         'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
                     ]
