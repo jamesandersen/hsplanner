@@ -50,7 +50,35 @@
             ]
         };
 
-        // returns the current list of phones
+        // Ella
+        /*profiles['117787249652700998593'] = {
+            userId: '117787249652700998593',
+            students: [],
+            subjects: [
+                {
+                    id: 'abc',
+                    summary: 'Spanish',
+                    bgcolor: '#33691e'
+                },
+                {
+                    id: 'def',
+                    summary: 'Writing',
+                    bgcolor: '#ff5722'
+                },
+                {
+                    id: 'ghi',
+                    summary: 'History',
+                    bgcolor: '#004d40'
+                },
+                {
+                    id: 'jkl',
+                    summary: 'Math',
+                    bgcolor: '#0091ea'
+                }
+            ]
+        };*/
+
+        // returns the current list of users
 
         $httpBackend.whenGET(profileUrlRegex).respond(function (method, url, data) {
             var match = profileUrlRegex.exec(url);

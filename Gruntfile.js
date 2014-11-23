@@ -120,26 +120,25 @@ module.exports = function (grunt) {
             }
         },
         watch: {
+            options: {
+                livereload: {
+                    port: 35729,
+                    key: grunt.file.read('node_modules/grunt-contrib-connect/tasks/certs/server.key'),
+                    cert: grunt.file.read('node_modules/grunt-contrib-connect/tasks/certs/server.crt')
+                    // you can pass in any other options you'd like to the https server, as listed here: http://nodejs.org/api/tls.html#tls_tls_createserver_options_secureconnectionlistener
+                }
+            },
             js: {
                 files: ['src/**/*.js', '!src/app_.js'],
-                tasks: ['build-js-app'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['build-js-app']
             },
             css: {
                 files: ['src/**/*.less'],
-                tasks: ['less'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['less']
             },
             html: {
                 files: ['src/**/*.html'],
-                tasks: ['build-html'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['build-html']
             }
         },
         connect: {
@@ -152,6 +151,8 @@ module.exports = function (grunt) {
             ],
             server: {
                 options: {
+                    protocol: 'https',
+                    hostname: '*',
                     port: 9001,
                     base: 'dist',
                     livereload: true,

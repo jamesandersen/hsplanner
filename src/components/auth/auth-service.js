@@ -55,7 +55,7 @@
                     // for some reason result.hasOwnProperty is undefined
                     $log.error('authentication error: ' + result.error);
                     updateSignedIn(false);
-                    if (pendingLoginDeferred && result.error !== 'immediate_failed') {
+                    if (pendingLoginDeferred) {
                         pendingLoginDeferred.reject(result.error);
                         pendingLoginDeferred = null;
                     }
