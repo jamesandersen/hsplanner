@@ -4,7 +4,7 @@
 
     var app = angular.module('hsp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
     angular.module('hsp.auth').constant('CLIENT_ID', '<!-- @secret client_id -->');
-
+    angular.module('hsp.common').constant('BASE_URL', 'https://localhost:9002');
     app.config(['$locationProvider', '$routeProvider',
         function ($locationProvider, $routeProvider) {
             $locationProvider.html5Mode(true);
