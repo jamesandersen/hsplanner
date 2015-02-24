@@ -9,8 +9,13 @@ module.exports = function (grunt) {
             'src/components/auth/**/*.js',
             'src/components/schedule/**/*.js',
             'src/app_.js',
+            'src/components/mock/**/*.js',
             '!src/**/*_tests.js',
         ];
+    
+    
+	var webpack = require("webpack");
+	var webpackConfig = require("./webpack.config.js");
 
     // Project configuration.
     grunt.initConfig({
@@ -90,6 +95,10 @@ module.exports = function (grunt) {
                         'bower_components/angular-route/angular-route.js',
                         'bower_components/angular-animate/angular-animate.js',
                         'bower_components/angular-touch/angular-touch.js',
+                        'bower_components/angular-resource/angular-resource.js',
+
+                        // TODO: figure out how to conditionally include this
+                        'bower_components/angular-mocks/angular-mocks.js',
                         'bower_components/angular-bootstrap/ui-bootstrap.js',
                         'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
                     ]
@@ -115,26 +124,25 @@ module.exports = function (grunt) {
             }
         },
         watch: {
+            options: {
+                livereload: {
+                    port: 35729,
+                    key: grunt.file.read('node_modules/grunt-contrib-connect/tasks/certs/server.key'),
+                    cert: grunt.file.read('node_modules/grunt-contrib-connect/tasks/certs/server.crt')
+                    // you can pass in any other options you'd like to the https server, as listed here: http://nodejs.org/api/tls.html#tls_tls_createserver_options_secureconnectionlistener
+                }
+            },
             js: {
                 files: ['src/**/*.js', '!src/app_.js'],
-                tasks: ['build-js-app'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['build-js-app']
             },
             css: {
                 files: ['src/**/*.less'],
-                tasks: ['less'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['less']
             },
             html: {
                 files: ['src/**/*.html'],
-                tasks: ['build-html'],
-                options: {
-                    livereload: true
-                }
+                tasks: ['build-html']
             }
         },
         connect: {
@@ -147,6 +155,8 @@ module.exports = function (grunt) {
             ],
             server: {
                 options: {
+                    protocol: 'https',
+                    hostname: '*',
                     port: 9001,
                     base: 'dist',
                     livereload: true,
@@ -174,22 +184,30 @@ module.exports = function (grunt) {
                     }
                 }
             }
-        }
+        },
+        webpack: {
+			options: webpackConfig,
+			build: {
+				plugins: webpackConfig.plugins.concat(
+					new webpack.DefinePlugin({
+						"process.env": {
+							// This has effect on the react lib size
+							"NODE_ENV": JSON.stringify("production")
+						}
+					}),
+					new webpack.optimize.DedupePlugin(),
+					new webpack.optimize.UglifyJsPlugin()
+				)
+			},
+			"build-dev": {
+				devtool: "sourcemap",
+				debug: true
+			}
+		},
     });
 
     // Load grunt plugins
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-connect-rewrite');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-string-replace');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-mkdir');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
+    require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 
     // Default task(s).
     grunt.registerTask('build-js-lib', ['mkdir', 'uglify:lib_dev']);
@@ -198,6 +216,8 @@ module.exports = function (grunt) {
     grunt.registerTask('build', ['build-html', 'build-js-lib', 'build-js-app', 'less']);
 
     grunt.registerTask('default', ['build', 'configureRewriteRules', 'connect', 'watch']);
+    
+    //grunt.registerTask('webpack', ['webpack:build']);
 
 
 

@@ -3,8 +3,8 @@
 
 (function () {
     'use strict';
-    angular.module('hsp.schedule').controller('WelcomeCtrl', ['$scope', '$log', '$q', '$timeout', '$location', '$modal', 'ScheduleModel', 'UserData', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
-        function ($scope, $log, $q, $timeout, $location, $modal, ScheduleModel, UserData, Util, MathUtil, auth, calendars) {
+    angular.module('hsp.schedule').controller('ScheduleCtrl', ['$scope', '$log', '$q', '$timeout', '$location', '$modal', 'ScheduleModel', 'Profile', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+        function ($scope, $log, $q, $timeout, $location, $modal, ScheduleModel, Profile, Util, MathUtil, auth, calendars) {
             // reasonable defaults
             var lastMinTime = 480, // 8am
                 lastMaxTime = 1020; // 5pm
@@ -37,7 +37,7 @@
                     if (!list) {
                         // we don't have an event list created for this student yet
                         lists.push({
-                            student: UserData.students.find(function (stdnt) { return stdnt.id === studentId; }),
+                            student: auth.getUserData().students.find(function (stdnt) { return stdnt.id === studentId; }),
                             events: []
                         });
                     }
@@ -85,10 +85,10 @@
                 while (minTime < maxTime) {
                     timeAxis.events.push({
                         duration: 4 * pixelsPerBlock + 'px', // 8:30 * 60,
+                        blockOffset: blockOffset * pixelsPerBlock + 'px',
                         resource: {
-                            summary: today.format('ha')
-                        },
-                        blockOffset: blockOffset * pixelsPerBlock + 'px'
+                            summary: today.format('ha'),
+                        }
                     });
 
                     blockOffset += 4;
@@ -142,10 +142,11 @@
                 $scope.activeStudent = activeStudent;
             };
 
-            $scope.openEvent = function (event) {
-                ScheduleModel.setActiveEvent(event.resource);
+            $scope.openEvent = function (evtViewState) {
+                ScheduleModel.setActiveEvent(evtViewState);
                 $location.url('/event-detail');
             };
 
+            $scope.toggleComplete = ScheduleModel.toggleCompletion;
         }]);
 }());

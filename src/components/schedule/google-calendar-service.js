@@ -80,14 +80,19 @@
             * @param {string} end
             * @return {Promise<event>}
             */
-            function getInstance(calendarId, event, start, end) {
+            function getInstance(evt, start, end) {
                 return $http({
                     method: 'GET',
-                    url: baseUri + '/calendars/' + calendarId + '/events/' + event.id + '/instances',
+                    url: baseUri + '/calendars/' + evt.calendarId + '/events/' + evt.id + '/instances',
                     params: { timeMin: start.format(), timeMax: end.format(), maxResults: 1 }
                 }).then(function (result) {
                     // select just the instance to return from the promise
-                    return result.data.items[0];
+                    if (result.data.items.length) {
+                        result.data.items[0].calendarId = evt.calendarId;
+                        return result.data.items[0];
+                    }
+
+                    return $q.reject('No event instances returned');
                 });
             }
 
@@ -101,7 +106,7 @@
             * @param {string} end Required when patching instances of recurring events. The end datetime for the instance filter.
             * @return {Promise<event>}
             */
-            function patchEvent(calendarId, evtResourceOrId, patch, patchParent, start, end) {
+            function patchEvent(evtResourceOrId, patch, patchParent, start, end) {
                 var evtResource = evtResourceOrId,
                     resourceToPatch;
                 // attempt to used a cached event resource an id string is passed in
@@ -116,30 +121,29 @@
                 resourceToPatch = $q.when(evtResource);
                 if (evtResource.recurrence && !patchParent) {
                     // we got a recurring event but only want to modify an instance
-                    resourceToPatch = getInstance(calendarId, evtResource, start, end);
+                    resourceToPatch = getInstance(evtResource, start, end);
                 }
 
                 return resourceToPatch.then(function (evt) {
                     // evt is the resource to patch
+                    resourceToPatch = evt;
                     return $http({
-                        url: baseUri + '/calendars/' + calendarId + '/events/' + evt.id,
+                        url: baseUri + '/calendars/' + evt.calendarId + '/events/' + evt.id,
                         method: 'PATCH',
                         headers: {
                             'If-Match': evt.etag
                         },
                         data: patch
                     }).success(function (data, status, headers, config, statusText) {
-                        angular.extend(evt, data);
+
+                        angular.extend(resourceToPatch, data);
 
                         // keep cache updated
                         if (localEvents[evt.id] !== undefined) {
                             localEvents[evt.id] = evt;
                         }
-
-                        // return the patched event
-                        return evt;
                     }).then(function (result) {
-                        return result.data;
+                        return resourceToPatch;
                     }, function (error) {
                         return $q.reject(error);
                     });

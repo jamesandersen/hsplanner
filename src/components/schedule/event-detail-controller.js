@@ -17,16 +17,16 @@
                 patchUpdated = false,
                 recurringParentPatchUpdated = false;
 
-            function setupEvent(anEvent) {
-                var parentEvt = calendars.getEvent(anEvent.recurringEventId),
-                    subjectId = Util.safeRead(parentEvt || anEvent, 'extendedProperties.private.subjectId');
+            function setupEvent(evtViewState) {
+                var parentEvt = calendars.getEvent(evtViewState.resource.recurringEventId),
+                    subjectId = Util.safeRead(parentEvt || evtViewState.resource, 'extendedProperties.private.subjectId');
                 if (angular.isDefined(subjectId)) {
-                    anEvent.subject = UserData.subjects.find(function (sub) {
+                    evtViewState.subject = UserData.subjects.find(function (sub) {
                         return sub.id === subjectId;
                     });
                 }
 
-                return anEvent;
+                return evtViewState;
             }
 
             function setProperty(propertyName, propertyValue) {
@@ -41,7 +41,7 @@
             }
 
             $scope.subjects = UserData.subjects;
-            $scope.evt = setupEvent(ScheduleModel.getEvent());
+            $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
 
             // create a patch object for the parent recurring event if applicable
             if ($scope.evt.recurringEventId) {
@@ -60,15 +60,7 @@
                 setProperty('description', $scope.evt.description);
             };
 
-            $scope.setCompleted = function () {
-                calendars.patchEvent($scope.evt.calendarId, $scope.evt, {
-                    extendedProperties: {
-                        private: {
-                            completeDateTime: 'foo'
-                        }
-                    }
-                }, false, ScheduleModel.getStart(), ScheduleModel.getEnd());
-            };
+            $scope.toggleCompletion = ScheduleModel.toggleCompletion.apply(null, [$scope.evt]);
 
             $scope.ok = function () {
                 var finishPromise = $q.when(false),
@@ -76,11 +68,11 @@
                     evt = $scope.evt;
                 if ((patchUpdated || recurringParentPatchUpdated) && $scope.evtForm.$valid) {
                     if (patchUpdated) {
-                        patches.push(calendars.patchEvent(evt.calendarId, evt, patch));
+                        patches.push(ScheduleModel.patchEvent(evt, patch, false));
                     }
 
                     if (recurringParentPatchUpdated) {
-                        patches.push(calendars.patchEvent(evt.calendarId, evt.recurringEventId, recurringParentPatch));
+                        patches.push(ScheduleModel.patchEvent(evt.recurringEventId, recurringParentPatch));
                     }
                     finishPromise = $q.all(patches);
                 }
@@ -93,7 +85,5 @@
             $scope.cancel = function () {
                 $location.url('/');
             };
-
-
         }]);
 }());

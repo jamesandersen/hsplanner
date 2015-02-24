@@ -154,6 +154,17 @@
         z-index: @event-z-index;
 
         .fa-cog { float: right; cursor: pointer; }
+
+        -webkit-transition: all 250ms;
+        -moz-transition: all 250ms;
+        transition: all 250ms;
+        .boxShadowHelper(1);
+        &:hover {
+             .boxShadowHelper(3);
+             -webkit-transform: translateY(-5px);
+             -moz-transform: translateY(-5px);
+             transform: translateY(-5px);
+        }
     }
 
     &.non-student {
@@ -173,6 +184,14 @@
             text-align: right;
             border: none;
             position: absolute;
+            box-shadow: none;
+
+            &:hover {
+                box-shadow: none;
+                -webkit-transform: none;
+                -moz-transform: none;
+                transform: none;
+            }
 
             &:before {
                 content: '';
@@ -184,6 +203,8 @@
                 top: 0px;
                 z-index: @grid-line-z-index;
             }
+
+            input[type=checkbox].md + label:before { display: none; }
         }
     }
 }

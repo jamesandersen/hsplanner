@@ -25,10 +25,12 @@ describe("Utilities Modules", function () {
                     }
                 },
                 val = Util.safeRead(obj, 'extendedProperties.private.subjectId'),
-                nonVal = Util.safeRead(obj, 'foo.bar.blah');
+                nonVal1 = Util.safeRead(obj, 'foo.bar.blah'),
+                nonVal2 = Util.safeRead(obj, 'extendedProperties.private.foo');
 
             expect(val).toBe(3);
-            expect(nonVal).toBeUndefined();
+            expect(nonVal1).toBeUndefined();
+            expect(nonVal2).toBeUndefined();
         }]));
 
     it('Util.safeSet should work', inject(['Util',

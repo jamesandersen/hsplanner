@@ -1,6 +1,9 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,700);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,700);
 @import 'components/common/bootstrap-imports.less';
 @import 'components/common/font-awesome-imports.less';
+
+// adding this override because webpack needs to have the absolute path to the fonts
+@fa-font-path: '../bower_components/fontawesome/fonts/';
 
 //===== Bootstrap Overrides ================
 // http://www.google.com/design/spec/style/color.html#color-ui-color-palette
@@ -20,6 +23,7 @@ html, body {
 @import 'components/common/layout.less';
 @import 'components/common/animations.less';
 @import 'components/common/material-design.less';
+@import 'components/common/forms.less';
 
 @import 'components/auth/login.less';
 @import 'components/schedule/schedules.less';

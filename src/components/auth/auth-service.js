@@ -6,11 +6,12 @@
         AUTHENTICATION_CHANGE: 'AUTHENTICATION_CHANGE'
     });
 
-    angular.module('hsp.auth').factory('hsAuthService', ['$window', '$document', '$location', '$rootScope', '$q', '$log', '$http', 'CLIENT_ID', 'authEvents',
-        function ($window, $document, $location, $rootScope, $q, $log, $http, CLIENT_ID, authEvents) {
+    angular.module('hsp.auth').factory('hsAuthService', ['$window', '$document', '$location', '$rootScope', '$q', '$log', '$http', 'CLIENT_ID', 'authEvents', 'Profile',
+        function ($window, $document, $location, $rootScope, $q, $log, $http, CLIENT_ID, authEvents, Profile) {
 
             var access_token = null,
                 profile = null,
+                userData = null,
                 signed_in = false,
                 expiration = null,
                 gplusAPILoaded = false,
@@ -54,7 +55,7 @@
                     // for some reason result.hasOwnProperty is undefined
                     $log.error('authentication error: ' + result.error);
                     updateSignedIn(false);
-                    if (pendingLoginDeferred && result.error !== 'immediate_failed') {
+                    if (pendingLoginDeferred) {
                         pendingLoginDeferred.reject(result.error);
                         pendingLoginDeferred = null;
                     }
@@ -83,8 +84,17 @@
                         .success(function (data, status, headers, config) {
                             // this callback will be called asynchronously
                             // when the response is available
-                            profile = data;
-                            updateSignedIn(true);
+                            userData = Profile.get({ userId: data.id }, function (profileData) {
+                                userData = profileData;
+                                profile = data;
+                                updateSignedIn(true);
+
+                                if (pendingLoginDeferred) {
+                                    pendingLoginDeferred.resolve(access_token);
+                                    pendingLoginDeferred = null;
+                                }
+                            });
+
                         }).
                         error(function (data, status, headers, config) {
                             // called asynchronously if an error occurs
@@ -92,10 +102,7 @@
                             $log.error('Error getting profile information');
                         });
 
-                    if (pendingLoginDeferred) {
-                        pendingLoginDeferred.resolve(access_token);
-                        pendingLoginDeferred = null;
-                    }
+
 
                     if (pendingTokenDeferred) {
                         pendingTokenDeferred.resolve(access_token);
@@ -168,17 +175,14 @@
                 }
             }
 
-            function getProfile() {
-                return profile;
-            }
-
             return {
                 login: login,
                 afterLogin: afterLogin,
                 logout: logout,
                 loadGoogleAPI: initGooglePlusAuth,
                 getToken: getToken,
-                getProfile: getProfile
+                getProfile: function () { return profile; },
+                getUserData: function () { return userData; }
             };
         }]);
 }());
