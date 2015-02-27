@@ -26,7 +26,9 @@ module.exports = {
     resolve: {
         alias: {
             angular: 'angular/angular.min.js',
+
             // need to have the alias setup for when webpack recurses to locale files which require "moment"
+            // TODO: Can't seem to use minified version
             moment: 'moment/moment.js',
 
             // app modules
