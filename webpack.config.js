@@ -3,6 +3,10 @@ var webpack = require("webpack");
 
 var nodeModulesPath = path.join(__dirname, 'node_modules');
 var bowerComponentsPath = path.join(__dirname, 'bower_components');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+
+var cssTextPlugin = new ExtractTextPlugin("[name].css");
+var htmlTextPlugin = new ExtractTextPlugin("[name].html");
 
 module.exports = {
     //context: __dirname + "/src",
@@ -10,12 +14,13 @@ module.exports = {
 	entry: {
 		//bootstrap: ["!bootstrap-webpack!./app/bootstrap/bootstrap.config.js", "./app/bootstrap"],
 		//react: "./app/react"
-
-        vendor: ["angular", "moment"],
+        index: "./src/index.html",
+        libs: ["angular", "moment"],
         app: [
             "./src/es6_polyfills.js",
             "imports?common,auth,schedule!./src/app.js" // import dependent modules
-        ]
+        ],
+        styles: ["./src/styles.less"]
 	},
 	output: {
 		path: path.join(__dirname, "/dist2"),
@@ -45,7 +50,12 @@ module.exports = {
         noParse: ['angular.min.js', 'moment.min.js'],
 		loaders: [
             // required to write "require('./style.css')"
-			{ test: /\.less$/,    loader: "style-loader!css-loader!less-loader" },
+
+			{ test: /\.html$/,    loader: "html-loader" },
+            { test: /index.html$/,    loader: "file?name=[name].[ext]" },
+
+            // required to write "require('./style.css')"
+			{ test: /\.less$/,    loader: cssTextPlugin.extract("style-loader", "css-loader!less-loader") },
 
 			// required for bootstrap icons
 			{ test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/,   loader: "url-loader?prefix=font/&limit=5000&mimetype=application/font-woff" },
@@ -66,7 +76,7 @@ module.exports = {
 		}),
         new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(es|pt)$/),
         new webpack.optimize.CommonsChunkPlugin({
-          name: "vendor",
+          name: "libs",
 
           // filename: "vendor.js"
           // (Give the chunk a different name)
@@ -74,6 +84,10 @@ module.exports = {
           minChunks: Infinity
           // (with more entries, this ensures that no other module
           //  goes into the vendor chunk)
-        })
+        }),
+
+        // output the text from a loader directly to a file (rather than wrapping as a js module)
+        cssTextPlugin,
+        htmlTextPlugin
 	]
 };
