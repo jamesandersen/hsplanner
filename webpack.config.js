@@ -6,7 +6,6 @@ var bowerComponentsPath = path.join(__dirname, 'bower_components');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var cssTextPlugin = new ExtractTextPlugin("[name].css");
-var htmlTextPlugin = new ExtractTextPlugin("[name].html");
 
 module.exports = {
     //context: __dirname + "/src",
@@ -15,7 +14,15 @@ module.exports = {
 		//bootstrap: ["!bootstrap-webpack!./app/bootstrap/bootstrap.config.js", "./app/bootstrap"],
 		//react: "./app/react"
         index: "./src/index.html",
-        libs: ["angular", "moment"],
+        libs: [
+            "angular",
+            "angular-route",
+            "angular-animate",
+            "angular-touch",
+            "angular-resource",
+            "imports?angular!angular-bootstrap",
+            "moment"
+        ],
         app: [
             "./src/es6_polyfills.js",
             "imports?common,auth,schedule!./src/app.js" // import dependent modules
@@ -24,14 +31,17 @@ module.exports = {
 	},
 	output: {
 		path: path.join(__dirname, "/dist2"),
-		publicPath: "dist2/",
 		filename: "[name].js",
 		chunkFilename: "[chunkhash].js"
 	},
     resolve: {
         alias: {
             angular: 'angular/angular.min.js',
-
+            "angular-route": 'angular-route/angular-route.min.js',
+            "angular-animate": 'angular-animate/angular-animate.min.js',
+            "angular-touch": 'angular-touch/angular-touch.min.js',
+            "angular-resource": 'angular-resource/angular-resource.min.js',
+            "angular-bootstrap": 'angular-bootstrap/ui-bootstrap-tpls.min.js',
             // need to have the alias setup for when webpack recurses to locale files which require "moment"
             // TODO: Can't seem to use minified version
             moment: 'moment/moment.js',
@@ -53,6 +63,7 @@ module.exports = {
 
 			{ test: /\.html$/,    loader: "html-loader" },
             { test: /index.html$/,    loader: "file?name=[name].[ext]" },
+            { test: /[\/\\]angular\.min\.js$/, loader: 'exports?window.angular' },
 
             // required to write "require('./style.css')"
 			{ test: /\.less$/,    loader: cssTextPlugin.extract("style-loader", "css-loader!less-loader") },
@@ -64,7 +75,7 @@ module.exports = {
 			{ test: /\.svg(\?v=[0-9]\.[0-9]\.[0-9])?$/,    loader: "file-loader?prefix=font/" },
 
 			// required for react jsx
-			{ test: /\.js$/,    loader: "jsx-loader" },
+			{ test: /\.js$/,  exclude: /(node_modules|angular.min.js)/,  loader: "babel-loader" },
 			{ test: /\.jsx$/,   loader: "jsx-loader?insertPragma=React.DOM" },
 		]
 	},
@@ -87,7 +98,6 @@ module.exports = {
         }),
 
         // output the text from a loader directly to a file (rather than wrapping as a js module)
-        cssTextPlugin,
-        htmlTextPlugin
+        cssTextPlugin
 	]
 };

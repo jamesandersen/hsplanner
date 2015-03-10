@@ -1,9 +1,9 @@
 /*jslint plusplus: true, es5: true */
 /*global angular: false, moment: false */
 
-(function () {
+export default (function () {
     'use strict';
-    angular.module('hsp.schedule').controller('EventDetailCtrl', ['$scope', '$location', '$q', '$modal', 'ScheduleModel', 'UserData', 'hsCalendarService', 'Util',
+    return ['$scope', '$location', '$q', '$modal', 'ScheduleModel', 'UserData', 'hsCalendarService', 'Util',
         function ($scope, $location, $q, $modal, ScheduleModel, UserData, calendars, Util) {
             var patch = {
                     extendedProperties: {
@@ -85,5 +85,5 @@
             $scope.cancel = function () {
                 $location.url('/');
             };
-        }]);
+        }];
 }());

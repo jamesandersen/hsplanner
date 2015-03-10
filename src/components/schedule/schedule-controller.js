@@ -1,9 +1,9 @@
 /*jslint plusplus: true, es5: true */
 /*global angular: false, moment: false */
 
-(function () {
+export default (function () {
     'use strict';
-    angular.module('hsp.schedule').controller('ScheduleCtrl', ['$scope', '$log', '$q', '$timeout', '$location', '$modal', 'ScheduleModel', 'Profile', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+    return ['$scope', '$log', '$q', '$timeout', '$location', '$modal', 'ScheduleModel', 'Profile', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
         function ($scope, $log, $q, $timeout, $location, $modal, ScheduleModel, Profile, Util, MathUtil, auth, calendars) {
             // reasonable defaults
             var lastMinTime = 480, // 8am
@@ -148,5 +148,5 @@
             };
 
             $scope.toggleComplete = ScheduleModel.toggleCompletion;
-        }]);
+        }];
 }());

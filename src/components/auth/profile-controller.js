@@ -1,11 +1,11 @@
 /*jslint plusplus: true, es5: true */
 /*global angular: false, moment: false */
-(function () {
+export default (function () {
     'use strict';
-    angular.module('hsp.auth').controller('ProfileCtrl', ['$scope', '$log', 'hsAuthService',
+    return ['$scope', '$log', 'hsAuthService',
         function ($scope, $log, auth) {
             $scope.getData = function () {
                 $log.log('get data');
             };
-        }]);
+        }];
 }());

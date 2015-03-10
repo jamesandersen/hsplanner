@@ -158,7 +158,7 @@ module.exports = function (grunt) {
                     protocol: 'https',
                     hostname: '*',
                     port: 9001,
-                    base: 'dist',
+                    base: 'dist2',
                     livereload: true,
                     middleware: function (connect, options) {
                         var middlewares = [],

@@ -1,12 +1,8 @@
 /*global angular: false, gapi: false */
-(function () {
+export default (function () {
     'use strict';
 
-    angular.module('hsp.auth').constant('authEvents', {
-        AUTHENTICATION_CHANGE: 'AUTHENTICATION_CHANGE'
-    });
-
-    angular.module('hsp.auth').factory('hsAuthService', ['$window', '$document', '$location', '$rootScope', '$q', '$log', '$http', 'CLIENT_ID', 'authEvents', 'Profile',
+    return ['$window', '$document', '$location', '$rootScope', '$q', '$log', '$http', 'CLIENT_ID', 'authEvents', 'Profile',
         function ($window, $document, $location, $rootScope, $q, $log, $http, CLIENT_ID, authEvents, Profile) {
 
             var access_token = null,
@@ -184,5 +180,5 @@
                 getProfile: function () { return profile; },
                 getUserData: function () { return userData; }
             };
-        }]);
+        }];
 }());
