@@ -2,6 +2,7 @@
 
 // require all .js files in the directory unless they end with _test.js
 //require.context(".", false, /^(.(?!_test))+?\.(js|html)$/);
+require.context(".", false, /^(.(?!_test))+?\.html$/);
 
 import * as gcs from './google-calendar-service.js';
 

@@ -8,26 +8,26 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var cssTextPlugin = new ExtractTextPlugin("[name].css");
 
 module.exports = {
-    //context: __dirname + "/src",
+    context: __dirname + "/src",
 	cache: true,
 	entry: {
 		//bootstrap: ["!bootstrap-webpack!./app/bootstrap/bootstrap.config.js", "./app/bootstrap"],
 		//react: "./app/react"
-        index: "./src/index.html",
         libs: [
             "angular",
             "angular-route",
             "angular-animate",
             "angular-touch",
             "angular-resource",
-            "imports?angular!angular-bootstrap",
+            "angular-bootstrap",
             "moment"
         ],
         app: [
-            "./src/es6_polyfills.js",
-            "imports?common,auth,schedule!./src/app.js" // import dependent modules
+            "./index.html",
+            "./es6_polyfills.js",
+            "imports?common,auth,schedule!./app.js" // import dependent modules
         ],
-        styles: ["./src/styles.less"]
+        styles: ["./styles.less"]
 	},
 	output: {
 		path: path.join(__dirname, "/dist2"),
@@ -57,12 +57,13 @@ module.exports = {
         modulesDirectories: ['bower_components']
     },
 	module: {
-        noParse: ['angular.min.js', 'moment.min.js'],
+        noParse: [/angular(\.min|-)/, /moment.min.js/],
 		loaders: [
             // required to write "require('./style.css')"
 
-			{ test: /\.html$/,    loader: "html-loader" },
-            { test: /index.html$/,    loader: "file?name=[name].[ext]" },
+            //{ test: /index.html$/,    loader: "file?name=[path][name].[ext]" },
+			//{ test: /\.html$/,    loader: "html-loader" },
+			{ test: /\.html$/,    loader: "file?name=[path][name].[ext]" },
             { test: /[\/\\]angular\.min\.js$/, loader: 'exports?window.angular' },
 
             // required to write "require('./style.css')"
@@ -75,7 +76,7 @@ module.exports = {
 			{ test: /\.svg(\?v=[0-9]\.[0-9]\.[0-9])?$/,    loader: "file-loader?prefix=font/" },
 
 			// required for react jsx
-			{ test: /\.js$/,  exclude: /(node_modules|angular.min.js)/,  loader: "babel-loader" },
+			{ test: /\.js$/,  exclude: /(node_modules|angular(\.|-))/,  loader: "babel-loader" },
 			{ test: /\.jsx$/,   loader: "jsx-loader?insertPragma=React.DOM" },
 		]
 	},
@@ -83,7 +84,8 @@ module.exports = {
 		new webpack.ProvidePlugin({
 			// when 'angular' is used from the global namespace
             // this pluglin will automatically require the angular module
-            angular: "angular"
+            angular: "angular",
+            moment: "moment"
 		}),
         new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(es|pt)$/),
         new webpack.optimize.CommonsChunkPlugin({

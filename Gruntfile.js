@@ -216,7 +216,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', ['build-html', 'build-js-lib', 'build-js-app', 'less']);
 
     grunt.registerTask('default', ['build', 'configureRewriteRules', 'connect', 'watch']);
-    
+    grunt.registerTask('serve', ['configureRewriteRules', 'connect', 'watch']);
     //grunt.registerTask('webpack', ['webpack:build']);
 
 
