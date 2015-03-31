@@ -4,8 +4,10 @@ var webpack = require("webpack");
 var nodeModulesPath = path.join(__dirname, 'node_modules');
 var bowerComponentsPath = path.join(__dirname, 'bower_components');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
-
+var StringReplacePlugin = require("string-replace-webpack-plugin");
 var cssTextPlugin = new ExtractTextPlugin("[name].css");
+
+var secrets = require('./client_secret.json');
 
 module.exports = {
     context: __dirname + "/src",
@@ -30,7 +32,7 @@ module.exports = {
         styles: ["./styles.less"]
 	},
 	output: {
-		path: path.join(__dirname, "/dist2"),
+		path: path.join(__dirname, "/dist"),
 		filename: "[name].js",
 		chunkFilename: "[chunkhash].js"
 	},
@@ -49,7 +51,7 @@ module.exports = {
             // app modules
             auth: './components/auth/_auth.js',
             common: './components/common/_common.js',
-            schedule: './components/schedule/_schedule.js',
+            schedule: './components/schedule/_schedule.js'
         },
         root: [bowerComponentsPath],
 
@@ -61,9 +63,21 @@ module.exports = {
 		loaders: [
             // required to write "require('./style.css')"
 
-            //{ test: /index.html$/,    loader: "file?name=[path][name].[ext]" },
-			//{ test: /\.html$/,    loader: "html-loader" },
-			{ test: /\.html$/,    loader: "file?name=[path][name].[ext]" },
+
+			//{ test: /\.html$/,    loader: "html-loader" }, // turns html into "modules"
+			{ test: /\.html$/,    loader: "file?name=[path][name].[ext]" }, // copies the files over
+            { test: /index.html$/,    loader: StringReplacePlugin.replace({
+                replacements: [
+                    {
+                        pattern: /<!-- @secret (\w*?) -->/ig,
+                        replacement: function (match, p1, offset, string) {
+                            return secrets.web[p1];
+                        }
+
+                    }
+                ]})
+            },
+
             { test: /[\/\\]angular\.min\.js$/, loader: 'exports?window.angular' },
 
             // required to write "require('./style.css')"
@@ -100,6 +114,7 @@ module.exports = {
         }),
 
         // output the text from a loader directly to a file (rather than wrapping as a js module)
-        cssTextPlugin
+        cssTextPlugin,
+        new StringReplacePlugin()
 	]
 };

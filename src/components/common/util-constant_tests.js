@@ -1,9 +1,10 @@
 /*jslint es5: true */
 /*global angular: false, describe: false, it: false, beforeEach: false, module: false, expect: false, inject: false */
-
+require('./_common.js');
+require('angular-mocks');
 describe("Utilities Modules", function () {
     'use strict';
-    beforeEach(module('hsp.common'));
+    beforeEach(angular.mock.module('hsp.common'));
     //beforeEach(angular.mock.module('App'));
 
     it('should pass a test', function () {

@@ -2,75 +2,26 @@
 /*global module: false, require: false,  es5: true */
 module.exports = function (grunt) {
     'use strict';
-    var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest,
-        appFiles = [
-            'src/es6_polyfills.js',
-            'src/components/common/**/*.js',
-            'src/components/auth/**/*.js',
-            'src/components/schedule/**/*.js',
-            'src/app_.js',
-            'src/components/mock/**/*.js',
-            '!src/**/*_tests.js',
-        ];
-    
-    
+    var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest;
 	var webpack = require("webpack");
 	var webpackConfig = require("./webpack.config.js");
 
     // Project configuration.
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
-        secrets: grunt.file.readJSON('client_secret.json'),
-        mkdir: {
-            all: {
-                options: {
-                    create: ['./<%= pkg.buildDir %>/js']
-                }
-            }
-        },
-        'string-replace': {
-            client_auth: {
-                files: {
-                    'src/app_.js': 'src/app.js',
-                    'src/index_.html': 'src/index.html'
-                },
-                options: {
-                    replacements: [{
-                        pattern: /<!-- @secret (\w*?) -->/ig,
-                        replacement: function (match, p1, offset, string) {
-                            return grunt.config.get('secrets').web[p1];
-                        }
-                    }]
-                }
-            }
-        },
-        copy: {
-            index: {
-                src: 'src/index_.html',
-                dest: '<%= pkg.buildDir %>/index.html'
-            },
-            partials: {
-                expand: true,
-                cwd: 'src/components/',
-                src: ['**/*.html'],
-                dest: '<%= pkg.buildDir %>/components/'
-            },
-            fonts: {
-                expand: true,
-                cwd: 'bower_components/fontawesome/fonts/',
-                src: ['**'],
-                dest: '<%= pkg.buildDir %>/fonts/'
-            },
-        },
-        clean: {
-            secrets: ["src/app_.js", "src/index_.html"]
-        },
         jshint: {
             all: ['Gruntfile.js', 'src/**/*.js']
         },
         jasmine: {
             customTemplate: {
-                src: appFiles,
+                src: [
+                    'src/es6_polyfills.js',
+                    'src/components/common/**/*.js',
+                    'src/components/auth/**/*.js',
+                    'src/components/schedule/**/*.js',
+                    'src/app.js',
+                    'src/components/mock/**/*.js',
+                    '!src/**/*_tests.js',
+                ],
                 options: {
                     specs: 'src/**/*_tests.js',
                     helpers: 'src/**/*_helper.js',
@@ -78,48 +29,6 @@ module.exports = function (grunt) {
                         "bower_components/angular/angular.js",
                         "bower_components/angular-mocks/angular-mocks.js"
                     ]
-                }
-            }
-        },
-        uglify: {
-            lib_dev: {
-                options: {
-                    sourceMap: false,
-                    mangle: false,
-                    compress: false
-                },
-                files: {
-                    '<%= pkg.buildDir %>/libs.js': [
-                        'bower_components/moment/moment.js',
-                        'bower_components/angular/angular.js',
-                        'bower_components/angular-route/angular-route.js',
-                        'bower_components/angular-animate/angular-animate.js',
-                        'bower_components/angular-touch/angular-touch.js',
-                        'bower_components/angular-resource/angular-resource.js',
-
-                        // TODO: figure out how to conditionally include this
-                        'bower_components/angular-mocks/angular-mocks.js',
-                        'bower_components/angular-bootstrap/ui-bootstrap.js',
-                        'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
-                    ]
-                }
-            },
-            dev: {
-                options: {
-                    sourceMap: false,
-                    beautify: true,
-                    mangle: false,
-                    compress: false
-                },
-                files: {
-                    '<%= pkg.buildDir %>/app.js': appFiles
-                }
-            }
-        },
-        less: {
-            development: {
-                files: {
-                    '<%= pkg.buildDir %>/styles.css': 'src/styles.less'
                 }
             }
         },
@@ -132,17 +41,9 @@ module.exports = function (grunt) {
                     // you can pass in any other options you'd like to the https server, as listed here: http://nodejs.org/api/tls.html#tls_tls_createserver_options_secureconnectionlistener
                 }
             },
-            js: {
-                files: ['src/**/*.js', '!src/app_.js'],
-                tasks: ['build-js-app']
-            },
-            css: {
-                files: ['src/**/*.less'],
-                tasks: ['less']
-            },
-            html: {
-                files: ['src/**/*.html'],
-                tasks: ['build-html']
+            app: {
+                files: ['src/**/*.js', 'src/**/*.less', 'src/**/*.html'],
+                tasks: ['webpack:development']
             }
         },
         connect: {
@@ -158,7 +59,7 @@ module.exports = function (grunt) {
                     protocol: 'https',
                     hostname: '*',
                     port: 9001,
-                    base: 'dist2',
+                    base: 'dist',
                     livereload: true,
                     middleware: function (connect, options) {
                         var middlewares = [],
@@ -187,38 +88,32 @@ module.exports = function (grunt) {
         },
         webpack: {
 			options: webpackConfig,
-			build: {
-				plugins: webpackConfig.plugins.concat(
-					new webpack.DefinePlugin({
-						"process.env": {
-							// This has effect on the react lib size
-							"NODE_ENV": JSON.stringify("production")
-						}
-					}),
-					new webpack.optimize.DedupePlugin(),
-					new webpack.optimize.UglifyJsPlugin()
-				)
-			},
-			"build-dev": {
-				devtool: "sourcemap",
-				debug: true
-			}
-		},
+            development: {
+                devtool: "sourcemap",
+                plugins: [
+                    new webpack.DefinePlugin({
+                        DEBUG: true,
+                        PRODUCTION: false
+                    })
+                ]
+            },
+            production: {
+                plugins: [
+                    new webpack.DefinePlugin({
+                        DEBUG: false,
+                        PRODUCTION: true
+                    }),
+                    new webpack.optimize.DedupePlugin(),
+                    new webpack.optimize.UglifyJsPlugin()
+                ]
+            }
+		}
     });
 
     // Load grunt plugins
     require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 
     // Default task(s).
-    grunt.registerTask('build-js-lib', ['mkdir', 'uglify:lib_dev']);
-    grunt.registerTask('build-js-app', ['mkdir', 'string-replace', 'uglify:dev', 'clean:secrets']);
-    grunt.registerTask('build-html', ['mkdir', 'string-replace', 'copy', 'clean:secrets']);
-    grunt.registerTask('build', ['build-html', 'build-js-lib', 'build-js-app', 'less']);
-
-    grunt.registerTask('default', ['build', 'configureRewriteRules', 'connect', 'watch']);
-    grunt.registerTask('serve', ['configureRewriteRules', 'connect', 'watch']);
-    //grunt.registerTask('webpack', ['webpack:build']);
-
-
-
+    grunt.registerTask('default', ['webpack:development', 'configureRewriteRules', 'connect', 'watch']);
+    grunt.registerTask('prod', ['webpack:production', 'configureRewriteRules', 'connect']);
 };
