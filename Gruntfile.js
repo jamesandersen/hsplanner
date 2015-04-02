@@ -5,8 +5,9 @@ module.exports = function (grunt) {
     var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest,
         webpack = require("webpack"),
         webpackConfig = require("./webpack.config.js"),
-        keyPath = __dirname + '/node_modules/grunt-contrib-connect/tasks/certs/server.key',
-        certPath = __dirname + '/node_modules/grunt-contrib-connect/tasks/certs/server.crt';
+        keyPath = __dirname + '/cert/server.key',
+        certPath = __dirname + '/cert/server.crt',
+        caPath = __dirname + '/cert/ca.crt';
 
 
     // Project configuration.
@@ -39,6 +40,9 @@ module.exports = function (grunt) {
             server: {
                 options: {
                     protocol: 'https',
+                    key: grunt.file.read(keyPath).toString(),
+                    cert: grunt.file.read(certPath).toString(),
+                    ca: grunt.file.read(caPath).toString(),
                     hostname: '*',
                     port: 9001,
                     base: 'dist',
