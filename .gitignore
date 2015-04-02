@@ -1,6 +1,9 @@
 node_modules/
 bower_components/
 dist/
-dist2/
 client_secret.json
 .grunt/
+
+# User-specific stuff:
+**/.idea/workspace.xml
+**/.idea/tasks.xml
