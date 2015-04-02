@@ -2,42 +2,24 @@
 /*global module: false, require: false,  es5: true */
 module.exports = function (grunt) {
     'use strict';
-    var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest;
-	var webpack = require("webpack");
-	var webpackConfig = require("./webpack.config.js");
+    var rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest,
+        webpack = require("webpack"),
+        webpackConfig = require("./webpack.config.js"),
+        keyPath = __dirname + '/node_modules/grunt-contrib-connect/tasks/certs/server.key',
+        certPath = __dirname + '/node_modules/grunt-contrib-connect/tasks/certs/server.crt';
+
 
     // Project configuration.
     grunt.initConfig({
         jshint: {
             all: ['Gruntfile.js', 'src/**/*.js']
         },
-        jasmine: {
-            customTemplate: {
-                src: [
-                    'src/es6_polyfills.js',
-                    'src/components/common/**/*.js',
-                    'src/components/auth/**/*.js',
-                    'src/components/schedule/**/*.js',
-                    'src/app.js',
-                    'src/components/mock/**/*.js',
-                    '!src/**/*_tests.js',
-                ],
-                options: {
-                    specs: 'src/**/*_tests.js',
-                    helpers: 'src/**/*_helper.js',
-                    vendor: [
-                        "bower_components/angular/angular.js",
-                        "bower_components/angular-mocks/angular-mocks.js"
-                    ]
-                }
-            }
-        },
         watch: {
             options: {
                 livereload: {
                     port: 35729,
-                    key: grunt.file.read('node_modules/grunt-contrib-connect/tasks/certs/server.key'),
-                    cert: grunt.file.read('node_modules/grunt-contrib-connect/tasks/certs/server.crt')
+                    key: grunt.file.read(keyPath),
+                    cert: grunt.file.read(certPath)
                     // you can pass in any other options you'd like to the https server, as listed here: http://nodejs.org/api/tls.html#tls_tls_createserver_options_secureconnectionlistener
                 }
             },
@@ -107,13 +89,28 @@ module.exports = function (grunt) {
                     new webpack.optimize.UglifyJsPlugin()
                 ]
             }
-		}
+		},
+        nodemon: {
+            json_server: {
+                script: 'services/server.js',
+                options: {
+                    args: ['-key=' + keyPath, '-cert=' + certPath]
+                }
+            }
+        },
+        concurrent: {
+            dev: ['dev', 'nodemon:json_server'],
+            options: {
+                logConcurrentOutput: true
+            }
+        }
     });
 
     // Load grunt plugins
     require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 
     // Default task(s).
-    grunt.registerTask('default', ['webpack:development', 'configureRewriteRules', 'connect', 'watch']);
+    grunt.registerTask('dev', ['webpack:development', 'configureRewriteRules', 'connect', 'watch']);
+    grunt.registerTask('default', ['concurrent:dev']);
     grunt.registerTask('prod', ['webpack:production', 'configureRewriteRules', 'connect']);
 };
