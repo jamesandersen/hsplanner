@@ -1,4 +1,6 @@
 /*global angular: false */
+
+//require("angular");
 (function () {
     'use strict';
 

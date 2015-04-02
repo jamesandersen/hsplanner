@@ -3,3 +3,7 @@ bower_components/
 dist/
 client_secret.json
 .grunt/
+
+# User-specific stuff:
+**/.idea/workspace.xml
+**/.idea/tasks.xml

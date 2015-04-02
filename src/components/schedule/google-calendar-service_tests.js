@@ -1,6 +1,12 @@
 /*jslint es5: true */
 /*global angular: false, describe: false, it: false, beforeEach: false, afterEach: false, module: false, expect: false, inject: false, $httpBackend: false */
+require('../common/_common.js');
+require('../auth/_auth.js');
+require('./_schedule.js');
+require('angular-resource');
+require('angular-mocks');
 
+angular.module('hsp.common').constant('BASE_URL', 'https://localhost:9002');
 angular.module('hsp.auth').constant('CLIENT_ID', 'CLIENT_ID');
 
 describe("hsCalendar Module", function () {
@@ -14,8 +20,11 @@ describe("hsCalendar Module", function () {
             "description": "This calendar is my personal calendar"
         }];
 
-    beforeEach(module('hsp.schedule'));
-    beforeEach(module('ngMock'));
+
+    beforeEach(angular.mock.module('hsp.common'));
+    beforeEach(angular.mock.module('hsp.auth'));
+    beforeEach(angular.mock.module('hsp.schedule'));
+    beforeEach(angular.mock.module('ngMock'));
 
     beforeEach(inject(function ($injector) {
         // Set up the mock http service responses
@@ -27,12 +36,12 @@ describe("hsCalendar Module", function () {
         $httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('should have a calendar service', inject(['hsCalendarService',
+    it('should have a calendar service', angular.mock.inject(['hsCalendarService',
         function (calendars) {
             expect(calendars).toBeDefined();
         }]));
 
-    it('getCalendarList should call api', inject(['hsCalendarService', '$httpBackend',
+    it('getCalendarList should call api', angular.mock.inject(['hsCalendarService', '$httpBackend',
         function (calendars, $httpBackend) {
             $httpBackend.expect('GET', /\/users\/me\/calendarList/).respond(200, {
                 "items": calendarData

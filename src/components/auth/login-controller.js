@@ -1,7 +1,7 @@
 /*global angular: false, gapi: false, onLoginSuccess: false, onLoginFailed: false */
-(function () {
+export default (function () {
     'use strict';
-    angular.module('hsp.auth').controller('LoginCtrl', ['$scope', '$location', '$log', 'hsAuthService',
+    return ['$scope', '$location', '$log', 'hsAuthService',
         function ($scope, $location, $log, auth) {
             auth.loadGoogleAPI().then(function (isGoogleAPILoaded) {
                 // not signed in so we need the login button
@@ -22,5 +22,5 @@
                 auth.afterLogin().then(onLoginSuccess, onLoginFailed);
             }
 
-        }]);
+        }];
 }());

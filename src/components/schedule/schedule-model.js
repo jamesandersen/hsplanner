@@ -1,9 +1,9 @@
 /*jslint plusplus: true, es5: true */
 /*global angular: false, moment: false */
 
-(function () {
+export default (function () {
     'use strict';
-    angular.module('hsp.schedule').factory('ScheduleModel', ['$q', '$log', 'hsAuthService', 'hsCalendarService', 'Util',
+    return ['$q', '$log', 'hsAuthService', 'hsCalendarService', 'Util',
         function ($q, $log, hsAuthService, calendars, Util) {
             var userCalendarList = null,
                 activeEventViewState = null,
@@ -137,5 +137,5 @@
                 getStart: function () { return start; },
                 getEnd: function () { return end; }
             };
-        }]);
+        }];
 }());

@@ -1,21 +1,10 @@
 /*global angular: false */
 /*jslint plusplus: true */
 
-(function () {
+export default (function () {
     'use strict';
 
-    // keep track of data that will ultimately need to kept and retrieved from elsewhere
-    var utilMod = angular.module('hsp.common');
-    utilMod.constant('MathUtil', {
-        ceiling: function (num, increment) {
-            return Math.ceil(num / increment) * increment;
-        },
-        floor: function (num, increment) {
-            return Math.floor(num / increment) * increment;
-        }
-    });
-
-    utilMod.constant('Util', {
+    return {
         safeRead: function (target, propertyPath) {
             var path = propertyPath.split('.'),
                 obj = target,
@@ -50,5 +39,5 @@
                 }
             }
         }
-    });
+    };
 }());

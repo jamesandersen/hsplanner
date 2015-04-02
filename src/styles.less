@@ -2,6 +2,9 @@
 @import 'components/common/bootstrap-imports.less';
 @import 'components/common/font-awesome-imports.less';
 
+// adding this override because webpack needs to have the absolute path to the fonts
+@fa-font-path: '../bower_components/fontawesome/fonts/';
+
 //===== Bootstrap Overrides ================
 // http://www.google.com/design/spec/style/color.html#color-ui-color-palette
 @brand-primary:         #03a9f4;
