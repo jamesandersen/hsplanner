@@ -19,8 +19,11 @@ module.exports = {
             "angular",
             "angular-route",
             "angular-animate",
-            "angular-touch",
+
             "angular-resource",
+            "angular-touch",
+            "angular-aria",
+            "angular-material",
             "angular-bootstrap",
             "moment"
         ],
@@ -41,8 +44,10 @@ module.exports = {
             angular: 'angular/angular.min.js',
             "angular-route": 'angular-route/angular-route.min.js',
             "angular-animate": 'angular-animate/angular-animate.min.js',
-            "angular-touch": 'angular-touch/angular-touch.min.js',
             "angular-resource": 'angular-resource/angular-resource.min.js',
+            "angular-touch": 'angular-touch/angular-touch.min.js',
+            "angular-aria": 'angular-aria/angular-aria.min.js',
+            "angular-material": 'angular-material/angular-material.min.js',
             "angular-bootstrap": 'angular-bootstrap/ui-bootstrap-tpls.min.js',
             // need to have the alias setup for when webpack recurses to locale files which require "moment"
             // TODO: Can't seem to use minified version

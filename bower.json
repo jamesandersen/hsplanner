@@ -21,11 +21,13 @@
     "angular-touch": "~1.4.x",
     "angular-mocks": "~1.4.x",
     "angular-resource": "~1.4.x",
+    "angular-material": "0.x",
     "fontawesome": "~4.1.0",
     "angular-bootstrap": "~0.12.x",
     "moment": "~2.8.x"
   },
   "resolutions": {
-    "angular": "1.4.x"
+    "angular": "1.4.x",
+    "angular-animate": "~1.4.x"
   }
 }
