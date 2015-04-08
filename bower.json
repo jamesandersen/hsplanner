@@ -27,7 +27,10 @@
     "moment": "~2.8.x"
   },
   "resolutions": {
-    "angular": "1.4.x",
+    "angular": "~1.4.x",
     "angular-animate": "~1.4.x"
+  },
+  "devDependencies": {
+    "angular-material-icons": "~0.4.0"
   }
 }

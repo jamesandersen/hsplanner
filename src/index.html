@@ -3,6 +3,7 @@
 
 <head>
     <title>Home School Planner</title>
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
     <link rel="stylesheet" href="styles.css" />
     <base href="https://localhost:9001/" />
     <meta name="google-signin-clientid" content="<!-- @secret client_id -->" />
@@ -14,6 +15,9 @@
 <body>
     <header ng-controller="HeaderCtrl" class="bg-primary">
         <span id="app-name">Home School Planner</span>
+        <md-button class="md-fab" aria-label="FAB">
+            <ng-md-icon icon="send" style="fill: pink" size="28"></ng-md-icon>
+        </md-button>
         <div ng-if="signed_in" class="header-right pull-right">
             <img class="profile-img" ng-src="{{profileImgSrc}}"/>
             <span ng-bind="profile.displayName"></span>
