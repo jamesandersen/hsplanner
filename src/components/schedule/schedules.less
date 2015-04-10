@@ -10,7 +10,7 @@
 
 .schedule {
     position: relative;
-    .box-sizing(border-box);
+    box-sizing: border-box;
     margin-top: -@schedule-name-height - @schedule-height-gutter - 10px;
     padding-top: @schedule-name-height + @schedule-height-gutter + 10px;
     padding-bottom: 10px;
@@ -37,6 +37,12 @@
             i.fa.fa-times { display: inline; }
         }
     }
+
+    #add-event {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
 }
 
 .header-container {
@@ -60,7 +66,7 @@
 
 .student-schedule, .student-schedule-header {
     float: left;
-    .box-sizing(border-box);
+    box-sizing: border-box;
     margin: 0px @student-schedule-margin 0px @student-schedule-margin;
     //padding-right: 8px;
     width: @student-schedule-width;
@@ -70,7 +76,7 @@
     &.non-student {
         background-color: transparent;
         color: @gray-dark;
-        .box-shadow(none);
+        box-shadow: none;
         border: none;
         width: @non-student-col-width;
     }
@@ -153,6 +159,7 @@
         right: 0px;
         z-index: @event-z-index;
 
+        md-checkbox { margin:0 }
         .fa-cog { float: right; cursor: pointer; }
 
         -webkit-transition: all 250ms;
@@ -176,7 +183,7 @@
             background-color: transparent;
         }
 
-        .fa-cog { display: none; }
+        .fa-cog, md-checkbox, ng-md-icon { display: none; }
 
         .event {
             background-color: transparent;

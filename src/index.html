@@ -13,17 +13,17 @@
 </head>
 
 <body>
-    <header ng-controller="HeaderCtrl" class="bg-primary">
-        <span id="app-name">Home School Planner</span>
-        <md-button class="md-fab" aria-label="FAB">
-            <ng-md-icon icon="send" style="fill: pink" size="28"></ng-md-icon>
-        </md-button>
-        <div ng-if="signed_in" class="header-right pull-right">
-            <img class="profile-img" ng-src="{{profileImgSrc}}"/>
-            <span ng-bind="profile.displayName"></span>
+    <header ng-controller="HeaderCtrl" class="bg-primary" layout="row">
+        <span id="app-name" flex="50">Home School Planner</span>
+        <div flex="50" layout="row" layout-align="end center">
+            <div ng-if="signed_in" class="header-right pull-right" layout="row" layout-align="end center">
+                <img class="profile-img" ng-src="{{profileImgSrc}}"/>
+                <span ng-bind="profile.displayName"></span>
 
-            <a href="" ng-click="logout()"><i class="fa fa-sign-out fa-2x"></i></a>
+                <a href="" ng-click="logout()"><i class="fa fa-sign-out fa-2x"></i></a>
+            </div>
         </div>
+
     </header>
 
     <div ng-view></div>

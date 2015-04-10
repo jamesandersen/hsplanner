@@ -24,7 +24,7 @@ module.exports = {
             "angular-aria",
             "angular-material",
             "angular-material-icons",
-            "angular-bootstrap",
+            //"angular-bootstrap",
             "moment"
         ],
         app: [

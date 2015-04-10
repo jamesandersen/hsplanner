@@ -3,8 +3,8 @@
 
 export default (function () {
     'use strict';
-    return ['$scope', '$location', '$q', '$modal', 'ScheduleModel', 'hsAuthService', 'hsCalendarService', 'Util',
-        function ($scope, $location, $q, $modal, ScheduleModel, hsAuthService, calendars, Util) {
+    return ['$scope', '$location', '$q', '$mdDialog', 'ScheduleModel', 'hsAuthService', 'hsCalendarService', 'Util',
+        function ($scope, $location, $q, $mdDialog, ScheduleModel, hsAuthService, calendars, Util) {
             var patch = {
                     extendedProperties: {
                         private: {}

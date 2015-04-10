@@ -4,7 +4,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('hsp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngMaterial', 'ngMdIcons', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
+    var app = angular.module('hsp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMdIcons', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
     angular.module('hsp.auth').constant('CLIENT_ID', '<!-- @secret client_id -->');
     angular.module('hsp.common').constant('BASE_URL', 'https://localhost:9002');
     app.config(['$locationProvider', '$routeProvider',

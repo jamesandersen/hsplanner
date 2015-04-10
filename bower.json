@@ -22,8 +22,7 @@
     "angular-mocks": "~1.4.x",
     "angular-resource": "~1.4.x",
     "angular-material": "0.x",
-    "fontawesome": "~4.1.0",
-    "angular-bootstrap": "~0.12.x",
+    "angular-material-icons": "~0.4.0",
     "moment": "~2.8.x"
   },
   "resolutions": {
@@ -31,6 +30,5 @@
     "angular-animate": "~1.4.x"
   },
   "devDependencies": {
-    "angular-material-icons": "~0.4.0"
   }
 }
