@@ -1,4 +1,7 @@
 <div class="schedule" ng-class="{ 'active-student': activeStudent }" ng-init="getData()">
+    <md-button id="add-event" class="md-fab" aria-label="FAB">
+        <ng-md-icon icon="send" style="fill: pink" size="20"></ng-md-icon>
+    </md-button>
     <div class="header-container">
         <div class="student-schedule-header"
              ng-repeat="list in studentEventLists"
@@ -21,10 +24,16 @@
                 <div class="event"
                      ng-repeat="evt in list.events"
                      ng-style="{ 'background-color': evt.subject.bgcolor, height: evt.duration, top: evt.blockOffset }">
-                    <i class="fa fa-cog" ng-cloak ng-click="openEvent(evt)"></i>
-                    <input id="{{evt.resource.id}}" ng-checked="evt.completion && !evt.updating" type="checkbox" class="md" ng-class="{ 'updating': evt.updating }"/>
+                    <div layout="row" layout-align="space-between center">
+                        <md-checkbox ng-model="isChecked" aria-label="Completed">
+                            <span>{{evt.fmtTime}}</span>&nbsp;<span ng-bind="evt.subject.summary"></span>
+                        </md-checkbox>
+                        <ng-md-icon icon="settings" size="12" ng-cloak ng-click="openEvent(evt)"></ng-md-icon>
+                    </div>
+
+                    <!--<input id="{{evt.resource.id}}" ng-checked="evt.completion && !evt.updating" type="checkbox" class="md" ng-class="{ 'updating': evt.updating }"/>
                     <label for="{{evt.resource.id}}" ng-click="toggleComplete(evt)"><span>{{evt.fmtTime}}</span>&nbsp;<span ng-bind="evt.subject.summary"></span></label>
-                    <br/>
+                    <br/>-->
                     <span ng-bind="evt.resource.summary"></span>
                 </div>
             </div>

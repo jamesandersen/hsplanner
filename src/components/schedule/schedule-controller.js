@@ -3,8 +3,8 @@
 
 export default (function () {
     'use strict';
-    return ['$scope', '$log', '$q', '$timeout', '$location', '$modal', 'ScheduleModel', 'Profile', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
-        function ($scope, $log, $q, $timeout, $location, $modal, ScheduleModel, Profile, Util, MathUtil, auth, calendars) {
+    return ['$scope', '$log', '$q', '$timeout', '$location', '$mdDialog', 'ScheduleModel', 'Profile', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+        function ($scope, $log, $q, $timeout, $location, $mdDialog, ScheduleModel, Profile, Util, MathUtil, auth, calendars) {
             // reasonable defaults
             var lastMinTime = 480, // 8am
                 lastMaxTime = 1020; // 5pm

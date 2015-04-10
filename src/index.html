@@ -3,6 +3,7 @@
 
 <head>
     <title>Home School Planner</title>
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
     <link rel="stylesheet" href="styles.css" />
     <base href="https://localhost:9001/" />
     <meta name="google-signin-clientid" content="<!-- @secret client_id -->" />
@@ -12,14 +13,17 @@
 </head>
 
 <body>
-    <header ng-controller="HeaderCtrl" class="bg-primary">
-        <span id="app-name">Home School Planner</span>
-        <div ng-if="signed_in" class="header-right pull-right">
-            <img class="profile-img" ng-src="{{profileImgSrc}}"/>
-            <span ng-bind="profile.displayName"></span>
+    <header ng-controller="HeaderCtrl" class="bg-primary" layout="row">
+        <span id="app-name" flex="50">Home School Planner</span>
+        <div flex="50" layout="row" layout-align="end center">
+            <div ng-if="signed_in" class="header-right pull-right" layout="row" layout-align="end center">
+                <img class="profile-img" ng-src="{{profileImgSrc}}"/>
+                <span ng-bind="profile.displayName"></span>
 
-            <a href="" ng-click="logout()"><i class="fa fa-sign-out fa-2x"></i></a>
+                <a href="" ng-click="logout()"><i class="fa fa-sign-out fa-2x"></i></a>
+            </div>
         </div>
+
     </header>
 
     <div ng-view></div>

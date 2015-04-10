@@ -3,8 +3,8 @@
 
 export default (function () {
     'use strict';
-    return ['$scope', '$location', '$q', '$modal', 'ScheduleModel', 'UserData', 'hsCalendarService', 'Util',
-        function ($scope, $location, $q, $modal, ScheduleModel, UserData, calendars, Util) {
+    return ['$scope', '$location', '$q', '$mdDialog', 'ScheduleModel', 'hsAuthService', 'hsCalendarService', 'Util',
+        function ($scope, $location, $q, $mdDialog, ScheduleModel, hsAuthService, calendars, Util) {
             var patch = {
                     extendedProperties: {
                         private: {}
@@ -15,7 +15,8 @@ export default (function () {
                 // instead of the customized instance.
                 recurringParentPatch = null,
                 patchUpdated = false,
-                recurringParentPatchUpdated = false;
+                recurringParentPatchUpdated = false,
+                UserData = hsAuthService.getUserData();
 
             function setupEvent(evtViewState) {
                 var parentEvt = calendars.getEvent(evtViewState.resource.recurringEventId),

@@ -104,6 +104,7 @@ module.exports = function (grunt) {
         },
         concurrent: {
             dev: ['dev', 'nodemon:json_server'],
+            prod: ['prod_build', 'nodemon:json_server'],
             options: {
                 logConcurrentOutput: true
             }
@@ -115,6 +116,7 @@ module.exports = function (grunt) {
 
     // Default task(s).
     grunt.registerTask('dev', ['webpack:development', 'configureRewriteRules', 'connect', 'watch']);
+    grunt.registerTask('prod_build', ['webpack:production', 'configureRewriteRules', 'connect', 'watch']);
     grunt.registerTask('default', ['concurrent:dev']);
-    grunt.registerTask('prod', ['webpack:production', 'configureRewriteRules', 'connect']);
+    grunt.registerTask('prod', ['concurrent:prod']);
 };

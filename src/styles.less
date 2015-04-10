@@ -1,6 +1,7 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,700);
-@import 'components/common/bootstrap-imports.less';
-@import 'components/common/font-awesome-imports.less';
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic);
+@import '../bower_components/angular-material/angular-material.min.css';
+//@import 'components/common/bootstrap-imports.less';
+//@import 'components/common/font-awesome-imports.less';
 
 // adding this override because webpack needs to have the absolute path to the fonts
 @fa-font-path: '../bower_components/fontawesome/fonts/';
@@ -15,6 +16,11 @@
 @brand-danger:          #d9534f;
 
 @paper-color:           #f9f9f9;
+
+@gray:                   lighten(#000, 33.5%); // #555
+@gray-dark:              lighten(#000, 20%);   // #333
+@body-bg:               #fff;
+@btn-primary-color:              #fff;
 
 html, body {
   font-family: 'Roboto', sans-serif;

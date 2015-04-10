@@ -137,6 +137,10 @@ export default (function () {
             }
 
             function afterLogin() {
+                if(access_token) {
+                    return $q.when(access_token);
+                }
+
                 return pendingGoogleAPIDeferred.promise.then(function () {
                     if (!pendingLoginDeferred) {
                         pendingLoginDeferred = $q.defer();
