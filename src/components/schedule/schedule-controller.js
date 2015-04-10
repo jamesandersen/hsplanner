@@ -9,6 +9,8 @@ export default (function () {
             var lastMinTime = 480, // 8am
                 lastMaxTime = 1020; // 5pm
 
+            this.taskMode = true;
+
             /** Determine the time range of the events and add a "non student" list  */
             function prepareEvents(eventsByStudentID) {
                 var minTime = 24 * 60 - 1,
@@ -136,6 +138,8 @@ export default (function () {
             };
 
             $scope.setActiveList = function (activeStudent) {
+                if (activeStudent && activeStudent.isTimeAxis) return;
+
                 angular.forEach($scope.studentEventLists, function (student) {
                     student.active = student === activeStudent;
                 });

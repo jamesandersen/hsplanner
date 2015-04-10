@@ -18,6 +18,8 @@
     max-width: @schedule-width;
     margin: 0 auto;
 
+
+
     &.active-student {
         .student-schedule, .student-schedule-header {
             float: none;
@@ -38,10 +40,44 @@
         }
     }
 
+  &.taskmode {
+
+    .student-schedule {
+
+      &.non-student {
+        visibility: hidden;
+      }
+
+      .inner-container {
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .event {
+        position: relative;
+        height: auto;
+        top: auto;
+        margin: 0px 0px 4px 0px;
+
+        .time {
+          display: none;
+        }
+      }
+
+
+    }
+  }
+
     #add-event {
       position: absolute;
       bottom: 10px;
       right: 10px;
+    }
+
+    #task-mode-switch {
+      position: absolute;
+      left: 10px;
+      top: 100px;
     }
 }
 
@@ -83,8 +119,8 @@
 }
 
 .student-schedule-header {
-    height: @schedule-name-height;
-    color: @btn-primary-color;
+    //height: @schedule-name-height;
+    //color: @btn-primary-color;
 
 
     div.list-summary {
@@ -93,14 +129,26 @@
         color: @gray;
     }
 
-    h3.name {
+    h3 {
+      margin: 3px 0px 0px 0px;
+      cursor: pointer;
+      &:hover {
+        color: @brand-primary;
+      }
+    }
+
+    [icon="clear"] {
+      display: none;
+    }
+
+    .name {
         .boxShadowHelper(3);
         font-size: 2.8rem;
-        height: @schedule-name-height;
+        //height: @schedule-name-height;
         background-color: @brand-secondary;
         width: 100%;
         text-align: center;
-        line-height: @schedule-name-height;
+        //line-height: @schedule-name-height;
         cursor: pointer;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -112,25 +160,25 @@
         i.fa { display: none; }
     }
 
+    &.active {
+      [icon="clear"] {
+        display: block;
+      }
+    }
+
     &.non-student {
         color: @gray-dark;
-        padding-top: 8px;
-        h3.name {
-            box-shadow: none;
-            line-height: 2rem;
-            cursor: default;
-            text-align: right;
-            background-color: transparent;
-            i[class*='fa-angle-'] {
-                display: inline;
-                cursor: pointer;
-                &:hover {
-                    color: @brand-primary;
-                }
-            }
 
-            &:hover { color: @gray; }
-        }
+      h3 {
+        margin: 0px 0px 0px 0px;
+        cursor: none;
+      }
+
+      // Not sure why this is necessary...
+      // the <ng-md-icon> encloses a 32 x 32 <svg> element but still ends up with 38px height
+      // unless explicity set
+      ng-md-icon { height: 32px; }
+
     }
 }
 
@@ -145,15 +193,14 @@
     }
 
     &.active {
-        h3.name { color: @brand-primary; }
+        .name { color: @brand-primary; }
     }
 
     .event {
         border: solid 1px #999;
         margin: 0px 3px 2px 3px;
-        padding: 2px;
         color: white;
-        background-color: #4bbaff;
+        background-color: @paper-color;
         position: absolute;
         left: 0px;
         right: 0px;
@@ -168,10 +215,67 @@
         .boxShadowHelper(1);
         &:hover {
              .boxShadowHelper(3);
-             -webkit-transform: translateY(-5px);
-             -moz-transform: translateY(-5px);
-             transform: translateY(-5px);
+             -webkit-transform: translateY(-3px);
+             -moz-transform: translateY(-3px);
+             transform: translateY(-3px);
         }
+
+        .evt-header {
+            .status-button.complete {
+                box-shadow: none;
+                background-color: transparent;
+            }
+        }
+
+        .summary {
+          color: @gray-dark;
+          padding: 4px;
+        }
+
+        .status-icon {
+
+          @keyframes rotating {
+            from {
+              transform: rotate(0deg);
+              -ms-transform: rotate(0deg);
+              -moz-transform: rotate(0deg);
+              -webkit-transform: rotate(0deg);
+              -o-transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+              -ms-transform: rotate(360deg);
+              -moz-transform: rotate(360deg);
+              -webkit-transform: rotate(360deg);
+              -o-transform: rotate(360deg);
+            }
+          }
+          @-webkit-keyframes rotating /* Safari and Chrome */ {
+            from {
+              transform: rotate(0deg);
+              -ms-transform: rotate(0deg);
+              -moz-transform: rotate(0deg);
+              -webkit-transform: rotate(0deg);
+              -o-transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+              -ms-transform: rotate(360deg);
+              -moz-transform: rotate(360deg);
+              -webkit-transform: rotate(360deg);
+              -o-transform: rotate(360deg);
+            }
+          }
+
+          &.updating {
+            -webkit-animation: rotating 2s linear infinite;
+            -moz-animation: rotating 2s linear infinite;
+            -ms-animation: rotating 2s linear infinite;
+            -o-animation: rotating 2s linear infinite;
+            animation: rotating 2s linear infinite;
+          }
+        }
+
     }
 
     &.non-student {
@@ -183,7 +287,7 @@
             background-color: transparent;
         }
 
-        .fa-cog, md-checkbox, ng-md-icon { display: none; }
+        .evt-header, ng-md-icon { display: none; }
 
         .event {
             background-color: transparent;
@@ -211,6 +315,9 @@
                 z-index: @grid-line-z-index;
             }
 
+            .summary {
+              background-color: transparent;
+            }
             input[type=checkbox].md + label:before { display: none; }
         }
     }

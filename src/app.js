@@ -14,7 +14,7 @@
             $routeProvider
                 .when('/', {
                     templateUrl: '/components/schedule/schedule.html',
-                    controller: 'ScheduleCtrl',
+                    controller: 'ScheduleCtrl as schedule',
                     resolve: {
                         token: ['hsAuthService', function (hsAuthService) {
                             return hsAuthService.afterLogin();
@@ -42,6 +42,12 @@
         function ($httpProvider) {
             $httpProvider.interceptors.push('calendarHttpInterceptor');
         }]);
+
+    app.config(["$mdThemingProvider", function($mdThemingProvider) {
+        $mdThemingProvider.theme('default')
+            .primaryPalette('pink')
+            .accentPalette('orange');
+    }]);
 
     app.run(['hsAuthService', '$location', '$log',
         function (auth, $location, $log) {
