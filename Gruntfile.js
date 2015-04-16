@@ -31,6 +31,7 @@ module.exports = function (grunt) {
         },
         connect: {
             rules: [
+                {from: '^/hsplanner/(.*)$', to: '/$1'},
                 // Internal rewrite
                 {
                     from: '^/(main|login|profile|event-detail)',

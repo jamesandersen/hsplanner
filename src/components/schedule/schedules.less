@@ -199,7 +199,6 @@
     .event {
         border: solid 1px #999;
         margin: 0px 3px 2px 3px;
-        color: white;
         background-color: @paper-color;
         position: absolute;
         left: 0px;
@@ -221,10 +220,17 @@
         }
 
         .evt-header {
+            cursor: pointer;
+            color: white;
+            .status-button { float: left; flex-basis: 40px; flex-grow: 0; flex-shrink: 0; }
+            [icon='settings'] { float: right; flex-basis: 40px;  flex-grow: 0; flex-shrink: 0; }
+
             .status-button.complete {
                 box-shadow: none;
                 background-color: transparent;
             }
+
+            .md-subhead { flex-grow: 1; }
         }
 
         .summary {
@@ -233,6 +239,9 @@
         }
 
         .status-icon {
+          display: block;
+          height: 36px;
+          width: 36px;
 
           @keyframes rotating {
             from {
@@ -315,6 +324,9 @@
                 z-index: @grid-line-z-index;
             }
 
+            md-content {
+              background-color: transparent;
+            }
             .summary {
               background-color: transparent;
             }
