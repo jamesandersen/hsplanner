@@ -1,0 +1,52 @@
+<div class="schedule" ng-class="{ 'active-student': activeStudent, 'taskmode': schedule.taskMode }" ng-init="getData()">
+    <md-switch id="task-mode-switch" ng-model="schedule.taskMode" aria-label="Task Mode">Task Mode</md-switch>
+    <md-button id="add-event" class="md-fab" aria-label="FAB">
+        <ng-md-icon icon="send" style="fill: pink" size="20"></ng-md-icon>
+    </md-button>
+    <div class="header-container">
+        <div class="student-schedule-header"
+             ng-repeat="list in studentEventLists"
+             ng-class="{ 'non-student': list.isTimeAxis, active: list.active }">
+            <div class="list-summary" ng-bind="list.summary"></div>
+            <div layout="row" layout-align="center center">
+                <ng-md-icon ng-if="list.isTimeAxis" icon="keyboard_arrow_left" ng-click="changeDay(-1);$event.stopPropagation()" flex="30" size="32"></ng-md-icon>
+                <h3 ng-class="{ 'md-display-1' : !list.isTimeAxis, 'md-headline': list.isTimeAxis }"
+                    ng-bind="list.student.name" ng-click="setActiveList(list)" flex="{{list.isTimeAxis ? 40 : 85 }}"></h3>
+                <ng-md-icon ng-if="list.isTimeAxis" icon="keyboard_arrow_right" ng-click="changeDay(1);$event.stopPropagation()" flex="30" size="32"></ng-md-icon>
+                <ng-md-icon ng-if="!list.isTimeAxis" ng-hide="list.isTimeAxis" icon="clear" ng-click="setActiveList(null);$event.stopPropagation()" flex="15"></ng-md-icon>
+            </div>
+        </div>
+    </div>
+    <div class="event-container" ng-class="{ animating: changingDay }">
+        <div class="student-schedule"
+             ng-style="{ height: scheduleTotalBlocks }"
+             ng-repeat="list in studentEventLists | hasEvents"
+             ng-class="{ 'non-student': list.isTimeAxis, active: list.active, 'schedule-forward': animateForward, 'schedule-back': !animateForward }">
+            <div class="inner-container">
+                <md-card class="event"
+                     layout="column"
+                     ng-repeat="evt in list.events"
+                     ng-style="{ height: schedule.taskMode ? 'auto' : vt.duration, top: schedule.taskMode ? 'auto' : evt.blockOffset }">
+                    <div class="evt-header"
+                        layout="row"
+                        layout-align="space-between center"
+                         ng-style="{ 'background-color': evt.subject.bgcolor }"
+                        ng-click="openEvent(evt)">
+                        <md-button class="md-mini md-icon-button status-button"
+                                   aria-label="FAB"
+                                   ng-click="toggleComplete(evt); $event.stopPropagation();"
+                                   ng-class="{complete: evt.completion }">
+                            <ng-md-icon class="status-icon" icon="{{evt.updating ? 'autorenew' : (evt.completion ? 'check_circle': 'done')}}"
+                                        ng-class="{ 'updating': evt.updating }"
+                                        style="fill: white" size="36"></ng-md-icon>
+                        </md-button>
+                        <h3 class="md-subhead"><span class="time">{{evt.fmtTime}}</span>&nbsp;<span ng-bind="evt.subject.summary"></span></h3>
+                    </div>
+                    <md-card-content layout-padding>
+                        <p class="summary" ng-bind="evt.resource.summary"></p>
+                    </md-card-content>
+                </md-card>
+            </div>
+        </div>
+    </div>
+</div>
