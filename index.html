@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" ng-app="hsp">
+
+<head>
+    <title>Home School Planner</title>
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link rel="stylesheet" href="styles.css" />
+    <base href="https://localhost:9001/" />
+    <meta name="google-signin-clientid" content="653295052579-6017j2a7ine0cn35dpinu9j5uv0mftk3.apps.googleusercontent.com" />
+    <meta name="google-signin-cookiepolicy" content="single_host_origin" />
+    <meta name="google-signin-callback" content="onAuthResult" />
+    <meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar" />
+</head>
+
+<body>
+    <header ng-controller="HeaderCtrl" class="bg-primary" layout="row">
+        <span id="app-name" flex="50">Home School Planner</span>
+        <div flex="50" layout="row" layout-align="end center">
+            <div ng-if="signed_in" class="header-right pull-right" layout="row" layout-align="end center">
+                <img class="profile-img" ng-src="{{profileImgSrc}}"/>
+                <span ng-bind="profile.displayName"></span>
+
+                <a href="" ng-click="logout()"><i class="fa fa-sign-out fa-2x"></i></a>
+            </div>
+        </div>
+
+    </header>
+
+    <div ng-view></div>
+
+    <script src="libs.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
