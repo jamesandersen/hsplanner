@@ -1,10 +1,10 @@
-webpackJsonp([2],[
+webpackJsonp([1],[
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	__webpack_require__(11);
 	__webpack_require__(8);
-	__webpack_require__(9);
-	module.exports = __webpack_require__(11);
+	module.exports = __webpack_require__(10);
 
 
 /***/ },
@@ -16,12 +16,6 @@ webpackJsonp([2],[
 /* 6 */,
 /* 7 */,
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "index.html"
-
-/***/ },
-/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -122,14 +116,14 @@ webpackJsonp([2],[
 	})();
 
 /***/ },
-/* 10 */,
-/* 11 */
+/* 9 */,
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(angular) {/*** IMPORTS FROM imports-loader ***/
-	var common = __webpack_require__(17);
-	var auth = __webpack_require__(18);
-	var schedule = __webpack_require__(19);
+	var common = __webpack_require__(16);
+	var auth = __webpack_require__(17);
+	var schedule = __webpack_require__(18);
 	
 	"use strict";
 	
@@ -192,12 +186,17 @@ webpackJsonp([2],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
 
 /***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "index.html"
+
+/***/ },
 /* 12 */,
 /* 13 */,
 /* 14 */,
 /* 15 */,
-/* 16 */,
-/* 17 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(angular) {"use strict";
@@ -210,12 +209,12 @@ webpackJsonp([2],[
 	
 	angular.module("hsp.common", []);
 	
-	angular.module("hsp.common").constant("MathUtil", __webpack_require__(31));
-	angular.module("hsp.common").constant("Util", __webpack_require__(32));
+	angular.module("hsp.common").constant("MathUtil", __webpack_require__(41));
+	angular.module("hsp.common").constant("Util", __webpack_require__(42));
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(angular) {"use strict";
@@ -223,7 +222,7 @@ webpackJsonp([2],[
 	/*global angular: false */
 	
 	// require all .js files in the directory unless they end with _test.js
-	__webpack_require__(29);
+	__webpack_require__(27);
 	
 	var authModule = angular.module("hsp.auth", ["ngResource"]);
 	
@@ -231,15 +230,15 @@ webpackJsonp([2],[
 	    AUTHENTICATION_CHANGE: "AUTHENTICATION_CHANGE"
 	});
 	
-	angular.module("hsp.auth").factory("hsAuthService", __webpack_require__(33));
-	angular.module("hsp.auth").controller("HeaderCtrl", __webpack_require__(34));
-	angular.module("hsp.auth").controller("LoginCtrl", __webpack_require__(35));
-	angular.module("hsp.auth").controller("ProfileCtrl", __webpack_require__(36));
-	angular.module("hsp.auth").factory("Profile", __webpack_require__(37));
+	angular.module("hsp.auth").factory("hsAuthService", __webpack_require__(31));
+	angular.module("hsp.auth").controller("HeaderCtrl", __webpack_require__(32));
+	angular.module("hsp.auth").controller("LoginCtrl", __webpack_require__(33));
+	angular.module("hsp.auth").controller("ProfileCtrl", __webpack_require__(34));
+	angular.module("hsp.auth").factory("Profile", __webpack_require__(35));
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(angular) {"use strict";
@@ -250,22 +249,23 @@ webpackJsonp([2],[
 	
 	// require all .js files in the directory unless they end with _test.js
 	//require.context(".", false, /^(.(?!_test))+?\.(js|html)$/);
-	__webpack_require__(30);
+	__webpack_require__(28);
 	
-	var gcs = _interopRequireWildcard(__webpack_require__(38));
+	var gcs = _interopRequireWildcard(__webpack_require__(36));
 	
 	angular.module("hsp.schedule", ["hsp.auth"]);
 	
-	angular.module("hsp.schedule").controller("EventDetailCtrl", __webpack_require__(39));
+	angular.module("hsp.schedule").controller("EventDetailCtrl", __webpack_require__(37));
 	angular.module("hsp.schedule").constant("CALENDAR_BASE_URI", gcs.BASE_URI);
 	angular.module("hsp.schedule").factory("hsCalendarService", gcs.hsCalendarService);
 	angular.module("hsp.schedule").factory("calendarHttpInterceptor", gcs.calendarHttpInterceptor);
-	angular.module("hsp.schedule").filter("hasEvents", __webpack_require__(40));
-	angular.module("hsp.schedule").controller("ScheduleCtrl", __webpack_require__(41));
-	angular.module("hsp.schedule").factory("ScheduleModel", __webpack_require__(42));
+	angular.module("hsp.schedule").filter("hasEvents", __webpack_require__(38));
+	angular.module("hsp.schedule").controller("ScheduleCtrl", __webpack_require__(39));
+	angular.module("hsp.schedule").factory("ScheduleModel", __webpack_require__(40));
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
 
 /***/ },
+/* 19 */,
 /* 20 */,
 /* 21 */,
 /* 22 */,
@@ -273,14 +273,12 @@ webpackJsonp([2],[
 /* 24 */,
 /* 25 */,
 /* 26 */,
-/* 27 */,
-/* 28 */,
-/* 29 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./login.html": 46,
-		"./profile.html": 47
+		"./login.html": 43,
+		"./profile.html": 44
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -293,16 +291,16 @@ webpackJsonp([2],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 29;
+	webpackContext.id = 27;
 
 
 /***/ },
-/* 30 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./event-detail.html": 48,
-		"./schedule.html": 49
+		"./event-detail.html": 45,
+		"./schedule.html": 46
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -315,77 +313,13 @@ webpackJsonp([2],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 30;
+	webpackContext.id = 28;
 
 
 /***/ },
+/* 29 */,
+/* 30 */,
 /* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	module.exports = {
-	    ceiling: function ceiling(num, increment) {
-	        return Math.ceil(num / increment) * increment;
-	    },
-	    floor: function floor(num, increment) {
-	        return Math.floor(num / increment) * increment;
-	    }
-	};
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(angular) {"use strict";
-	
-	/*global angular: false */
-	/*jslint plusplus: true */
-	
-	module.exports = (function () {
-	    "use strict";
-	
-	    return {
-	        safeRead: function safeRead(target, propertyPath) {
-	            var path = propertyPath.split("."),
-	                obj = target,
-	                i = 0;
-	
-	            for (i = 0; i < path.length; i++) {
-	                if (angular.isUndefined(obj) || obj === null || !obj.hasOwnProperty(path[i])) {
-	                    return undefined;
-	                }
-	                obj = obj[path[i]];
-	            }
-	            return obj;
-	        },
-	        safeSet: function safeSet(target, propertyPath, propertyValue) {
-	            if (angular.isObject(target)) {
-	                var path = propertyPath.split("."),
-	                    context = target,
-	                    i = 0;
-	                for (i = 0; i < path.length; i++) {
-	                    if (i < path.length - 1) {
-	                        if (angular.isUndefined(context[path[i]])) {
-	                            context[path[i]] = {};
-	                        } else if (!angular.isObject(context[path[i]])) {
-	                            throw "Cannot set on non-object path segment: " + path[i];
-	                        }
-	                    } else {
-	                        context[path[i]] = propertyValue;
-	                        return;
-	                    }
-	
-	                    context = context[path[i]];
-	                }
-	            }
-	        }
-	    };
-	})();
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
-
-/***/ },
-/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -578,7 +512,7 @@ webpackJsonp([2],[
 	})();
 
 /***/ },
-/* 34 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -602,7 +536,7 @@ webpackJsonp([2],[
 	})();
 
 /***/ },
-/* 35 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -634,7 +568,7 @@ webpackJsonp([2],[
 	})();
 
 /***/ },
-/* 36 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -652,7 +586,7 @@ webpackJsonp([2],[
 	})();
 
 /***/ },
-/* 37 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -680,7 +614,7 @@ webpackJsonp([2],[
 	})();
 
 /***/ },
-/* 38 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(moment, angular) {"use strict";
@@ -872,10 +806,10 @@ webpackJsonp([2],[
 
 	// called asynchronously if an error occurs
 	// or server returns response with an error status.
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10), __webpack_require__(14)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(14)))
 
 /***/ },
-/* 39 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(angular) {"use strict";
@@ -972,7 +906,7 @@ webpackJsonp([2],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
 
 /***/ },
-/* 40 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -989,7 +923,7 @@ webpackJsonp([2],[
 	};
 
 /***/ },
-/* 41 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(moment, angular) {"use strict";
@@ -1158,10 +1092,10 @@ webpackJsonp([2],[
 	        $scope.toggleComplete = ScheduleModel.toggleCompletion;
 	    }];
 	})();
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10), __webpack_require__(14)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(14)))
 
 /***/ },
-/* 42 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(moment, angular) {"use strict";
@@ -1312,31 +1246,94 @@ webpackJsonp([2],[
 	        };
 	    }];
 	})();
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10), __webpack_require__(14)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(14)))
 
 /***/ },
-/* 43 */,
-/* 44 */,
-/* 45 */,
-/* 46 */
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	module.exports = {
+	    ceiling: function ceiling(num, increment) {
+	        return Math.ceil(num / increment) * increment;
+	    },
+	    floor: function floor(num, increment) {
+	        return Math.floor(num / increment) * increment;
+	    }
+	};
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(angular) {"use strict";
+	
+	/*global angular: false */
+	/*jslint plusplus: true */
+	
+	module.exports = (function () {
+	    "use strict";
+	
+	    return {
+	        safeRead: function safeRead(target, propertyPath) {
+	            var path = propertyPath.split("."),
+	                obj = target,
+	                i = 0;
+	
+	            for (i = 0; i < path.length; i++) {
+	                if (angular.isUndefined(obj) || obj === null || !obj.hasOwnProperty(path[i])) {
+	                    return undefined;
+	                }
+	                obj = obj[path[i]];
+	            }
+	            return obj;
+	        },
+	        safeSet: function safeSet(target, propertyPath, propertyValue) {
+	            if (angular.isObject(target)) {
+	                var path = propertyPath.split("."),
+	                    context = target,
+	                    i = 0;
+	                for (i = 0; i < path.length; i++) {
+	                    if (i < path.length - 1) {
+	                        if (angular.isUndefined(context[path[i]])) {
+	                            context[path[i]] = {};
+	                        } else if (!angular.isObject(context[path[i]])) {
+	                            throw "Cannot set on non-object path segment: " + path[i];
+	                        }
+	                    } else {
+	                        context[path[i]] = propertyValue;
+	                        return;
+	                    }
+	
+	                    context = context[path[i]];
+	                }
+	            }
+	        }
+	    };
+	})();
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
+
+/***/ },
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "components/auth/login.html"
 
 /***/ },
-/* 47 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "components/auth/profile.html"
 
 /***/ },
-/* 48 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "components/schedule/event-detail.html"
 
 /***/ },
-/* 49 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "components/schedule/schedule.html"
