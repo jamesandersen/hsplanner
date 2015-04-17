@@ -146,7 +146,7 @@ webpackJsonp([2],[
 	        $locationProvider.html5Mode(true);
 	
 	        $routeProvider.when("/", {
-	            templateUrl: "/components/schedule/schedule.html",
+	            templateUrl: "components/schedule/schedule.html",
 	            controller: "ScheduleCtrl as schedule",
 	            resolve: {
 	                token: ["hsAuthService", function (hsAuthService) {
@@ -154,13 +154,13 @@ webpackJsonp([2],[
 	                }]
 	            }
 	        }).when("/profile", {
-	            templateUrl: "/components/auth/profile.html",
+	            templateUrl: "components/auth/profile.html",
 	            controller: "ProfileCtrl"
 	        }).when("/event-detail", {
-	            templateUrl: "/components/schedule/event-detail.html",
+	            templateUrl: "components/schedule/event-detail.html",
 	            controller: "EventDetailCtrl"
 	        }).when("/login", {
-	            templateUrl: "/components/auth/login.html",
+	            templateUrl: "components/auth/login.html",
 	            controller: "LoginCtrl"
 	        }).otherwise({
 	            redirectTo: "/"
