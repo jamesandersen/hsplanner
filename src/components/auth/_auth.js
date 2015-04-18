@@ -3,7 +3,7 @@
 // require all .js files in the directory unless they end with _test.js
 require.context(".", false, /^(.(?!_test))+?\.(html)$/);
 
-var authModule = angular.module('hsp.auth', ['ngResource']);
+var authModule = angular.module('hsp.auth', ['ngResource', 'ngMaterial']);
 
 angular.module('hsp.auth').constant('authEvents', {
     AUTHENTICATION_CHANGE: 'AUTHENTICATION_CHANGE'

@@ -38,8 +38,12 @@ export default (function () {
                     var list = lists.find(function (evtList, idx) { return evtList.student.id === studentId; });
                     if (!list) {
                         // we don't have an event list created for this student yet
+                        var userData = auth.getUserData(),
+                            student = userData.students
+                                ? userData.students.find(function (stdnt) { return stdnt.id === studentId; })
+                                : userData;
                         lists.push({
-                            student: auth.getUserData().students.find(function (stdnt) { return stdnt.id === studentId; }),
+                            student: student,
                             events: []
                         });
                     }
@@ -129,11 +133,14 @@ export default (function () {
                 }, 0, true);
             };
 
-            $scope.getData = function () {
-                ScheduleModel.fetchStudentEvents().then(prepareEvents).then(function (updatedLists) {
-                    $scope.studentEventLists = updatedLists;
-                }, function (error) {
-                    $log.error(error);
+            $scope.getData = function ()
+            {
+                auth.afterLogin().then(function(access_token) {
+                    ScheduleModel.fetchStudentEvents().then(prepareEvents).then(function (updatedLists) {
+                        $scope.studentEventLists = updatedLists;
+                    }, function (error) {
+                        $log.error(error);
+                    });
                 });
             };
 
