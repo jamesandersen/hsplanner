@@ -54,11 +54,11 @@ export default (function () {
             };
 
             $scope.onSummaryChange = function () {
-                setProperty('summary', $scope.evt.summary);
+                setProperty('summary', $scope.evt.resource.summary);
             };
 
             $scope.onDescriptionChange = function () {
-                setProperty('description', $scope.evt.description);
+                setProperty('description', $scope.evt.resource.description);
             };
 
             $scope.toggleCompletion = ScheduleModel.toggleCompletion.apply(null, [$scope.evt]);
