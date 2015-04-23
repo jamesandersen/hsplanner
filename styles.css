@@ -7046,6 +7046,10 @@ input[type=checkbox].md.updating + label:before {
 }
 .student-schedule-header.active [icon="clear"] {
   display: block;
+  float: right;
+  flex-basis: 30px;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 .student-schedule-header.non-student {
   color: #333333;
