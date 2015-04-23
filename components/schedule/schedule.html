@@ -8,12 +8,12 @@
              ng-repeat="list in studentEventLists"
              ng-class="{ 'non-student': list.isTimeAxis, active: list.active }">
             <div class="list-summary" ng-bind="list.summary"></div>
-            <div layout="row" layout-align="center center">
+            <div layout="row" layout-align="space-between center">
                 <ng-md-icon ng-if="list.isTimeAxis" icon="keyboard_arrow_left" ng-click="changeDay(-1);$event.stopPropagation()" flex="30" size="32"></ng-md-icon>
                 <h3 ng-class="{ 'md-display-1' : !list.isTimeAxis, 'md-headline': list.isTimeAxis }"
                     ng-bind="list.student.name" ng-click="setActiveList(list)" flex="{{list.isTimeAxis ? 40 : 85 }}"></h3>
                 <ng-md-icon ng-if="list.isTimeAxis" icon="keyboard_arrow_right" ng-click="changeDay(1);$event.stopPropagation()" flex="30" size="32"></ng-md-icon>
-                <ng-md-icon ng-if="!list.isTimeAxis" ng-hide="list.isTimeAxis" icon="clear" ng-click="setActiveList(null);$event.stopPropagation()" flex="15"></ng-md-icon>
+                <ng-md-icon ng-if="!list.isTimeAxis" ng-hide="list.isTimeAxis" icon="clear" ng-click="setActiveList(null);$event.stopPropagation()"></ng-md-icon>
             </div>
         </div>
     </div>
@@ -44,6 +44,7 @@
                     </div>
                     <md-card-content layout-padding>
                         <p class="summary" ng-bind="evt.resource.summary"></p>
+                        <p class="summary" ng-bind="evt.resource.description"></p>
                     </md-card-content>
                 </md-card>
             </div>

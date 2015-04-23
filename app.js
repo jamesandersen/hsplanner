@@ -1003,11 +1003,11 @@ webpackJsonp([2],[
 	        };
 	
 	        $scope.onSummaryChange = function () {
-	            setProperty("summary", $scope.evt.summary);
+	            setProperty("summary", $scope.evt.resource.summary);
 	        };
 	
 	        $scope.onDescriptionChange = function () {
-	            setProperty("description", $scope.evt.description);
+	            setProperty("description", $scope.evt.resource.description);
 	        };
 	
 	        $scope.toggleCompletion = ScheduleModel.toggleCompletion.apply(null, [$scope.evt]);
@@ -1207,6 +1207,10 @@ webpackJsonp([2],[
 	            auth.afterLogin().then(function (access_token) {
 	                ScheduleModel.fetchStudentEvents().then(prepareEvents).then(function (updatedLists) {
 	                    $scope.studentEventLists = updatedLists;
+	                    if (updatedLists.length == 2) {
+	                        $scope.activeStudent = updatedLists[1];
+	                        $scope.activeStudent.active = true;
+	                    }
 	                }, function (error) {
 	                    $log.error(error);
 	                });
