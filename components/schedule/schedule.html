@@ -1,5 +1,4 @@
-<div class="schedule" ng-class="{ 'active-student': activeStudent, 'taskmode': schedule.taskMode }" ng-init="getData()">
-    <md-switch id="task-mode-switch" ng-model="schedule.taskMode" aria-label="Task Mode">Task Mode</md-switch>
+<div class="schedule" layout="column" ng-class="{ 'active-student': activeStudent, 'taskmode': schedule.taskMode }" ng-init="getData()">
     <md-button id="add-event" class="md-fab" aria-label="FAB">
         <ng-md-icon icon="send" style="fill: pink" size="20"></ng-md-icon>
     </md-button>
@@ -11,15 +10,15 @@
             <div layout="row" layout-align="space-between center">
                 <ng-md-icon ng-if="list.isTimeAxis" icon="keyboard_arrow_left" ng-click="changeDay(-1);$event.stopPropagation()" flex="30" size="32"></ng-md-icon>
                 <h3 ng-class="{ 'md-display-1' : !list.isTimeAxis, 'md-headline': list.isTimeAxis }"
-                    ng-bind="list.student.name" ng-click="setActiveList(list)" flex="{{list.isTimeAxis ? 40 : 85 }}"></h3>
+                    ng-bind="list.student.name" ng-click="setActiveList(list)" flex="{{list.isTimeAxis ? 40 : 1 }}"></h3>
                 <ng-md-icon ng-if="list.isTimeAxis" icon="keyboard_arrow_right" ng-click="changeDay(1);$event.stopPropagation()" flex="30" size="32"></ng-md-icon>
                 <ng-md-icon ng-if="!list.isTimeAxis" ng-hide="list.isTimeAxis" icon="clear" ng-click="setActiveList(null);$event.stopPropagation()"></ng-md-icon>
             </div>
         </div>
     </div>
-    <div class="event-container" ng-class="{ animating: changingDay }">
+    <div class="event-container" ng-class="{ animating: changingDay }" flex>
         <div class="student-schedule"
-             ng-style="{ height: scheduleTotalBlocks }"
+             ng-style="{ height: schedule.taskMode && list.isTimeAxis ? '10px' : (schedule.taskMode ? 'auto' : scheduleTotalBlocks) }"
              ng-repeat="list in studentEventLists | hasEvents"
              ng-class="{ 'non-student': list.isTimeAxis, active: list.active, 'schedule-forward': animateForward, 'schedule-back': !animateForward }">
             <div class="inner-container">

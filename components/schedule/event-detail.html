@@ -1,39 +1,38 @@
 <md-card>
     <md-card-content>
         <h3 class="modal-title" ng-bind="evt.resource.summary"></h3>
-            <form name="evtForm">
-                <div layout="row">
-                    <md-select name="subject"
-                               placeholder="-- Choose Subject --"
-                               class="form-control"
-                               ng-model="evt.subject"
-                               ng-change="onSubjectChange()"
-                               flex="20">
-                        <md-option ng-value="subject" ng-repeat="subject in subjects">{{subject.summary}}</md-option>
-                    </md-select>
-                    <md-input-container flex="80">
-                        <label for="subject">Summary</label>
-                        <input type="text" name="description"
-                          class="form-control"
-                          ng-model="evt.resource.summary"
-                          ng-change="onSummaryChange()"
-                          ng-disabled="!evt.resource.recurringEventId"/>
-                    </md-input-container>
-                </div>
-                <md-input-container>
-                    <label>Description</label>
-                    <textarea name="description"
-                              class="form-control"
-                              ng-model="evt.resource.description"
-                              ng-change="onDescriptionChange()"
-                              ng-disabled="!evt.resource.recurringEventId">
-                    </textarea>
+        <form name="evtForm">
+            <div layout="row">
+                <md-select name="subject"
+                           placeholder="-- Choose Subject --"
+                           class="form-control"
+                           ng-model="evt.subject"
+                           ng-change="onSubjectChange()"
+                           flex="20">
+                    <md-option ng-value="subject" ng-repeat="subject in subjects">{{subject.summary}}</md-option>
+                </md-select>
+                <md-input-container flex="80">
+                    <label for="subject">Summary</label>
+                    <input type="text" name="description"
+                      class="form-control"
+                      ng-model="evt.resource.summary"
+                      ng-change="onSummaryChange()"
+                      ng-disabled="!evt.resource.recurringEventId"/>
                 </md-input-container>
-
-                <input type="checkbox" ng-checked="evt.resource.extendedProperties.private.completion"/>
-                <button ng-click="toggleCompletion()">Toggle Complete</button>
-            </form>
-
+            </div>
+            <md-input-container>
+                <label>Description</label>
+                <textarea name="description"
+                          class="form-control"
+                          ng-model="evt.resource.description"
+                          ng-change="onDescriptionChange()"
+                          ng-disabled="!evt.resource.recurringEventId">
+                </textarea>
+            </md-input-container>
+            <md-checkbox ng-model="evt.resource.extendedProperties.private.completion" ng-change="toggleCompletion()">
+                Complete
+            </md-checkbox>
+        </form>
     </md-card-content>
     <md-divider></md-divider>
     <md-card-footer layout="row" layout-align="end center">
