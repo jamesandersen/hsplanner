@@ -16,7 +16,17 @@ export default (function () {
                 recurringParentPatch = null,
                 patchUpdated = false,
                 recurringParentPatchUpdated = false,
-                UserData = hsAuthService.getUserData();
+                UserData;
+
+            hsAuthService.afterLogin().then(function() {
+                UserData = hsAuthService.getUserData()
+                $scope.subjects = UserData.subjects;
+                $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
+                // create a patch object for the parent recurring event if applicable
+                if ($scope.evt.recurringEventId) {
+                    recurringParentPatch = angular.copy(patch);
+                }
+            });
 
             function setupEvent(evtViewState) {
                 var parentEvt = calendars.getEvent(evtViewState.resource.recurringEventId),
@@ -39,14 +49,6 @@ export default (function () {
                     Util.safeSet(patch, propertyName, propertyValue);
                     patchUpdated = true;
                 }
-            }
-
-            $scope.subjects = UserData.subjects;
-            $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
-
-            // create a patch object for the parent recurring event if applicable
-            if ($scope.evt.recurringEventId) {
-                recurringParentPatch = angular.copy(patch);
             }
 
             $scope.onSubjectChange = function () {

@@ -5,26 +5,38 @@
     <title>Home School Planner</title>
     <link rel="stylesheet" href="styles.css" />
     <base href="/hsplanner/" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="google-signin-clientid" content="653295052579-6017j2a7ine0cn35dpinu9j5uv0mftk3.apps.googleusercontent.com" />
     <meta name="google-signin-cookiepolicy" content="single_host_origin" />
     <meta name="google-signin-callback" content="onAuthResult" />
     <meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar" />
 </head>
 
-<body>
-    <header ng-controller="HeaderCtrl" class="bg-primary" layout="row">
-        <span id="app-name" flex="50">Home School Planner</span>
-        <div flex="50" layout="row" layout-align="end center">
-            <div ng-if="signed_in" class="header-right pull-right" layout="row" layout-align="end center">
-                <img class="profile-img" ng-src="{{profileImgSrc}}"/>
-                <span ng-bind="profile.displayName"></span>
-                <ng-md-icon icon="clear" ng-click="logout()"></ng-md-icon>
-            </div>
+<body layout="column" flex>
+    <div layout="row" class="main-content" flex>
+        <md-sidenav md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" class="md-sidenav-left" flex>
+            <header class="bg-primary" layout="row">
+                <span flex hide show-gt-md>Home School Planner</span>
+            </header>
+            <md-switch id="task-mode-switch" ng-model="schedule.taskMode" aria-label="Task Mode">Task Mode</md-switch>
+        </md-sidenav>
+        <div layout="column" flex>
+            <header ng-controller="HeaderCtrl" class="bg-primary" layout="row">
+                <div flex="66" layout="row" layout-align="start center" hide-gt-md>
+                    <ng-md-icon icon="menu" ng-click="toggleNav()"></ng-md-icon>
+                    <span id="app-name" flex>Home School Planner</span>
+                </div>
+                <div flex="33" layout="row" layout-align="end center">
+                    <div ng-if="signed_in" class="header-right pull-right" layout="row" layout-align="end center">
+                        <img class="profile-img" ng-src="{{profileImgSrc}}"/>
+                        <span ng-bind="profile.displayName" hide-sm></span>
+                        <ng-md-icon icon="clear" ng-click="logout()"></ng-md-icon>
+                    </div>
+                </div>
+            </header>
+            <div ng-view flex></div>
         </div>
-
-    </header>
-
-    <div ng-view></div>
+    </div>
 
     <script src="libs.js"></script>
     <script src="app.js"></script>

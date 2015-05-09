@@ -628,7 +628,7 @@ webpackJsonp([2],[
 	
 	module.exports = (function () {
 	    "use strict";
-	    return ["$scope", "$log", "hsAuthService", "authEvents", function ($scope, $log, auth, authEvents) {
+	    return ["$scope", "$log", "$mdSidenav", "hsAuthService", "authEvents", function ($scope, $log, $mdSidenav, auth, authEvents) {
 	
 	        $scope.signed_in = false;
 	        $scope.$on(authEvents.AUTHENTICATION_CHANGE, function (event, signed_in) {
@@ -638,6 +638,10 @@ webpackJsonp([2],[
 	        });
 	
 	        $scope.logout = auth.logout;
+	
+	        $scope.toggleNav = function () {
+	            $mdSidenav("left").toggle();
+	        };
 	    }];
 	})();
 
@@ -966,7 +970,17 @@ webpackJsonp([2],[
 	        recurringParentPatch = null,
 	            patchUpdated = false,
 	            recurringParentPatchUpdated = false,
+	            UserData;
+	
+	        hsAuthService.afterLogin().then(function () {
 	            UserData = hsAuthService.getUserData();
+	            $scope.subjects = UserData.subjects;
+	            $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
+	            // create a patch object for the parent recurring event if applicable
+	            if ($scope.evt.recurringEventId) {
+	                recurringParentPatch = angular.copy(patch);
+	            }
+	        });
 	
 	        function setupEvent(evtViewState) {
 	            var parentEvt = calendars.getEvent(evtViewState.resource.recurringEventId),
@@ -988,14 +1002,6 @@ webpackJsonp([2],[
 	                Util.safeSet(patch, propertyName, propertyValue);
 	                patchUpdated = true;
 	            }
-	        }
-	
-	        $scope.subjects = UserData.subjects;
-	        $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
-	
-	        // create a patch object for the parent recurring event if applicable
-	        if ($scope.evt.recurringEventId) {
-	            recurringParentPatch = angular.copy(patch);
 	        }
 	
 	        $scope.onSubjectChange = function () {
@@ -1305,7 +1311,9 @@ webpackJsonp([2],[
 	        }
 	
 	        function toggleCompletion(evtViewState) {
-	            return patchEvent(evtViewState, {
+	            if (!evtViewState) {
+	                return;
+	            }return patchEvent(evtViewState, {
 	                extendedProperties: {
 	                    "private": {
 	                        completion: !Util.safeRead(evtViewState.resource, "extendedProperties.private.completion") ? moment().format() : null

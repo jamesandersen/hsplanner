@@ -2,8 +2,8 @@
 /*global angular: false, moment: false */
 export default (function () {
     'use strict';
-    return ['$scope', '$log', 'hsAuthService', 'authEvents',
-        function ($scope, $log, auth, authEvents) {
+    return ['$scope', '$log', '$mdSidenav', 'hsAuthService', 'authEvents',
+        function ($scope, $log, $mdSidenav, auth, authEvents) {
 
             $scope.signed_in = false;
             $scope.$on(authEvents.AUTHENTICATION_CHANGE, function (event, signed_in) {
@@ -14,6 +14,9 @@ export default (function () {
 
             $scope.logout = auth.logout;
 
+            $scope.toggleNav = function() {
+                $mdSidenav('left').toggle();
+            }
 
         }];
 }());

@@ -60,6 +60,8 @@ export default (function () {
             }
 
             function toggleCompletion(evtViewState) {
+                if(!evtViewState) return;
+
                 return patchEvent(evtViewState, {
                     extendedProperties: {
                         private: {
