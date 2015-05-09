@@ -5,6 +5,7 @@
     <title>Home School Planner</title>
     <link rel="stylesheet" href="styles.css" />
     <base href="/hsplanner/" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="google-signin-clientid" content="653295052579-6017j2a7ine0cn35dpinu9j5uv0mftk3.apps.googleusercontent.com" />
     <meta name="google-signin-cookiepolicy" content="single_host_origin" />
     <meta name="google-signin-callback" content="onAuthResult" />
@@ -21,11 +22,11 @@
         </md-sidenav>
         <div layout="column" flex>
             <header ng-controller="HeaderCtrl" class="bg-primary" layout="row">
-                <div flex layout="row" layout-align="start center" hide-gt-md>
+                <div flex="66" layout="row" layout-align="start center" hide-gt-md>
                     <ng-md-icon icon="menu" ng-click="toggleNav()"></ng-md-icon>
                     <span id="app-name" flex>Home School Planner</span>
                 </div>
-                <div flex layout="row" layout-align="end center">
+                <div flex="33" layout="row" layout-align="end center">
                     <div ng-if="signed_in" class="header-right pull-right" layout="row" layout-align="end center">
                         <img class="profile-img" ng-src="{{profileImgSrc}}"/>
                         <span ng-bind="profile.displayName"></span>
