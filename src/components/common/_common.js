@@ -8,3 +8,4 @@ angular.module('hsp.common', []);
 
 angular.module('hsp.common').constant('MathUtil', require('./math-util-constant.js'));
 angular.module('hsp.common').constant('Util', require('./util-constant.js'));
+angular.module('hsp.common').constant('Events', require('./event-constant.js'));

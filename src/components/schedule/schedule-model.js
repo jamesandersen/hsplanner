@@ -43,7 +43,8 @@ export default (function () {
                     fmtTime: start.format('hh:mma'),
                     subject: getSubject(evtResource),
                     completion: Util.safeRead(evtResource, 'extendedProperties.private.completion'),
-                    resource: evtResource
+                    resource: evtResource,
+                    editable: angular.isArray(hsAuthService.getUserData().students)
                 };
             }
 
@@ -74,54 +75,6 @@ export default (function () {
 
                     evtViewState.completion = Util.safeRead(updatedEvtViewState.resource, 'extendedProperties.private.completion');
                     return evtViewState;
-                });
-            }
-
-            function fetchStudentEvents(calendarList, nextSyncToken) {
-
-                return getUserCalendars().then(function (calendarList) {
-                    var deferred = $q.defer(),
-                        eventsByStudentID = {},
-                        pendingStudents = 0;
-
-                    // loop over students to fetch events for each
-                    angular.forEach(hsAuthService.getUserData().students, function (student) {
-                        eventsByStudentID[student.id] = [];
-                        var eventListPromises = [];
-
-                        // build up a list of promises for events from the student's calendar(s)
-                        angular.forEach(student.calendarIDs, function (studentCalendarId) {
-                            var calendar = calendarList.items.find(function (cal, idx) {
-                                return cal.id === studentCalendarId;
-                            });
-                            if (calendar) {
-                                eventListPromises.push(calendars.getEventList(calendar.id, start.format(), end.format()));
-                            }
-                        });
-
-                        if (eventListPromises.length) {
-                            // fetch the events for the student's calendar(s)
-                            pendingStudents++;
-                            $q.all(eventListPromises).then(function (resultsArray) {
-                                deferred.notify(student.name + ' data retrieved');
-                                pendingStudents--;
-                                angular.forEach(resultsArray, function (eventListResult) {
-                                    angular.forEach(eventListResult.items, function (evtResource) {
-
-                                        eventsByStudentID[student.id].push(buildEventViewState(evtResource));
-                                    });
-                                });
-
-                                if (pendingStudents === 0) {
-                                    // we've now retrieved data from all students
-                                    deferred.resolve(eventsByStudentID);
-                                }
-                            }, function (rejections) {
-                                deferred.reject('Error fetching events for ' + student.name + ': ' + rejections);
-                            });
-                        }
-                    });
-                    return deferred.promise;
                 });
             }
 

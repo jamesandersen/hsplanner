@@ -1,3 +1,7 @@
+@breakpoint-sm: 600px;
+@breakpoint-md: 960px;
+@breakpoint-lg: 1200px;
+
 @header-height: 44px;
 
 html {
@@ -50,11 +54,18 @@ html {
   }
 }
 
-html, body, div[ng-view], .main-content {
+html, body, div[ng-view], .main-content, .center {
     height: 100%;
 }
 
 body { background-color: lighten(#000, 90.7%); }
+
+md-sidenav {
+  header {
+    background-color: @brand-primary;
+  }
+  background-color: lighten(@brand-primary, 30%);
+}
 
 .main-content, [md-sidenav] { //div[ng-view] {
     box-sizing: border-box;
@@ -68,6 +79,12 @@ header {
     height: @header-height;
     line-height: @header-height;
     box-shadow: 0px 0px 5px 2px @gray;
+
+    [icon^='keyboard_arrow_'] > svg {
+        vertical-align: middle;
+    }
+
+    .current-date { font-size: 1.4rem }
 
     [icon='menu'] {
       line-height: normal;
@@ -85,7 +102,50 @@ header {
     }
 }
 
-#app-name {
-    font-size: 1.4rem;
+.app-name {
+    font-size: 1.2rem;
     padding: 0 10px;
 }
+
+/*
+@media screen and (max-width: @breakpoint-md) {
+  .header-container, .event-container, .schedule {
+    width: 100%;
+  }
+
+  .schedule {
+
+    .student-schedule, .event-container, .student-schedule-header.non-student{
+      display: none;
+    }
+
+    .student-schedule-header:not(.non-student) {
+      width: 100%;
+      margin: 0;
+      padding: 0 @student-schedule-margin 0 @student-schedule-margin;
+    }
+
+    &.active-student {
+      .student-schedule.active {
+        float: none;
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      .event-container {
+        display: block;
+      }
+
+      .student-schedule:not(.active), .student-schedule-header:not(.active) {
+        display: none;
+      }
+
+      .student-schedule.active, .student-schedule-header.active {
+        padding-left: @student-schedule-margin;
+        padding-right: @student-schedule-margin;
+        margin: 0;
+      }
+    }
+  }
+}
+*/

@@ -3,8 +3,8 @@
 
 export default (function () {
     'use strict';
-    return ['$scope', '$log', '$q', '$timeout', '$location', '$mdDialog', 'ScheduleModel', 'Profile', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
-        function ($scope, $log, $q, $timeout, $location, $mdDialog, ScheduleModel, Profile, Util, MathUtil, auth, calendars) {
+    return ['$scope', '$log', '$q', '$timeout', '$location', '$mdDialog', 'Events', 'ScheduleModel', 'Profile', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+        function ($scope, $log, $q, $timeout, $location, $mdDialog, Events, ScheduleModel, Profile, Util, MathUtil, auth, calendars) {
             // reasonable defaults
             var lastMinTime = 480, // 8am
                 lastMaxTime = 1020; // 5pm
@@ -109,7 +109,8 @@ export default (function () {
             $scope.animateForward = false;
             $scope.studentEventLists = [];
 
-            $scope.changeDay = function (increment) {
+            $scope.$on(Events.CHANGE_DAY, function(event, increment) {
+                //$scope.changeDay = function (increment) {
                 ScheduleModel.changeDay(increment);
 
                 // change direction of animation
@@ -131,7 +132,7 @@ export default (function () {
                         }, Math.max(0, 500 - elapsed), true);
                     });
                 }, 0, true);
-            };
+            });
 
             $scope.getData = function ()
             {

@@ -1,3 +1,5 @@
+@import "../common/layout.less";
+
 @schedule-name-height: 55px;
 @schedule-height-gutter: 5px;
 @student-schedule-width: 250px;
@@ -11,8 +13,6 @@
 .schedule {
     position: relative;
     box-sizing: border-box;
-    margin-top: -@schedule-name-height - @schedule-height-gutter - 10px;
-    padding-top: @schedule-name-height + @schedule-height-gutter + 10px;
     padding-bottom: 10px;
     height: 100%;
     max-width: @schedule-width;
@@ -42,11 +42,14 @@
 
   &.taskmode {
 
+    .student-schedule-header.non-student { display: none; }
+
     .student-schedule {
 
       &.non-student {
-        visibility: hidden;
-        .event { display: none; }
+        display: none;
+        /* visibility: hidden;
+        .event { display: none; } */
       }
 
       .inner-container {
@@ -73,6 +76,9 @@
       position: absolute;
       bottom: 10px;
       right: 10px;
+      [icon='add'] > svg {
+        color: @btn-primary-color;
+      }
     }
 
     #task-mode-switch {
@@ -83,7 +89,6 @@
 }
 
 .header-container {
-    margin-top: -@schedule-name-height - @schedule-height-gutter;
     height: @schedule-name-height + @schedule-height-gutter;
     max-width: @schedule-width;
 }
@@ -105,9 +110,6 @@
     float: left;
     box-sizing: border-box;
     margin: 0px @student-schedule-margin 0px @student-schedule-margin;
-    //padding-right: 8px;
-    width: @student-schedule-width;
-    //border: solid 1px #BBB;
     position: relative;
 
     &.non-student {
@@ -145,11 +147,9 @@
     .name {
         .boxShadowHelper(3);
         font-size: 1.4rem;
-        //height: @schedule-name-height;
         background-color: @brand-secondary;
         width: 100%;
         text-align: center;
-        //line-height: @schedule-name-height;
         cursor: pointer;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -337,7 +337,8 @@
     }
 }
 
-@media screen and (max-width: @schedule-width) {
+/*@media screen and (max-width: @schedule-width) {*/
+@media screen and (max-width: @breakpoint-sm) {
     .header-container, .event-container, .schedule {
         width: 100%;
     }

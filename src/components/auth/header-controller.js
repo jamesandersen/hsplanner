@@ -2,9 +2,9 @@
 /*global angular: false, moment: false */
 export default (function () {
     'use strict';
-    return ['$scope', '$log', '$mdSidenav', 'hsAuthService', 'authEvents',
-        function ($scope, $log, $mdSidenav, auth, authEvents) {
-
+    return ['$scope', '$rootScope', '$log', '$mdSidenav', 'ScheduleModel', 'Events', 'hsAuthService', 'authEvents',
+        function ($scope, $rootScope, $log, $mdSidenav, ScheduleModel, Events, auth, authEvents) {
+            $scope.currentDay = ScheduleModel.getStart().format('M/D');
             $scope.signed_in = false;
             $scope.$on(authEvents.AUTHENTICATION_CHANGE, function (event, signed_in) {
                 $scope.signed_in = signed_in;
@@ -16,6 +16,11 @@ export default (function () {
 
             $scope.toggleNav = function() {
                 $mdSidenav('left').toggle();
+            }
+
+            $scope.changeDay = function (increment) {
+                $rootScope.$broadcast(Events.CHANGE_DAY, increment);
+                $scope.currentDay = ScheduleModel.getStart().format('M/D');
             }
 
         }];
