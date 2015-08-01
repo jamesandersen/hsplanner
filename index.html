@@ -16,25 +16,29 @@
     <div layout="row" class="main-content" flex>
         <md-sidenav md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" class="md-sidenav-left" flex>
             <header class="bg-primary" layout="row">
-                <span flex hide show-gt-md>Home School Planner</span>
+                <span class="app-name" flex>Home School Planner</span>
             </header>
             <md-switch id="task-mode-switch" ng-model="schedule.taskMode" aria-label="Task Mode">Task Mode</md-switch>
         </md-sidenav>
-        <div layout="column" flex>
+        <div class="center" layout="column" flex>
             <header ng-controller="HeaderCtrl" class="bg-primary" layout="row">
-                <div flex="66" layout="row" layout-align="start center" hide-gt-md>
+                <div flex="33" layout="row" layout-align="start center" hide-gt-md>
                     <ng-md-icon icon="menu" ng-click="toggleNav()"></ng-md-icon>
-                    <span id="app-name" flex>Home School Planner</span>
+                    <span class="app-name" flex>Home School Planner</span>
                 </div>
-                <div flex="33" flex-gt-md="100" layout="row" layout-align="end center">
+                <div flex="33" flex-gt-md="66" layout="row" layout-align="center center">
+                    <ng-md-icon icon="keyboard_arrow_left" ng-click="changeDay(-1);$event.stopPropagation()" size="32"></ng-md-icon>
+                    <span class="current-date" ng-bind="currentDay"></span>
+                    <ng-md-icon icon="keyboard_arrow_right" ng-click="changeDay(1);$event.stopPropagation()" size="32"></ng-md-icon>
+                </div>
+                <div flex="33" layout="row" layout-align="end center">
                     <div ng-if="signed_in" class="header-right pull-right" layout="row" layout-align="end center">
                         <img class="profile-img" ng-src="{{profileImgSrc}}"/>
-                        <span ng-bind="profile.displayName" hide-sm></span>
                         <ng-md-icon icon="clear" ng-click="logout()"></ng-md-icon>
                     </div>
                 </div>
             </header>
-            <div ng-view flex></div>
+            <div ng-view flex layout="column"></div>
         </div>
     </div>
 
