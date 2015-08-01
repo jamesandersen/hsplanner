@@ -1,26 +1,27 @@
-<div class="schedule" layout="column" ng-class="{ 'active-student': activeStudent, 'taskmode': schedule.taskMode }" ng-init="getData()">
+<div class="schedule" flex layout="column" ng-class="{ 'active-student': activeStudent, 'taskmode': schedule.taskMode }" ng-init="getData()">
     <md-button id="add-event" class="md-fab" aria-label="FAB">
-        <ng-md-icon icon="send" style="fill: pink" size="20"></ng-md-icon>
+        <ng-md-icon icon="add" size="48" style="color: white; fill:white"></ng-md-icon>
     </md-button>
-    <div class="header-container">
+    <div class="header-container" layout="row" layout-sm="column">
         <div class="student-schedule-header"
+             flex="{{list.isTimeAxis ? 10 : (list.active ? '' : 30)}}"
              ng-repeat="list in studentEventLists"
-             ng-class="{ 'non-student': list.isTimeAxis, active: list.active }">
+             ng-class="{ 'non-student': list.isTimeAxis, active: list.active, 'task-mode': schedule.taskMode }">
             <div class="list-summary" ng-bind="list.summary"></div>
             <div layout="row" layout-align="space-between center">
-                <ng-md-icon ng-if="list.isTimeAxis" icon="keyboard_arrow_left" ng-click="changeDay(-1);$event.stopPropagation()" flex="30" size="32"></ng-md-icon>
                 <h3 ng-class="{ 'md-display-1' : !list.isTimeAxis, 'md-headline': list.isTimeAxis }"
                     ng-bind="list.student.name" ng-click="setActiveList(list)" flex="{{list.isTimeAxis ? 40 : 1 }}"></h3>
-                <ng-md-icon ng-if="list.isTimeAxis" icon="keyboard_arrow_right" ng-click="changeDay(1);$event.stopPropagation()" flex="30" size="32"></ng-md-icon>
                 <ng-md-icon ng-if="!list.isTimeAxis" ng-hide="list.isTimeAxis" icon="clear" ng-click="setActiveList(null);$event.stopPropagation()"></ng-md-icon>
             </div>
         </div>
     </div>
-    <div class="event-container" ng-class="{ animating: changingDay }" flex>
+    <div class="event-container" ng-class="{ animating: changingDay }" flex layout="row">
         <div class="student-schedule"
-             ng-style="{ height: schedule.taskMode && list.isTimeAxis ? '10px' : (schedule.taskMode ? 'auto' : scheduleTotalBlocks) }"
+             flex="{{list.isTimeAxis ? 10 : (list.active ? '' : 30)}}"
+             ng-style="{ height: schedule.taskMode && list.isTimeAxis ? '10px' : (schedule.taskMode ? 'auto' : scheduleTotalBlocks),
+                            display: schedule.taskMode && list.isTimeAxis ? 'none' : 'auto' }"
              ng-repeat="list in studentEventLists | hasEvents"
-             ng-class="{ 'non-student': list.isTimeAxis, active: list.active, 'schedule-forward': animateForward, 'schedule-back': !animateForward }">
+             ng-class="{ 'non-student': list.isTimeAxis, 'task-mode': schedule.taskMode, active: list.active, 'schedule-forward': animateForward, 'schedule-back': !animateForward }">
             <div class="inner-container">
                 <md-card class="event"
                      layout="column"
