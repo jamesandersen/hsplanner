@@ -1,8 +1,8 @@
 {
-  "name": "chromeapp",
+  "name": "Home School Planner",
   "version": "0.0.1",
   "authors": [
-    "James Andersen <james.andersen@universalmind.com>"
+    "James Andersen <james@jander.me>"
   ],
   "description": "Home School Planner",
   "main": "main.js",
@@ -21,7 +21,7 @@
     "angular-touch": "~1.4.x",
     "angular-mocks": "~1.4.x",
     "angular-resource": "~1.4.x",
-    "angular-material": "0.x",
+    "angular-material": "0.9.x",
     "angular-material-icons": "~0.4.0",
     "moment": "~2.8.x"
   },

@@ -1,15 +1,76 @@
+@breakpoint-sm: 600px;
+@breakpoint-md: 960px;
+@breakpoint-lg: 1200px;
+
 @header-height: 44px;
 
-html, body, div[ng-view] {
+html {
+  font-size: 13px;
+}
+
+@media screen and (min-width: 500px){
+  html{
+    font-size: 14px;
+  }
+}
+@media screen and (min-width: 570px){
+  html{
+    font-size: 15px;
+  }
+}
+@media screen and (min-width: 620px){
+  html{
+    font-size: 16px;
+  }
+}
+@media screen and (min-width: 680px){
+  html{
+    font-size: 17px;
+  }
+}
+@media screen and (min-width: 720px){
+  html{
+    font-size: 18px;
+  }
+}
+@media screen and (min-width: 800px){
+  html{
+    font-size: 19px;
+  }
+}
+@media screen and (min-width: 860px){
+  html{
+    font-size: 20px;
+  }
+}
+@media screen and (min-width: 920px){
+  html{
+    font-size: 21px;
+  }
+}
+@media screen and (min-width: 1000px){
+  html{
+    font-size: 22px;
+  }
+}
+
+html, body, div[ng-view], .main-content, .center {
     height: 100%;
 }
 
 body { background-color: lighten(#000, 90.7%); }
 
-div[ng-view] {
+md-sidenav {
+  header {
+    background-color: @brand-primary;
+  }
+  background-color: lighten(@brand-primary, 30%);
+}
+
+.main-content, [md-sidenav] { //div[ng-view] {
     box-sizing: border-box;
-    margin-top: -@header-height;
-    padding-top: @header-height;
+    //margin-top: -@header-height;
+    //padding-top: @header-height;
 }
 
 header {
@@ -19,9 +80,20 @@ header {
     line-height: @header-height;
     box-shadow: 0px 0px 5px 2px @gray;
 
+    [icon^='keyboard_arrow_'] > svg {
+        vertical-align: middle;
+    }
+
+    .current-date { font-size: 1.4rem }
+
+    [icon='menu'] {
+      line-height: normal;
+      margin-left: 10px;
+    }
+
     .header-right {
         padding: 0 10px;
-        i.fa { vertical-align: middle; padding-left: 3px; }
+        [icon='clear'] { line-height: normal; padding-left: 3px; }
         .profile-img { border-radius: (@header-height - 4) / 2; padding-right: 3px; }
     }
 
@@ -30,7 +102,50 @@ header {
     }
 }
 
-#app-name {
-    font-size: 1.8rem;
+.app-name {
+    font-size: 1.2rem;
     padding: 0 10px;
 }
+
+/*
+@media screen and (max-width: @breakpoint-md) {
+  .header-container, .event-container, .schedule {
+    width: 100%;
+  }
+
+  .schedule {
+
+    .student-schedule, .event-container, .student-schedule-header.non-student{
+      display: none;
+    }
+
+    .student-schedule-header:not(.non-student) {
+      width: 100%;
+      margin: 0;
+      padding: 0 @student-schedule-margin 0 @student-schedule-margin;
+    }
+
+    &.active-student {
+      .student-schedule.active {
+        float: none;
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      .event-container {
+        display: block;
+      }
+
+      .student-schedule:not(.active), .student-schedule-header:not(.active) {
+        display: none;
+      }
+
+      .student-schedule.active, .student-schedule-header.active {
+        padding-left: @student-schedule-margin;
+        padding-right: @student-schedule-margin;
+        margin: 0;
+      }
+    }
+  }
+}
+*/

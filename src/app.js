@@ -6,15 +6,24 @@
 
     var app = angular.module('hsp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMdIcons', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
     angular.module('hsp.auth').constant('CLIENT_ID', '<!-- @secret client_id -->');
-    angular.module('hsp.common').constant('BASE_URL', 'https://localhost:9002');
+
+    // DEBUG and PRODUCTION are defined by the webpack define plugin
+    if(DEBUG) {
+        angular.module('hsp.common').constant('BASE_URL', 'https://localhost:9002');
+    }
+
+    if(PRODUCTION) {
+        angular.module('hsp.common').constant('BASE_URL', 'https://home-school.azurewebsites.net');
+    }
+
     app.config(['$locationProvider', '$routeProvider',
         function ($locationProvider, $routeProvider) {
             $locationProvider.html5Mode(true);
 
             $routeProvider
                 .when('/', {
-                    templateUrl: '/components/schedule/schedule.html',
-                    controller: 'ScheduleCtrl',
+                    templateUrl: 'components/schedule/schedule.html',
+                    controller: 'ScheduleCtrl as schedule',
                     resolve: {
                         token: ['hsAuthService', function (hsAuthService) {
                             return hsAuthService.afterLogin();
@@ -22,15 +31,15 @@
                     }
                 })
                 .when('/profile', {
-                    templateUrl: '/components/auth/profile.html',
+                    templateUrl: 'components/auth/profile.html',
                     controller: 'ProfileCtrl'
                 })
                 .when('/event-detail', {
-                    templateUrl: '/components/schedule/event-detail.html',
+                    templateUrl: 'components/schedule/event-detail.html',
                     controller: 'EventDetailCtrl'
                 })
                 .when('/login', {
-                    templateUrl: '/components/auth/login.html',
+                    templateUrl: 'components/auth/login.html',
                     controller: 'LoginCtrl'
                 })
                 .otherwise({
@@ -42,6 +51,12 @@
         function ($httpProvider) {
             $httpProvider.interceptors.push('calendarHttpInterceptor');
         }]);
+
+    app.config(["$mdThemingProvider", function($mdThemingProvider) {
+        $mdThemingProvider.theme('default')
+            .primaryPalette('pink')
+            .accentPalette('orange');
+    }]);
 
     app.run(['hsAuthService', '$location', '$log',
         function (auth, $location, $log) {

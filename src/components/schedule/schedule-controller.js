@@ -3,11 +3,13 @@
 
 export default (function () {
     'use strict';
-    return ['$scope', '$log', '$q', '$timeout', '$location', '$mdDialog', 'ScheduleModel', 'Profile', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
-        function ($scope, $log, $q, $timeout, $location, $mdDialog, ScheduleModel, Profile, Util, MathUtil, auth, calendars) {
+    return ['$scope', '$log', '$q', '$timeout', '$location', '$mdDialog', 'Events', 'ScheduleModel', 'Profile', 'Util', 'MathUtil', 'hsAuthService', 'hsCalendarService',
+        function ($scope, $log, $q, $timeout, $location, $mdDialog, Events, ScheduleModel, Profile, Util, MathUtil, auth, calendars) {
             // reasonable defaults
             var lastMinTime = 480, // 8am
                 lastMaxTime = 1020; // 5pm
+
+            this.taskMode = true;
 
             /** Determine the time range of the events and add a "non student" list  */
             function prepareEvents(eventsByStudentID) {
@@ -36,8 +38,12 @@ export default (function () {
                     var list = lists.find(function (evtList, idx) { return evtList.student.id === studentId; });
                     if (!list) {
                         // we don't have an event list created for this student yet
+                        var userData = auth.getUserData(),
+                            student = userData.students
+                                ? userData.students.find(function (stdnt) { return stdnt.id === studentId; })
+                                : userData;
                         lists.push({
-                            student: auth.getUserData().students.find(function (stdnt) { return stdnt.id === studentId; }),
+                            student: student,
                             events: []
                         });
                     }
@@ -103,7 +109,8 @@ export default (function () {
             $scope.animateForward = false;
             $scope.studentEventLists = [];
 
-            $scope.changeDay = function (increment) {
+            $scope.$on(Events.CHANGE_DAY, function(event, increment) {
+                //$scope.changeDay = function (increment) {
                 ScheduleModel.changeDay(increment);
 
                 // change direction of animation
@@ -125,17 +132,27 @@ export default (function () {
                         }, Math.max(0, 500 - elapsed), true);
                     });
                 }, 0, true);
-            };
+            });
 
-            $scope.getData = function () {
-                ScheduleModel.fetchStudentEvents().then(prepareEvents).then(function (updatedLists) {
-                    $scope.studentEventLists = updatedLists;
-                }, function (error) {
-                    $log.error(error);
+            $scope.getData = function ()
+            {
+                auth.afterLogin().then(function(access_token) {
+                    ScheduleModel.fetchStudentEvents().then(prepareEvents).then(function (updatedLists) {
+                        $scope.studentEventLists = updatedLists;
+                        if (updatedLists.length == 2) {
+                            $scope.activeStudent = updatedLists[1];
+                            $scope.activeStudent.active = true;
+                        }
+
+                    }, function (error) {
+                        $log.error(error);
+                    });
                 });
             };
 
             $scope.setActiveList = function (activeStudent) {
+                if (activeStudent && activeStudent.isTimeAxis) return;
+
                 angular.forEach($scope.studentEventLists, function (student) {
                     student.active = student === activeStudent;
                 });

@@ -31,7 +31,8 @@ export var hsCalendarService = ['$http', '$q', '$log', 'hsAuthService', 'CALENDA
             return $http.get(baseUri + '/calendars/' + calendarId + '/events', {
                 params: {
                     timeMin: timeMin || moment().startOf('day').format(),
-                    timeMax: timeMax || moment().endOf('day').format()
+                    timeMax: timeMax || moment().endOf('day').format(),
+                    singleEvents: true // avoid headache of recurring events
                 }
             }).
                 success(function (data, status, headers, config) {
@@ -42,15 +43,8 @@ export var hsCalendarService = ['$http', '$q', '$log', 'hsAuthService', 'CALENDA
                         evt.calendarId = calendarId;
 
                         localEvents[evt.id] = evt;
-
-                        if (evt.recurringEventId) {
-                            evt.recurringEvent = data.items.find(function (ev) { return ev.id === evt.recurringEventId; });
-                            evt.recurringEvent.linked = true;
-                        }
                     });
 
-                    // remove the "parent" event when we have specific customized instances in this set
-                    data.items = data.items.filter(function (evt) { return !evt.linked; });
                     data.calendarId = calendarId;
                 }).
                 error(function (data, status, headers, config) {
@@ -91,6 +85,9 @@ export var hsCalendarService = ['$http', '$q', '$log', 'hsAuthService', 'CALENDA
                 }
 
                 return $q.reject('No event instances returned');
+            }, function(error) {
+                $log.error(error);
+                return $q.reject(error);
             });
         }
 

@@ -43,7 +43,8 @@ export default (function () {
                     fmtTime: start.format('hh:mma'),
                     subject: getSubject(evtResource),
                     completion: Util.safeRead(evtResource, 'extendedProperties.private.completion'),
-                    resource: evtResource
+                    resource: evtResource,
+                    editable: angular.isArray(hsAuthService.getUserData().students)
                 };
             }
 
@@ -60,6 +61,8 @@ export default (function () {
             }
 
             function toggleCompletion(evtViewState) {
+                if(!evtViewState) return;
+
                 return patchEvent(evtViewState, {
                     extendedProperties: {
                         private: {
@@ -80,9 +83,11 @@ export default (function () {
                 return getUserCalendars().then(function (calendarList) {
                     var deferred = $q.defer(),
                         eventsByStudentID = {},
-                        pendingStudents = 0;
+                        pendingStudents = 0,
+                        userData = hsAuthService.getUserData();
+
                     // loop over students to fetch events for each
-                    angular.forEach(hsAuthService.getUserData().students, function (student) {
+                    angular.forEach(userData.students || [userData], function (student) {
                         eventsByStudentID[student.id] = [];
                         var eventListPromises = [];
 

@@ -16,7 +16,17 @@ export default (function () {
                 recurringParentPatch = null,
                 patchUpdated = false,
                 recurringParentPatchUpdated = false,
-                UserData = hsAuthService.getUserData();
+                UserData;
+
+            hsAuthService.afterLogin().then(function() {
+                UserData = hsAuthService.getUserData()
+                $scope.subjects = UserData.subjects;
+                $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
+                // create a patch object for the parent recurring event if applicable
+                if ($scope.evt.recurringEventId) {
+                    recurringParentPatch = angular.copy(patch);
+                }
+            });
 
             function setupEvent(evtViewState) {
                 var parentEvt = calendars.getEvent(evtViewState.resource.recurringEventId),
@@ -41,24 +51,16 @@ export default (function () {
                 }
             }
 
-            $scope.subjects = UserData.subjects;
-            $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
-
-            // create a patch object for the parent recurring event if applicable
-            if ($scope.evt.recurringEventId) {
-                recurringParentPatch = angular.copy(patch);
-            }
-
             $scope.onSubjectChange = function () {
                 setProperty('extendedProperties.private.subjectId', $scope.evt.subject ? $scope.evt.subject.id : null);
             };
 
             $scope.onSummaryChange = function () {
-                setProperty('summary', $scope.evt.summary);
+                setProperty('summary', $scope.evt.resource.summary);
             };
 
             $scope.onDescriptionChange = function () {
-                setProperty('description', $scope.evt.description);
+                setProperty('description', $scope.evt.resource.description);
             };
 
             $scope.toggleCompletion = ScheduleModel.toggleCompletion.apply(null, [$scope.evt]);

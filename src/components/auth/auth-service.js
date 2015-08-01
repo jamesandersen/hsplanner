@@ -2,8 +2,8 @@
 export default (function () {
     'use strict';
 
-    return ['$window', '$document', '$location', '$rootScope', '$q', '$log', '$http', 'CLIENT_ID', 'authEvents', 'Profile',
-        function ($window, $document, $location, $rootScope, $q, $log, $http, CLIENT_ID, authEvents, Profile) {
+    return ['$window', '$document', '$location', '$rootScope', '$q', '$log', '$http', '$mdDialog', 'CLIENT_ID', 'authEvents', 'Profile',
+        function ($window, $document, $location, $rootScope, $q, $log, $http, $mdDialog, CLIENT_ID, authEvents, Profile) {
 
             var access_token = null,
                 profile = null,
@@ -46,15 +46,13 @@ export default (function () {
 
             /* will be called once immediately after google api is loaded */
             function onGooglePlusAuthCallback(result) {
+                delete result['g-oauth-window'];
+
                 $log.debug('google plus API auth callback: ' + JSON.stringify(result));
                 if (!result.status.signed_in) {
                     // for some reason result.hasOwnProperty is undefined
                     $log.error('authentication error: ' + result.error);
-                    updateSignedIn(false);
-                    if (pendingLoginDeferred) {
-                        pendingLoginDeferred.reject(result.error);
-                        pendingLoginDeferred = null;
-                    }
+                    finishLogin(false, result);
 
                     if (pendingTokenDeferred) {
                         pendingTokenDeferred.reject(result.error);
@@ -66,7 +64,6 @@ export default (function () {
                         // but not yet signed into our app
                     }*/
                 } else {
-                    access_token = result.access_token;
                     expiration = new Date();
                     expiration.setMilliseconds(expiration.getMilliseconds() + result.expires_in);
                     $log.info('successful login; access token expires at ' + expiration.toLocaleTimeString());
@@ -74,20 +71,35 @@ export default (function () {
 
                     $http.get('https://www.googleapis.com/plus/v1/people/me', {
                         headers: {
-                            Authorization: 'Bearer ' + access_token
+                            Authorization: 'Bearer ' + result.access_token
                         }
                     })
                         .success(function (data, status, headers, config) {
                             // this callback will be called asynchronously
                             // when the response is available
-                            userData = Profile.get({ userId: data.id }, function (profileData) {
-                                userData = profileData;
-                                profile = data;
-                                updateSignedIn(true);
 
-                                if (pendingLoginDeferred) {
-                                    pendingLoginDeferred.resolve(access_token);
-                                    pendingLoginDeferred = null;
+                            userData = Profile.get({ userId: data.id }, function (hspUserData) {
+                                finishLogin(true, result, data, hspUserData);
+                            }, function(response) {
+                                if(response.status == 404) {
+                                    // user has logged in but we don't have any profile data for them
+                                    // prompt for information required for HSP profile
+
+                                    $mdDialog.show({
+                                        //targetEvent: $event,
+                                        templateUrl: 'components/auth/profile.html',
+                                        controller: 'ProfileCtrl',
+                                        //onComplete: afterShowAnimation,
+                                        locals: { employee: "User Name" }
+                                    }).then(function(newHspUserData) {
+                                        // TODO: call to persist this data
+                                        finishLogin(true, result, data, newHspUserData);
+                                    }, function(cancellation) {
+                                        finishLogin(false, result, data);
+                                    });
+                                } else {
+                                    // some other error occurred
+                                    finishLogin(false, result, data);
                                 }
                             });
 
@@ -96,15 +108,33 @@ export default (function () {
                             // called asynchronously if an error occurs
                             // or server returns response with an error status.
                             $log.error('Error getting profile information');
+                            finishLogin(false, result, data);
                         });
-
-
 
                     if (pendingTokenDeferred) {
                         pendingTokenDeferred.resolve(access_token);
                         pendingTokenDeferred = null;
                     }
                 }
+            }
+
+            function finishLogin(success, authResult, googleProfile, hspProfile) {
+                access_token = authResult.access_token;
+                profile = googleProfile;
+                userData = hspProfile;
+
+
+                if (pendingLoginDeferred) {
+                    if(success) {
+                        pendingLoginDeferred.resolve(access_token);
+                    } else {
+                        pendingLoginDeferred.reject(authResult ? authResult.error : 'failed to gather login data');
+                    }
+
+                    pendingLoginDeferred = null;
+                }
+
+                updateSignedIn(success);
             }
 
             function initGooglePlusAuth() {

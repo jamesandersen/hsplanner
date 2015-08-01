@@ -1,3 +1,5 @@
+@import "../common/layout.less";
+
 @schedule-name-height: 55px;
 @schedule-height-gutter: 5px;
 @student-schedule-width: 250px;
@@ -11,12 +13,12 @@
 .schedule {
     position: relative;
     box-sizing: border-box;
-    margin-top: -@schedule-name-height - @schedule-height-gutter - 10px;
-    padding-top: @schedule-name-height + @schedule-height-gutter + 10px;
     padding-bottom: 10px;
     height: 100%;
     max-width: @schedule-width;
     margin: 0 auto;
+
+
 
     &.active-student {
         .student-schedule, .student-schedule-header {
@@ -38,15 +40,55 @@
         }
     }
 
+  &.taskmode {
+
+    .student-schedule-header.non-student { display: none; }
+
+    .student-schedule {
+
+      &.non-student {
+        display: none;
+        /* visibility: hidden;
+        .event { display: none; } */
+      }
+
+      .inner-container {
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .event {
+        position: relative;
+        height: auto;
+        top: auto;
+        margin: 0px 0px 4px 0px;
+
+        .time {
+          display: none;
+        }
+      }
+
+
+    }
+  }
+
     #add-event {
       position: absolute;
       bottom: 10px;
       right: 10px;
+      [icon='add'] > svg {
+        color: @btn-primary-color;
+      }
+    }
+
+    #task-mode-switch {
+      position: absolute;
+      left: 10px;
+      top: 100px;
     }
 }
 
 .header-container {
-    margin-top: -@schedule-name-height - @schedule-height-gutter;
     height: @schedule-name-height + @schedule-height-gutter;
     max-width: @schedule-width;
 }
@@ -68,9 +110,6 @@
     float: left;
     box-sizing: border-box;
     margin: 0px @student-schedule-margin 0px @student-schedule-margin;
-    //padding-right: 8px;
-    width: @student-schedule-width;
-    //border: solid 1px #BBB;
     position: relative;
 
     &.non-student {
@@ -83,8 +122,8 @@
 }
 
 .student-schedule-header {
-    height: @schedule-name-height;
-    color: @btn-primary-color;
+    //height: @schedule-name-height;
+    //color: @btn-primary-color;
 
 
     div.list-summary {
@@ -93,14 +132,24 @@
         color: @gray;
     }
 
-    h3.name {
+    h3 {
+      margin: 3px 0px 0px 0px;
+      cursor: pointer;
+      &:hover {
+        color: @brand-primary;
+      }
+    }
+
+    [icon="clear"] {
+      display: none;
+    }
+
+    .name {
         .boxShadowHelper(3);
-        font-size: 2.8rem;
-        height: @schedule-name-height;
+        font-size: 1.4rem;
         background-color: @brand-secondary;
         width: 100%;
         text-align: center;
-        line-height: @schedule-name-height;
         cursor: pointer;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -112,25 +161,26 @@
         i.fa { display: none; }
     }
 
+    &.active {
+      [icon="clear"] {
+        display: block;
+        float: right; flex-basis: 30px;  flex-grow: 0; flex-shrink: 0;
+      }
+    }
+
     &.non-student {
         color: @gray-dark;
-        padding-top: 8px;
-        h3.name {
-            box-shadow: none;
-            line-height: 2rem;
-            cursor: default;
-            text-align: right;
-            background-color: transparent;
-            i[class*='fa-angle-'] {
-                display: inline;
-                cursor: pointer;
-                &:hover {
-                    color: @brand-primary;
-                }
-            }
 
-            &:hover { color: @gray; }
-        }
+      h3 {
+        margin: 0px 0px 0px 0px;
+        cursor: none;
+      }
+
+      // Not sure why this is necessary...
+      // the <ng-md-icon> encloses a 32 x 32 <svg> element but still ends up with 38px height
+      // unless explicity set
+      ng-md-icon { height: 32px; }
+
     }
 }
 
@@ -145,15 +195,13 @@
     }
 
     &.active {
-        h3.name { color: @brand-primary; }
+        .name { color: @brand-primary; }
     }
 
     .event {
         border: solid 1px #999;
         margin: 0px 3px 2px 3px;
-        padding: 2px;
-        color: white;
-        background-color: #4bbaff;
+        background-color: @paper-color;
         position: absolute;
         left: 0px;
         right: 0px;
@@ -168,10 +216,77 @@
         .boxShadowHelper(1);
         &:hover {
              .boxShadowHelper(3);
-             -webkit-transform: translateY(-5px);
-             -moz-transform: translateY(-5px);
-             transform: translateY(-5px);
+             -webkit-transform: translateY(-3px);
+             -moz-transform: translateY(-3px);
+             transform: translateY(-3px);
         }
+
+        .evt-header {
+            cursor: pointer;
+            color: white;
+            .status-button { float: left; flex-basis: 40px; flex-grow: 0; flex-shrink: 0; }
+            [icon='settings'] { float: right; flex-basis: 40px;  flex-grow: 0; flex-shrink: 0; }
+
+            .status-button.complete {
+                box-shadow: none;
+                background-color: transparent;
+            }
+
+            .md-subhead { flex-grow: 1; }
+        }
+
+        .summary {
+          color: @gray-dark;
+          padding: 4px;
+        }
+
+        .status-icon {
+          display: block;
+          height: 36px;
+          width: 36px;
+
+          @keyframes rotating {
+            from {
+              transform: rotate(0deg);
+              -ms-transform: rotate(0deg);
+              -moz-transform: rotate(0deg);
+              -webkit-transform: rotate(0deg);
+              -o-transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+              -ms-transform: rotate(360deg);
+              -moz-transform: rotate(360deg);
+              -webkit-transform: rotate(360deg);
+              -o-transform: rotate(360deg);
+            }
+          }
+          @-webkit-keyframes rotating /* Safari and Chrome */ {
+            from {
+              transform: rotate(0deg);
+              -ms-transform: rotate(0deg);
+              -moz-transform: rotate(0deg);
+              -webkit-transform: rotate(0deg);
+              -o-transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+              -ms-transform: rotate(360deg);
+              -moz-transform: rotate(360deg);
+              -webkit-transform: rotate(360deg);
+              -o-transform: rotate(360deg);
+            }
+          }
+
+          &.updating {
+            -webkit-animation: rotating 2s linear infinite;
+            -moz-animation: rotating 2s linear infinite;
+            -ms-animation: rotating 2s linear infinite;
+            -o-animation: rotating 2s linear infinite;
+            animation: rotating 2s linear infinite;
+          }
+        }
+
     }
 
     &.non-student {
@@ -183,7 +298,7 @@
             background-color: transparent;
         }
 
-        .fa-cog, md-checkbox, ng-md-icon { display: none; }
+        .evt-header, ng-md-icon { display: none; }
 
         .event {
             background-color: transparent;
@@ -211,12 +326,19 @@
                 z-index: @grid-line-z-index;
             }
 
+            md-content {
+              background-color: transparent;
+            }
+            .summary {
+              background-color: transparent;
+            }
             input[type=checkbox].md + label:before { display: none; }
         }
     }
 }
 
-@media screen and (max-width: @schedule-width) {
+/*@media screen and (max-width: @schedule-width) {*/
+@media screen and (max-width: @breakpoint-sm) {
     .header-container, .event-container, .schedule {
         width: 100%;
     }
