@@ -1,3 +1,5 @@
 [submodule "services"]
 	path = services
 	url = git@github.com:jamesandersen/hs-api.git
+[submodule "services/"]
+	branch = master

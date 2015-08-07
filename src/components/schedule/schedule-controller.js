@@ -35,12 +35,13 @@ export default (function () {
                 timeAxis.student.name = ScheduleModel.getStart().format('M/D');
 
                 angular.forEach(eventsByStudentID, function (events, studentId) {
-                    var list = lists.find(function (evtList, idx) { return evtList.student.id === studentId; });
+                    var list = lists.find(function (evtList, idx) { return evtList.student.userId === studentId; });
                     if (!list) {
                         // we don't have an event list created for this student yet
                         var userData = auth.getUserData(),
+                            // student users won't have a students array... TODO: more explicit way to identify student
                             student = userData.students
-                                ? userData.students.find(function (stdnt) { return stdnt.id === studentId; })
+                                ? userData.students.find(function (stdnt) { return stdnt.userId === studentId; })
                                 : userData;
                         lists.push({
                             student: student,
@@ -72,7 +73,7 @@ export default (function () {
                     if (list.isTimeAxis) { return; }
 
                     list.events = [];
-                    angular.forEach(eventsByStudentID[list.student.id], function (evt) {
+                    angular.forEach(eventsByStudentID[list.student.userId], function (evt) {
                         evt.blockOffset = Math.round(MathUtil.floor(evt.startMinutes - minTime, minutesPerBlock) / minutesPerBlock) * pixelsPerBlock + 'px';
                         evt.duration = MathUtil.floor(evt.endMinutes - evt.startMinutes, minutesPerBlock) / minutesPerBlock *  pixelsPerBlock + 'px';
                         minTime = Math.min(minTime, evt.startMinutes);
