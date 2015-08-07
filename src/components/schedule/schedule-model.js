@@ -88,7 +88,7 @@ export default (function () {
 
                     // loop over students to fetch events for each
                     angular.forEach(userData.students || [userData], function (student) {
-                        eventsByStudentID[student.id] = [];
+                        eventsByStudentID[student.userId] = [];
                         var eventListPromises = [];
 
                         // build up a list of promises for events from the student's calendar(s)
@@ -110,7 +110,7 @@ export default (function () {
                                 angular.forEach(resultsArray, function (eventListResult) {
                                     angular.forEach(eventListResult.items, function (evtResource) {
 
-                                        eventsByStudentID[student.id].push(buildEventViewState(evtResource));
+                                        eventsByStudentID[student.userId].push(buildEventViewState(evtResource));
                                     });
                                 });
 
