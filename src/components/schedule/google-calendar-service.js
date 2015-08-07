@@ -65,6 +65,29 @@ export var hsCalendarService = ['$http', '$q', '$log', 'hsAuthService', 'CALENDA
         }
 
         /**
+         * Get a calendar event.
+         * @param {string} eventId
+         * @param {string} calendarId
+         * @return {Promise<event>}
+         */
+        function fetchEvent(eventId, calendarId) {
+            return $http({
+                method: 'GET',
+                url: baseUri + '/calendars/' + calendarId + '/events/' + eventId
+            }).then(function (result) {
+                var evt = result.data;
+                // facilitate future updates by tracking the calendar id this event belongs to
+                evt.calendarId = calendarId;
+                localEvents[evt.id] = evt;
+
+                return evt;
+            }, function(error) {
+                $log.error(error);
+                return $q.reject(error);
+            });
+        }
+
+        /**
         * Get an instance of a recurring event.
         * @param {string} calendarId
         * @param {Object} event
@@ -117,6 +140,8 @@ export var hsCalendarService = ['$http', '$q', '$log', 'hsAuthService', 'CALENDA
             if (evtResource.recurrence && !patchParent) {
                 // we got a recurring event but only want to modify an instance
                 resourceToPatch = getInstance(evtResource, start, end);
+            } else if (evtResource.recurringEventId && patchParent) {
+                resourceToPatch = fetchEvent(evtResource.recurringEventId, evtResource.calendarId);
             }
 
             return resourceToPatch.then(function (evt) {

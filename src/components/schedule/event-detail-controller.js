@@ -23,7 +23,7 @@ export default (function () {
                 $scope.subjects = UserData.subjects;
                 $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
                 // create a patch object for the parent recurring event if applicable
-                if ($scope.evt.recurringEventId) {
+                if ($scope.evt.resource.recurringEventId) {
                     recurringParentPatch = angular.copy(patch);
                 }
             });
@@ -75,7 +75,7 @@ export default (function () {
                     }
 
                     if (recurringParentPatchUpdated) {
-                        patches.push(ScheduleModel.patchEvent(evt.recurringEventId, recurringParentPatch));
+                        patches.push(ScheduleModel.patchEvent(evt, recurringParentPatch, true));
                     }
                     finishPromise = $q.all(patches);
                 }
