@@ -1,10 +1,11 @@
 <div class="schedule" flex layout="column" ng-class="{ 'active-student': activeStudent, 'taskmode': schedule.taskMode }" ng-init="getData()">
     <md-button id="add-event" class="md-fab" aria-label="FAB">
-        <ng-md-icon icon="add" size="48" style="color: white; fill:white"></ng-md-icon>
+        <md-icon>add</md-icon>
     </md-button>
     <div class="header-container" layout="row" layout-sm="column">
         <div class="student-schedule-header"
-             flex="{{list.isTimeAxis ? 10 : (list.active ? '' : 30)}}"
+             flex-md="{{list.isTimeAxis ? 10 : (list.active ? '' : 30)}}"
+             flex-gt-md="{{list.isTimeAxis ? 10 : (list.active ? '' : 30)}}"
              ng-repeat="list in studentEventLists"
              ng-class="{ 'non-student': list.isTimeAxis, active: list.active, 'task-mode': schedule.taskMode }">
             <div class="list-summary" ng-bind="list.summary"></div>
