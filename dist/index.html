@@ -4,6 +4,7 @@
 <head>
     <title>Home School Planner</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <base href="/hsplanner/" />
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="google-signin-clientid" content="653295052579-6017j2a7ine0cn35dpinu9j5uv0mftk3.apps.googleusercontent.com" />
@@ -15,16 +16,52 @@
 <body layout="column" flex>
     <div layout="row" class="main-content" flex>
         <md-sidenav md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" class="md-sidenav-left" flex>
-            <header class="bg-primary" layout="row">
-                <span class="app-name" flex>Home School Planner</span>
-            </header>
-            <md-switch id="task-mode-switch" ng-model="schedule.taskMode" aria-label="Task Mode">Task Mode</md-switch>
+            <md-content class="md-hue-1">
+            <div ng-controller="SideNavCtrl">
+                <md-toolbar layout="row">
+                    <div class="md-toolbar-tools">
+                        <h2>Home School Planner</h2>
+                    </div>
+                </md-toolbar>
+                <div class="user-card" ng-if="signed_in" class="header-right" layout="row">
+                    <img class="profile-img" ng-src="{{profileImgSrc}}"/>
+                    <div class="display-name md-subhead">{{profile.displayName}}</div>
+                </div>
+                <md-content class="md-hue-1">
+                    <md-list>
+                        <md-divider></md-divider>
+                        <md-list-item>
+                            <md-switch id="task-mode-switch" ng-model="schedule.taskMode" aria-label="Task Mode">Task Mode</md-switch>
+                        </md-list-item>
+                        <md-divider></md-divider>
+                        <md-list-item>
+                            <a ng-click="logout()">Logout</a>
+                        </md-list-item>
+                    </md-list>
+                </md-content>
+
+            </div>
+            </md-content>
         </md-sidenav>
         <div class="center" layout="column" flex>
-            <header ng-controller="HeaderCtrl" class="bg-primary" layout="row">
+            <md-toolbar ng-controller="HeaderCtrl">
+                <div class="md-toolbar-tools">
+                    <md-button ng-click="toggleNav()" class="md-icon-button" aria-label="Settings" hide-gt-md>
+                        <md-icon>menu</md-icon>
+                    </md-button>
+                    <h2 hide-gt-md hide-sm>
+                        <span>Home School Planner</span>
+                    </h2>
+                    <span flex></span>
+                    <md-icon ng-click="changeDay(-1);$event.stopPropagation()">keyboard_arrow_left</md-icon>
+                    <span class="current-date" ng-bind="currentDay"></span>
+                    <md-icon ng-click="changeDay(1);$event.stopPropagation()">keyboard_arrow_right</md-icon>
+                </div>
+            </md-toolbar>
+
+            <!--<header ng-controller="HeaderCtrl" class="bg-primary" layout="row">
                 <div flex="33" layout="row" layout-align="start center" hide-gt-md>
                     <ng-md-icon icon="menu" ng-click="toggleNav()"></ng-md-icon>
-                    <span class="app-name" flex>Home School Planner</span>
                 </div>
                 <div flex="33" flex-gt-md="66" layout="row" layout-align="center center">
                     <ng-md-icon icon="keyboard_arrow_left" ng-click="changeDay(-1);$event.stopPropagation()" size="32"></ng-md-icon>
@@ -37,7 +74,7 @@
                         <ng-md-icon icon="clear" ng-click="logout()"></ng-md-icon>
                     </div>
                 </div>
-            </header>
+            </header>-->
             <div ng-view flex layout="column"></div>
         </div>
     </div>

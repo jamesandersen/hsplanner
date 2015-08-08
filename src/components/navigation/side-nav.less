@@ -1,0 +1,29 @@
+@profile-image-radius: 40px;
+
+md-sidenav {
+  header {
+    position: relative;
+    z-index: 10;
+  }
+}
+
+.user-card {
+  height: 160px;
+  position: relative;
+  //background-color: darken(@brand-primary, 5%);
+  .profile-img {
+    position: absolute;
+    top: 40%;
+    left: 20px;
+    border-radius: @profile-image-radius;
+    margin-top: -@profile-image-radius;
+    .boxShadowHelper(2);
+  }
+
+  .display-name {
+    left: 20px;
+    bottom: 16px;
+    position: absolute;
+  }
+
+}

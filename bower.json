@@ -21,7 +21,7 @@
     "angular-touch": "~1.4.x",
     "angular-mocks": "~1.4.x",
     "angular-resource": "~1.4.x",
-    "angular-material": "0.9.x",
+    "angular-material": "0.10.x",
     "angular-material-icons": "~0.4.0",
     "moment": "~2.8.x"
   },

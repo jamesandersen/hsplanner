@@ -30,7 +30,7 @@ module.exports = {
         app: [
             "./index.html",
             "./es6_polyfills.js",
-            "imports?common,auth,schedule!./app.js" // import dependent modules
+            "imports?common,auth,navigation,schedule!./app.js" // import dependent modules
         ],
         styles: ["./styles.less"]
 	},
@@ -57,6 +57,7 @@ module.exports = {
             // app modules
             auth: './components/auth/_auth.js',
             common: './components/common/_common.js',
+            navigation: './components/navigation/_navigation.js',
             schedule: './components/schedule/_schedule.js'
         },
         root: [bowerComponentsPath],

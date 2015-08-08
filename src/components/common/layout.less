@@ -2,7 +2,7 @@
 @breakpoint-md: 960px;
 @breakpoint-lg: 1200px;
 
-@header-height: 44px;
+@header-height: 64px;
 
 html {
   font-size: 13px;
@@ -60,12 +60,7 @@ html, body, div[ng-view], .main-content, .center {
 
 body { background-color: lighten(#000, 90.7%); }
 
-md-sidenav {
-  header {
-    background-color: @brand-primary;
-  }
-  background-color: lighten(@brand-primary, 30%);
-}
+
 
 .main-content, [md-sidenav] { //div[ng-view] {
     box-sizing: border-box;
@@ -73,7 +68,7 @@ md-sidenav {
     //padding-top: @header-height;
 }
 
-header {
+header, md-toolbar {
     width: 100%;
     border-bottom: solid 1px @gray-dark;
     height: @header-height;

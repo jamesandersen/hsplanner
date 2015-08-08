@@ -4,7 +4,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('hsp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMdIcons', 'hsp.common', 'hsp.auth', 'hsp.schedule']);
+    var app = angular.module('hsp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMdIcons', 'hsp.common', 'hsp.auth', 'hsp.navigation', 'hsp.schedule']);
     angular.module('hsp.auth').constant('CLIENT_ID', '<!-- @secret client_id -->');
 
     // DEBUG and PRODUCTION are defined by the webpack define plugin
@@ -53,9 +53,7 @@
         }]);
 
     app.config(["$mdThemingProvider", function($mdThemingProvider) {
-        $mdThemingProvider.theme('default')
-            .primaryPalette('pink')
-            .accentPalette('orange');
+        $mdThemingProvider.theme('default'); //.dark();
     }]);
 
     app.run(['hsAuthService', '$location', '$log',
