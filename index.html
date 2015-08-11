@@ -53,9 +53,15 @@
                         <span>Home School Planner</span>
                     </h2>
                     <span flex></span>
-                    <md-icon ng-click="changeDay(-1);$event.stopPropagation()">keyboard_arrow_left</md-icon>
+                    <md-button ng-click="changeDay(-1);$event.stopPropagation()" class="md-icon-button">
+                        <md-icon>keyboard_arrow_left</md-icon>
+                    </md-button>
+
                     <span class="current-date" ng-bind="currentDay"></span>
-                    <md-icon ng-click="changeDay(1);$event.stopPropagation()">keyboard_arrow_right</md-icon>
+
+                    <md-button ng-click="changeDay(1);$event.stopPropagation()" class="md-icon-button">
+                        <md-icon>keyboard_arrow_right</md-icon>
+                    </md-button>
                 </div>
             </md-toolbar>
 
