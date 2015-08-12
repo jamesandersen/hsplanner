@@ -2,7 +2,7 @@
 /*global angular: false, describe: false, it: false, beforeEach: false, afterEach: false, module: false, expect: false, inject: false, $httpBackend: false */
 require('../common/_common.js');
 require('../auth/_auth.js');
-require('./_schedule.js');
+require('./../schedule/_schedule.js');
 require('angular-resource');
 require('angular-mocks');
 

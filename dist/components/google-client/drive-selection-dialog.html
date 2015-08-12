@@ -1,0 +1,53 @@
+<md-dialog flex="85">
+    <md-content class="md-padding">
+        <div class="md-headline">Choose an attachment for {{ctrl.evt.resource.summary}}</div>
+        <p ng-show="ctrl.loading">...Loading...</p>
+        <md-tabs>
+            <md-tab label="Choose Existing" md-on-select="ctrl.onTabSelected('existing')">
+                <md-content class="md-padding">
+                    <md-list ng-hide="ctrl.loading">
+                        <md-divider ng-repeat-start="file in ctrl.files"></md-divider>
+                        <md-list-item ng-repeat-end="">
+                            <img ng-src="{{file.iconLink}}"/>&nbsp;<a href="" ng-click="ctrl.closeDialog(file)">{{file.title}}</a>
+                        </md-list-item>
+                    </md-list>
+                </md-content>
+            </md-tab>
+            <md-tab label="Create New" md-on-select="ctrl.onTabSelected('new')">
+                <md-content class="md-padding">
+                    <div class="modal-title" ng-bind="ctrl.newFile.title"></div>
+                    <form name="evtForm">
+                        <md-input-container>
+                            <label for="title">Title</label>
+                            <input type="text" id="title" name="title"
+                                   class="form-control"
+                                   ng-model="ctrl.newFile.title"/>
+                        </md-input-container>
+                        <md-input-container>
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description"
+                                      class="form-control"
+                                      ng-model="ctrl.newFile.description">
+                            </textarea>
+                        </md-input-container>
+                        <md-input-container>
+                            <label for="upload">Upload</label>
+                            <input id="upload" type="file" name="upload"
+                                      class="form-control"
+                                      on-file-change="ctrl.onFileChange">
+                            </textarea>
+                        </md-input-container>
+                    </form>
+                </md-content>
+
+            </md-tab>
+        </md-tabs>
+        <div class="md-actions">
+            <md-button ng-show="ctrl.currentTab =='existing'"
+                       ng-click="ctrl.cancelDialog()">Cancel</md-button>
+            <md-button ng-show="ctrl.currentTab =='new'"
+                       ng-disabled="evtForm.$pristine || evtForm.$invalid"
+                       ng-click="ctrl.createFile()">Create</md-button>
+        </div>
+    </md-content>
+</md-dialog>

@@ -3,8 +3,8 @@
 
 export default (function () {
     'use strict';
-    return ['$scope', '$location', '$q', '$mdDialog', 'ScheduleModel', 'hsAuthService', 'hsCalendarService', 'Util',
-        function ($scope, $location, $q, $mdDialog, ScheduleModel, hsAuthService, calendars, Util) {
+    return ['$scope', '$location', '$q', '$mdDialog', 'ScheduleModel', 'hsAuthService', 'hsCalendarService', 'hsDriveService', 'Util',
+        function ($scope, $location, $q, $mdDialog, ScheduleModel, hsAuthService, calendars, drive, Util) {
             var patch = {
                     extendedProperties: {
                         private: {}
@@ -22,6 +22,10 @@ export default (function () {
                 UserData = hsAuthService.getUserData()
                 $scope.subjects = UserData.subjects;
                 $scope.evt = setupEvent(ScheduleModel.getActiveEventViewState());
+
+                // we may modify the attachments so only modify a copy
+                $scope.attachments = angular.copy($scope.evt.resource.attachments);
+
                 // create a patch object for the parent recurring event if applicable
                 if ($scope.evt.resource.recurringEventId) {
                     recurringParentPatch = angular.copy(patch);
@@ -63,7 +67,30 @@ export default (function () {
                 setProperty('description', $scope.evt.resource.description);
             };
 
+            $scope.selectGoogleDoc = function() {
+                drive.chooseGoogleDriveDoc($scope.evt).then(function(driveFile) {
+                    if(driveFile) {
+
+                        var attachments = $scope.evt.resource.attachments || [];
+                        if(!attachments.find(function(el, idx) { el.fileId == driveFile.id; })) {
+                            attachments.push({
+                                fileId: driveFile.id,
+                                fileUrl: driveFile.alternateLink,
+                                iconLink: driveFile.iconLink,
+                                mimeType: driveFile.mimeType,
+                                title: driveFile.title
+                            });
+                        }
+
+                        setProperty('attachments', attachments);
+                        $scope.attachments = angular.copy(attachments);
+                        $scope.evtForm.$setDirty();
+                    }
+                });
+            };
+
             $scope.toggleCompletion = ScheduleModel.toggleCompletion.apply(null, [$scope.evt]);
+            $scope.toggleComplete = ScheduleModel.toggleCompletion;
 
             $scope.ok = function () {
                 var finishPromise = $q.when(false),

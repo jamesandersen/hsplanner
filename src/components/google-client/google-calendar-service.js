@@ -153,6 +153,9 @@ export var hsCalendarService = ['$http', '$q', '$log', 'hsAuthService', 'CALENDA
                     headers: {
                         'If-Match': evt.etag
                     },
+                    params: {
+                        supportsAttachments: patch.hasOwnProperty('attachments')
+                    },
                     data: patch
                 }).success(function (data, status, headers, config, statusText) {
 

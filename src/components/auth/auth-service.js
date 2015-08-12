@@ -15,7 +15,7 @@ export default (function () {
                     'clientid': CLIENT_ID,
                     'cookiepolicy': 'single_host_origin',
                     'callback': 'onAuthResult',
-                    'scope': 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/calendar'
+                    'scope': 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.file'
                 },
                 pendingGoogleAPIDeferred = null,
                 pendingTokenDeferred = null,
