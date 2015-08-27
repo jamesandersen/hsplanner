@@ -4,7 +4,7 @@
 (function () {
     'use strict';
 
-    var app = angular.module('hsp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMdIcons', 'hsp.common', 'hsp.auth', 'hsp.navigation', 'hsp.schedule']);
+    var app = angular.module('hsp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMdIcons', 'hsp.common', 'hsp.auth', 'hsp.navigation', 'hsp.google-client', 'hsp.schedule']);
     angular.module('hsp.auth').constant('CLIENT_ID', '<!-- @secret client_id -->');
 
     // DEBUG and PRODUCTION are defined by the webpack define plugin

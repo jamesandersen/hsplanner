@@ -29,7 +29,7 @@ export default (function () {
                 return hsAuthService.getUserData().subjects.find(function (sub) { return sub.id === subjectId; });
             }
 
-            function buildEventViewState(evtResource) {
+            function buildEventViewState(evtResource, student) {
                 var start = moment(evtResource.start.dateTime),
                     end = moment(evtResource.end.dateTime);
 
@@ -44,7 +44,9 @@ export default (function () {
                     subject: getSubject(evtResource),
                     completion: Util.safeRead(evtResource, 'extendedProperties.private.completion'),
                     resource: evtResource,
-                    editable: angular.isArray(hsAuthService.getUserData().students)
+                    editable: angular.isArray(hsAuthService.getUserData().students),
+                    studentUserId: student.userId,
+                    studentEmail: student.email
                 };
             }
 
@@ -110,7 +112,7 @@ export default (function () {
                                 angular.forEach(resultsArray, function (eventListResult) {
                                     angular.forEach(eventListResult.items, function (evtResource) {
 
-                                        eventsByStudentID[student.userId].push(buildEventViewState(evtResource));
+                                        eventsByStudentID[student.userId].push(buildEventViewState(evtResource, student));
                                     });
                                 });
 
