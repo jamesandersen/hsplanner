@@ -10,7 +10,10 @@
     <meta name="google-signin-clientid" content="653295052579-6017j2a7ine0cn35dpinu9j5uv0mftk3.apps.googleusercontent.com" />
     <meta name="google-signin-cookiepolicy" content="single_host_origin" />
     <meta name="google-signin-callback" content="onAuthResult" />
-    <meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly" />
+    <!-- Note on permissions
+    * Full Drive access - needed to not only create new files but also modify permissions on existing files that are added to events
+    -->
+    <meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive" />
 </head>
 
 <body layout="column" flex>
