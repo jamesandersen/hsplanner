@@ -3,8 +3,8 @@
 
 export default (function () {
     'use strict';
-    return ['$scope', '$location', '$q', '$mdDialog', 'hsDriveService', 'Util',
-        function ($scope, $location, $q, $mdDialog, driveService, Util) {
+    return ['$scope', '$location', '$q', '$log', '$mdDialog', 'hsDriveService', 'hsAuthService',
+        function ($scope, $location, $q, $log, $mdDialog, driveService, auth) {
             var controller = this;
             controller.newFile = { id: null, evt: controller.evt, blank: true };
             controller.loading = true;
@@ -24,7 +24,20 @@ export default (function () {
             }
 
             this.closeDialog = function (driveFile) {
-                $mdDialog.hide(driveFile);
+                var colleagues = auth.getUserData().colleagues || [],
+                    editors = [{ email: controller.evt.studentEmail, role: 'writer' }].concat(colleagues.map(function(colleague) {
+                        return { email: colleague.email, role: 'writer' };
+                    }));
+                driveService.ensurePermissions(driveFile, editors).then(function(sharedFile) {
+                    $mdDialog.hide(sharedFile);
+                }, function(rejection){
+                    var msg = 'setting permissions failed';
+                    if(rejection.body && rejection.body.error) {
+                        msg = rejection.body.error.message;
+                    }
+
+                    $log.error('Unable to set permissions for selected file: ' + msg);
+                });
             }
 
             this.createFile = function () {
