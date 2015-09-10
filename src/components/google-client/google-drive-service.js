@@ -111,38 +111,22 @@ export var hsDriveService = ['$http', '$q', '$log', '$window', '$mdDialog', 'hsA
                     headers: { 'Content-Type': 'multipart/mixed; boundary="' + boundary + '"' },
                     body: requestBody
                 }).then(function(resp) {
-                        // doc has been created...
-                        // ... now need to grant permission to the student
-                        $window.gapi.client.request({
-                            method: 'POST',
-                            path: 'drive/v2/files/' + resp.result.id + '/permissions',
-                            params: {
-                                sendNotificationEmails: false
-                            },
-                            body:  {
-                                role: 'writer',
-                                type: 'user',
-                                value: newFile.evt.studentEmail
-                            }
-                        }).then(function(permResp) {
-                            // add the newly created permission into the newly
-                            // created doc result
-                            if(angular.isArray(resp.result.permissions)) {
-                                resp.result.permissions.push(permResp.result);
-                            } else {
-                                resp.result.permissions = [permResp.result];
-                            }
-                            deferred.resolve(resp.result);
+                    var colleagues = auth.getUserData().colleagues || [],
+                        editors = [{ email: newFile.evt.studentEmail, role: 'writer' }].concat(colleagues.map(function(colleague) {
+                            return { email: colleague.email, role: 'writer' };
+                        }));
 
-                        }, function(permRejection) {
-                            // TODO: This is partially successful... need to think about how to handle
-                            // this scenario
-                            deferred.reject(permRejection);
-                        })
-                    },
-                    function(reason) {
-                        deferred.reject(reason);
-                    });
+                        ensurePermissions(resp.result, editors).then(
+                            function(sharedFile) {
+                                deferred.resolve(sharedFile);
+                            },
+                            function(rejection) {
+                                deferred.reject(rejection);
+                            });
+                },
+                function(reason) {
+                    deferred.reject(reason);
+                });
             }, function(requestBodyRejection) {
                 deferred.reject(requestBodyRejection);
             });
@@ -150,9 +134,93 @@ export var hsDriveService = ['$http', '$q', '$log', '$window', '$mdDialog', 'hsA
             return deferred.promise;
         }
 
+        function grantPermission(fileId, email, role) {
+            role = role || 'writer';
+
+            // ... now need to grant permission to the student
+            var deferred = $q.defer();
+            $window.gapi.client.request({
+                method: 'POST',
+                path: 'drive/v2/files/' + fileId + '/permissions',
+                params: {
+                    sendNotificationEmails: false
+                },
+                body:  {
+                    role: role,
+                    type: 'user',
+                    value: email
+                }
+            }).then(function(permResp) {
+                // add the newly created permission into the newly
+                // created doc result
+                deferred.resolve(permResp.result);
+
+            }, function(permRejection) {
+                // TODO: This is partially successful... need to think about how to handle
+                // this scenario
+                deferred.reject(permRejection);
+            })
+
+            return deferred.promise;
+        }
+
+        /**
+         * Ensure that a list of collaborators have permission to given file.
+         * @param {FileResource} driveFile
+         * @param {Array} collaborators
+         * @return {Promise<event>}
+         */
+        function ensurePermissions(driveFile, collaborators) {
+            var deferred = $q.defer();
+
+            // ensure we've got a permissions array to work with
+            if(!angular.isArray(driveFile.permissions)) {
+                driveFile.permissions = [];
+            }
+
+            // filter out any existing permissions
+            angular.forEach(driveFile.permissions, function(perm) {
+               var matchingCollaborator = collaborators.find(function(cb) {
+                   return cb.email.toLowerCase() == perm.emailAddress.toLowerCase() && cb.role === perm.role;
+               });
+
+               if(matchingCollaborator) {
+                   collaborators.splice(collaborators.indexOf(matchingCollaborator), 1);
+               }
+            });
+
+            if(collaborators.length > 0) {
+                // doc has been created, now need to grant permission to the student
+                grantPermission(driveFile.id, collaborators[0].email, collaborators[0].role).then(onPermGranted, onPermRejection);
+            } else {
+                deferred.resolve(driveFile);
+            }
+
+            function onPermGranted(permResult) {
+                driveFile.permissions.push(permResult); // add the new permission
+                collaborators.shift(); // advance to the next editor
+
+                if(collaborators.length > 0) {
+                    // grant permission to the next collaborator...
+                    grantPermission(driveFile.id, collaborators[0].email, collaborators[0].role).then(onPermGranted, onPermRejection);
+                } else {
+                    // ...otherwise it's time to claim victory
+                    deferred.resolve(driveFile);
+                }
+            }
+
+            function onPermRejection(permRejection) {
+                // TODO: This is partially successful... need to think about how to handle this scenario
+                deferred.reject(permRejection);
+            }
+
+            return deferred.promise;
+        }
+
         return {
             getFileList: getFileList,
             insertFile: insertFile,
+            ensurePermissions: ensurePermissions,
             chooseGoogleDriveDoc: chooseGoogleDriveDoc
         };
     }];
