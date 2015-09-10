@@ -111,41 +111,71 @@ export var hsDriveService = ['$http', '$q', '$log', '$window', '$mdDialog', 'hsA
                     headers: { 'Content-Type': 'multipart/mixed; boundary="' + boundary + '"' },
                     body: requestBody
                 }).then(function(resp) {
-                        // doc has been created...
-                        // ... now need to grant permission to the student
-                        $window.gapi.client.request({
-                            method: 'POST',
-                            path: 'drive/v2/files/' + resp.result.id + '/permissions',
-                            params: {
-                                sendNotificationEmails: false
-                            },
-                            body:  {
-                                role: 'writer',
-                                type: 'user',
-                                value: newFile.evt.studentEmail
-                            }
-                        }).then(function(permResp) {
-                            // add the newly created permission into the newly
-                            // created doc result
-                            if(angular.isArray(resp.result.permissions)) {
-                                resp.result.permissions.push(permResp.result);
-                            } else {
-                                resp.result.permissions = [permResp.result];
-                            }
-                            deferred.resolve(resp.result);
+                    var colleagues = auth.getUserData().colleagues || [],
+                        editors = [newFile.evt.studentEmail].concat(colleagues.map(function(colleague) { return colleague.email; }));
+                    function onPermGranted(permResult) {
+                        // add the newly created permission into the newly
+                        // created doc result
+                        if(angular.isArray(resp.result.permissions)) {
+                            resp.result.permissions.push(permResult);
+                        } else {
+                            resp.result.permissions = [permResult];
+                        }
 
-                        }, function(permRejection) {
-                            // TODO: This is partially successful... need to think about how to handle
-                            // this scenario
-                            deferred.reject(permRejection);
-                        })
-                    },
-                    function(reason) {
-                        deferred.reject(reason);
-                    });
+                        editors.shift(); // advance to the next editor
+                        if(editors.length > 0) {
+                            // grant permission to the next editor...
+                            grantPermission(resp.result.id, editors[0], 'writer').then(onPermGranted, onPermRejection);
+                        } else {
+                            // ...otherwise it's time to claim victory
+                            deferred.resolve(resp.result);
+                        }
+                    }
+
+                    function onPermRejection(permRejection) {
+                        // TODO: This is partially successful... need to think about how to handle this scenario
+                        deferred.reject(permRejection);
+                    }
+
+                    // doc has been created, now need to grant permission to the student
+                    grantPermission(resp.result.id, editors[0], 'writer').then(onPermGranted, onPermRejection);
+                },
+                function(reason) {
+                    deferred.reject(reason);
+                });
             }, function(requestBodyRejection) {
                 deferred.reject(requestBodyRejection);
             });
+
+            return deferred.promise;
+        }
+
+        function grantPermission(fileId, email, role) {
+            role = role || 'writer';
+
+            // ... now need to grant permission to the student
+            var deferred = $q.defer();
+            $window.gapi.client.request({
+                method: 'POST',
+                path: 'drive/v2/files/' + fileId + '/permissions',
+                params: {
+                    sendNotificationEmails: false
+                },
+                body:  {
+                    role: role,
+                    type: 'user',
+                    value: email
+                }
+            }).then(function(permResp) {
+                // add the newly created permission into the newly
+                // created doc result
+                deferred.resolve(permResp.result);
+
+            }, function(permRejection) {
+                // TODO: This is partially successful... need to think about how to handle
+                // this scenario
+                deferred.reject(permRejection);
+            })
 
             return deferred.promise;
         }
