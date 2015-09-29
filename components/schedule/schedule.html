@@ -12,7 +12,7 @@
             <div layout="row" layout-align="space-between center">
                 <h3 ng-class="{ 'md-display-1' : !list.isTimeAxis, 'md-headline': list.isTimeAxis }"
                     ng-bind="list.student.name" ng-click="setActiveList(list)" flex="{{list.isTimeAxis ? 40 : 1 }}"></h3>
-                <ng-md-icon ng-if="!list.isTimeAxis" ng-hide="list.isTimeAxis" icon="clear" ng-click="setActiveList(null);$event.stopPropagation()"></ng-md-icon>
+                <ng-md-icon ng-if="!list.isTimeAxis && !list.isStudentList" ng-hide="list.isTimeAxis" icon="clear" ng-click="setActiveList(null);$event.stopPropagation()"></ng-md-icon>
             </div>
         </div>
     </div>
@@ -41,10 +41,10 @@
                                         ng-class="{ 'updating': evt.updating }"
                                         style="fill: white" size="36"></ng-md-icon>
                         </md-button>
-                        <h3 class="md-subhead"><span class="time">{{evt.fmtTime}}</span>&nbsp;<span ng-bind="evt.subject.summary"></span></h3>
+                        <h3 class="md-subhead"><span class="time">{{evt.fmtTime}}</span>&nbsp;<span ng-bind="evt.resource.summary || evt.subject.summary"></span></h3>
+                        <md-icon ng-show="evt.resource.attachments">attach_file</md-icon>
                     </div>
-                    <md-card-content layout-padding>
-                        <p class="summary" ng-bind="evt.resource.summary"></p>
+                    <md-card-content ng-if="evt.resource.description" layout-padding>
                         <p class="summary" ng-bind="evt.resource.description"></p>
                     </md-card-content>
                 </md-card>
