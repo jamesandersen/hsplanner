@@ -45,7 +45,8 @@ export default (function () {
                                 : userData;
                         lists.push({
                             student: student,
-                            events: []
+                            events: [],
+                            isStudentList: userData.students ? false : true
                         });
                     }
 

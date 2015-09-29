@@ -34,18 +34,7 @@
                     <md-list>
                         <md-divider></md-divider>
                         <md-list-item>
-                            <md-switch id="task-mode-switch" ng-model="schedule.taskMode" aria-label="Task Mode">Task Mode</md-switch>
-                        </md-list-item>
-                        <md-divider></md-divider>
-                        <md-list-item>
-                            <a ng-click="testDrive()">Test Drive</a>
-                        </md-list-item>
-                        <md-divider></md-divider>
-                        <md-list-item>
                             <a ng-click="logout()">Logout</a>
-                        </md-list-item>
-                        <md-list-item ng-repeat="file in files">
-                            <a ng-href="{{file.alternateLink}}">{{file.title}}</a>
                         </md-list-item>
                     </md-list>
                 </md-content>

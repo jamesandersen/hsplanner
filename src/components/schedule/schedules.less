@@ -228,11 +228,27 @@
             }
 
             .md-subhead { flex-grow: 1; }
+            md-icon { color: white; }
         }
 
         .summary {
           color: @gray-dark;
-          padding: 4px;
+          position: relative;
+          overflow: hidden;
+          line-height: 1.2em;
+          max-height: 3.6em;
+          margin: 0px;
+
+          &:after {
+              content: "";
+              text-align: right;
+              position: absolute;
+              top: 2.4em;
+              right: 0;
+              width: 50%;
+              height: 1.2em;
+              background: linear-gradient(to right, rgba(249, 249, 249, 0), rgba(249, 249, 249, 1) 50%);
+          }
         }
 
 
