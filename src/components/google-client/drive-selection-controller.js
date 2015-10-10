@@ -3,16 +3,20 @@
 
 export default (function () {
     'use strict';
-    return ['$scope', '$location', '$q', '$log', '$mdDialog', 'hsDriveService', 'hsAuthService',
-        function ($scope, $location, $q, $log, $mdDialog, driveService, auth) {
+    return ['$scope', '$location', '$q', '$log', '$exceptionHandler', '$mdDialog', 'hsDriveService', 'hsAuthService',
+        function ($scope, $location, $q, $log, $exceptionHandler, $mdDialog, driveService, auth) {
             var controller = this;
             controller.newFile = { id: null, evt: controller.evt, blank: true };
             controller.loading = true;
             controller.currentTab = 'existing';
-            driveService.getFileList().then(function(result) {
-                controller.files = result.result.items;
-                controller.loading = false;
-            });
+            driveService.getFileList()
+                .then(function(result) {
+                    controller.files = result.result.items;
+                })
+                .catch(function(error) {
+                    $exceptionHandler(error, 'Error loading drive files');
+                })
+                .finally(function() { controller.loading = false; });
 
             this.onTabSelected = function(tabName) {
                 controller.currentTab = tabName;

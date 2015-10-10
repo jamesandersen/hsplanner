@@ -1,11 +1,15 @@
 <md-dialog flex="85">
     <md-content class="md-padding">
         <div class="md-headline">Choose an attachment for {{ctrl.evt.resource.summary}}</div>
-        <p ng-show="ctrl.loading">...Loading...</p>
-        <md-tabs>
+        <div ng-show="ctrl.loading" class="loader">
+            <svg class="circular">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+            </svg>
+        </div>
+        <md-tabs ng-hide="ctrl.loading">
             <md-tab label="Choose Existing" md-on-select="ctrl.onTabSelected('existing')">
                 <md-content class="md-padding">
-                    <md-list ng-hide="ctrl.loading">
+                    <md-list>
                         <md-divider ng-repeat-start="file in ctrl.files"></md-divider>
                         <md-list-item ng-repeat-end="">
                             <img ng-src="{{file.iconLink}}"/>&nbsp;<a href="" ng-click="ctrl.closeDialog(file)">{{file.title}}</a>
@@ -30,13 +34,11 @@
                                       ng-model="ctrl.newFile.description">
                             </textarea>
                         </md-input-container>
-                        <md-input-container>
-                            <label for="upload">Upload</label>
+                        <div>
                             <input id="upload" type="file" name="upload"
-                                      class="form-control"
-                                      on-file-change="ctrl.onFileChange">
-                            </textarea>
-                        </md-input-container>
+                                   class="form-control"
+                                   on-file-change="ctrl.onFileChange">
+                        </div>
                     </form>
                 </md-content>
 
