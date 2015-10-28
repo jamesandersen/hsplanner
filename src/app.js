@@ -40,7 +40,8 @@
                 })
                 .when('/login', {
                     templateUrl: 'components/auth/login.html',
-                    controller: 'LoginCtrl'
+                    controller: 'LoginCtrl',
+                    controllerAs: 'Ctrl'
                 })
                 .otherwise({
                     redirectTo: '/'
@@ -58,16 +59,12 @@
 
     app.run(['hsAuthService', '$location', '$log',
         function (auth, $location, $log) {
-            auth.loadGoogleAPI().then(function (isGoogleAPILoaded) {
-                auth.afterLogin().then(function (accessToken) {
-                    // token is available so we're signed in
-                }, function (authError) {
-                    $log.warn('not signed in at startup: ' + authError);
-                    // not signed in, redirect to login screen
-                    $location.url('/login?dst=' + encodeURIComponent($location.url()));
-                });
-            }, function (rejection) {
-                $log.warn('google api not loaded: ' + rejection);
+            auth.afterLogin().then(function (accessToken) {
+                // token is available so we're signed in
+            }, function (authError) {
+                $log.warn('not signed in at startup: ' + authError);
+                // not signed in, redirect to login screen
+                $location.url('/login?dst=' + encodeURIComponent($location.url()));
             });
         }]);
 }());
