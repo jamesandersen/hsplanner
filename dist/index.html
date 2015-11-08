@@ -7,13 +7,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <base href="/hsplanner/" />
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="google-signin-clientid" content="653295052579-6017j2a7ine0cn35dpinu9j5uv0mftk3.apps.googleusercontent.com" />
-    <meta name="google-signin-cookiepolicy" content="single_host_origin" />
-    <meta name="google-signin-callback" content="onAuthResult" />
-    <!-- Note on permissions
-    * Full Drive access - needed to not only create new files but also modify permissions on existing files that are added to events
-    -->
-    <meta name="google-signin-scope" content="profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive" />
 </head>
 
 <body layout="column" flex>
@@ -45,7 +38,7 @@
         <div class="center" layout="column" flex>
             <md-toolbar ng-controller="HeaderCtrl">
                 <div class="md-toolbar-tools">
-                    <md-button ng-click="toggleNav()" class="md-icon-button" aria-label="Settings" hide-gt-md>
+                    <md-button ng-show="signed_in" ng-click="toggleNav()" class="md-icon-button" aria-label="Settings" hide-gt-md>
                         <md-icon>menu</md-icon>
                     </md-button>
                     <h2 hide-gt-md hide-sm>

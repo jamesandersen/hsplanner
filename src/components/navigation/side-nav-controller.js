@@ -11,7 +11,10 @@ export default (function () {
                 $scope.profileImgSrc = $scope.profile ? $scope.profile.image.url.replace(/sz=\d+/, 'sz=80') : null;
             });
 
-            $scope.logout = auth.logout;
+            $scope.logout = function() {
+                $mdSidenav('left').close();
+                auth.logout();
+            }
 
             $scope.toggleNav = function() {
                 $mdSidenav('left').toggle();

@@ -25,7 +25,7 @@ module.exports = function (grunt) {
                 }
             },
             app: {
-                files: ['src/**/*.js', 'src/**/*.less', 'src/**/*.html'],
+                files: ['src/**/*.js', 'src/**/*.less', 'src/**/*.html', 'src/**/*.svg'],
                 tasks: ['webpack:development']
             }
         },

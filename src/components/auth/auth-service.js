@@ -10,22 +10,28 @@ export default (function () {
                 expiration = null,
                 profilePromise = null;
 
-            function afterLogin() {
-                var search;
+            function afterLogin(login, ecode) {
                 if (access_token) {
                     // we've already got a token so we must be logged in
                     return $q.when(access_token);
-                } else if ((search = $location.search()).ecode){
+                } else if (ecode){
                     // we don't have a token yet but have our auth code
-                    profilePromise = profilePromise || getProfile(search.ecode);
-                    //$location.hash(null);
+                    if(!profilePromise) {
+                        profilePromise = getProfile(ecode);
+                    }
+                    
                     return profilePromise;
-                } else {
+                } else if(login) {
+                    // user has now opted to login
                     // get a redirect URL for the user to login via Google
                     return $http.get(BASE_URL + '/users/login').then(function(response) {
                         $window.location.href = response.data;
                         return $q.reject('redirecting for login');
                     });
+                } else {
+                    // redirect to login screen
+                    $location.path('/login');
+                    return $q.reject("Not logged in");
                 }
             }
             
@@ -72,6 +78,7 @@ export default (function () {
 
             function logout() {
                 access_token = expiration = null;
+                $rootScope.$broadcast(authEvents.AUTHENTICATION_CHANGE, false);
                 $location.path('/login');
             }
 
