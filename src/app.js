@@ -18,17 +18,12 @@
 
     app.config(['$locationProvider', '$routeProvider',
         function ($locationProvider, $routeProvider) {
-            $locationProvider.html5Mode(true);
+            //$locationProvider.html5Mode(true);
 
             $routeProvider
                 .when('/', {
                     templateUrl: 'components/schedule/schedule.html',
-                    controller: 'ScheduleCtrl as schedule',
-                    resolve: {
-                        token: ['hsAuthService', function (hsAuthService) {
-                            return hsAuthService.afterLogin();
-                        }]
-                    }
+                    controller: 'ScheduleCtrl as schedule'
                 })
                 .when('/profile', {
                     templateUrl: 'components/auth/profile.html',
@@ -40,7 +35,13 @@
                 })
                 .when('/login', {
                     templateUrl: 'components/auth/login.html',
-                    controller: 'LoginCtrl'
+                    controller: 'LoginCtrl',
+                    controllerAs: 'Ctrl'
+                })
+                .when('/ec/:ecode', {
+                    templateUrl: 'components/auth/login.html',
+                    controller: 'LoginCtrl',
+                    controllerAs: 'Ctrl'
                 })
                 .otherwise({
                     redirectTo: '/'
@@ -56,18 +57,8 @@
         $mdThemingProvider.theme('default'); //.dark();
     }]);
 
-    app.run(['hsAuthService', '$location', '$log',
+    /*app.run(['hsAuthService', '$location', '$log',
         function (auth, $location, $log) {
-            auth.loadGoogleAPI().then(function (isGoogleAPILoaded) {
-                auth.afterLogin().then(function (accessToken) {
-                    // token is available so we're signed in
-                }, function (authError) {
-                    $log.warn('not signed in at startup: ' + authError);
-                    // not signed in, redirect to login screen
-                    $location.url('/login?dst=' + encodeURIComponent($location.url()));
-                });
-            }, function (rejection) {
-                $log.warn('google api not loaded: ' + rejection);
-            });
-        }]);
+            var path = $location.path();
+        }]); */
 }());

@@ -75,6 +75,7 @@ module.exports = {
 
 			//{ test: /\.html$/,    loader: "html-loader" }, // turns html into "modules"
 			{ test: /\.html$/,    loader: "file?name=[path][name].[ext]" }, // copies the files over
+            { test: /\.svg$/,    loader: "file?name=[path][name].[ext]" }, // copies the files over
             { test: /index.html$/,    loader: StringReplacePlugin.replace({
                 replacements: [
                     {
@@ -96,7 +97,7 @@ module.exports = {
 			{ test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/,   loader: "url-loader?prefix=font/&limit=5000&mimetype=application/font-woff" },
 			{ test: /\.ttf(\?v=[0-9]\.[0-9]\.[0-9])?$/,    loader: "file-loader?prefix=font/" },
 			{ test: /\.eot(\?v=[0-9]\.[0-9]\.[0-9])?$/,    loader: "file-loader?prefix=font/" },
-			{ test: /\.svg(\?v=[0-9]\.[0-9]\.[0-9])?$/,    loader: "file-loader?prefix=font/" },
+			//{ test: /\.svg(\?v=[0-9]\.[0-9]\.[0-9])?$/,    loader: "file-loader?prefix=font/" },
 
 			// required for react jsx
 			{ test: /\.js$/,  exclude: /(node_modules|angular(\.|-))/,  loader: "babel-loader" },

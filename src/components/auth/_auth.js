@@ -1,7 +1,7 @@
 /*global angular: false */
 
 // require all .js files in the directory unless they end with _test.js
-require.context(".", false, /^(.(?!_test))+?\.(html)$/);
+require.context(".", true, /^(.(?!_test))+?\.(html|svg)$/);
 
 var authModule = angular.module('hsp.auth', ['ngResource', 'ngMaterial']);
 

@@ -1,4 +1,49 @@
 #login-panel {
     width: 400px;
     margin: 0 auto;
+    text-align: center;
+}
+
+button.sign-in-btn {
+    padding: 0;
+    border: none;
+    background: none;
+    margin: 20px;
+    width: 250px;
+    height: 70px;
+
+    use {
+        &.normal { display: block; }
+        &.focus {display: none; }
+        &.pressed { display: none; }
+        &.disabled { display: none; }
+    }
+    
+    &:focus {
+        outline: none;
+        use {
+            &.normal { display: none; }
+            &.focus {display: block; }
+            &.pressed { display: none; }
+            &.disabled { display: none; }
+        }
+    }
+    
+    &:active {
+        use {
+            &.normal { display: none; }
+            &.focus {display: none; }
+            &.pressed { display: block; }
+            &.disabled { display: none; }
+        }
+    }
+    
+    &:disabled {
+        use {
+            &.normal { display: none; }
+            &.focus {display: none; }
+            &.pressed { display: none; }
+            &.disabled { display: block; }
+        }
+    }
 }
