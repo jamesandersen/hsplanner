@@ -22,6 +22,9 @@ export default (function () {
             
             if($routeParams.ecode) {
                 controller.login();
+            } else {
+                // see if we can auto-login
+                auth.getToken().then(controller.login);
             }
         }];
 }());

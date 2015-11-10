@@ -16,16 +16,19 @@ export var hsDriveService = ['$http', '$q', '$log', '$window', '$mdDialog', 'hsA
 
         function getFileList() {
             var deferred = $q.defer();
-
-            $window.gapi.client.request({
-                'path': 'drive/v2/files',
-                'params': {'query': name}
-            }).then(function(resp) {
-                deferred.resolve(resp);
-            },
-            function(reason) {
-                deferred.reject(reason);
+            auth.getToken().then(function(token) {
+                $http({
+                    url: BASE_URI + '/files',
+                    headers: { Authorization: 'Bearer ' + token },
+                    params: {'query': name}
+                }).then(function(resp) {
+                    deferred.resolve(resp);
+                },
+                function(reason) {
+                    deferred.reject(reason);
+                });
             });
+            
 
             return deferred.promise;
         }
@@ -101,32 +104,38 @@ export var hsDriveService = ['$http', '$q', '$log', '$window', '$mdDialog', 'hsA
             requestBodyPromise.then(function(requestBody) {
                 // we've got a request body... either from a blank file template or
                 // from data from the filesystem
-                $window.gapi.client.request({
-                    method: 'POST',
-                    path: 'upload/drive/v2/files',
-                    params: {
-                        uploadType: 'multipart',
-                        convert: true
+                auth.getToken().then(function(token) {
+                    $http({
+                        method: 'POST',
+                        url: 'https://www.googleapis.com/upload/drive/v2/files',
+                        params: {
+                            uploadType: 'multipart',
+                            convert: true
+                        },
+                        headers: { 
+                            'Content-Type': 'multipart/mixed; boundary="' + boundary + '"',
+                            Authorization: 'Bearer ' + token
+                        },
+                        data: requestBody
+                    }).then(function(resp) {
+                        var colleagues = auth.getUserData().colleagues || [],
+                            editors = [{ email: newFile.evt.studentEmail, role: 'writer' }].concat(colleagues.map(function(colleague) {
+                                return { email: colleague.email, role: 'writer' };
+                            }));
+    
+                            ensurePermissions(resp.data, editors).then(
+                                function(sharedFile) {
+                                    deferred.resolve(sharedFile);
+                                },
+                                function(rejection) {
+                                    deferred.reject(rejection);
+                                });
                     },
-                    headers: { 'Content-Type': 'multipart/mixed; boundary="' + boundary + '"' },
-                    body: requestBody
-                }).then(function(resp) {
-                    var colleagues = auth.getUserData().colleagues || [],
-                        editors = [{ email: newFile.evt.studentEmail, role: 'writer' }].concat(colleagues.map(function(colleague) {
-                            return { email: colleague.email, role: 'writer' };
-                        }));
-
-                        ensurePermissions(resp.result, editors).then(
-                            function(sharedFile) {
-                                deferred.resolve(sharedFile);
-                            },
-                            function(rejection) {
-                                deferred.reject(rejection);
-                            });
-                },
-                function(reason) {
-                    deferred.reject(reason);
+                    function(reason) {
+                        deferred.reject(reason);
+                    });
                 });
+                
             }, function(requestBodyRejection) {
                 deferred.reject(requestBodyRejection);
             });
@@ -139,28 +148,31 @@ export var hsDriveService = ['$http', '$q', '$log', '$window', '$mdDialog', 'hsA
 
             // ... now need to grant permission to the student
             var deferred = $q.defer();
-            $window.gapi.client.request({
-                method: 'POST',
-                path: 'drive/v2/files/' + fileId + '/permissions',
-                params: {
-                    sendNotificationEmails: false
-                },
-                body:  {
-                    role: role,
-                    type: 'user',
-                    value: email
-                }
-            }).then(function(permResp) {
-                // add the newly created permission into the newly
-                // created doc result
-                deferred.resolve(permResp.result);
-
-            }, function(permRejection) {
-                // TODO: This is partially successful... need to think about how to handle
-                // this scenario
-                deferred.reject(permRejection);
-            })
-
+            auth.getToken().then(function(token) {
+                $http({
+                    method: 'POST',
+                    url: BASE_URI + '/files/' + fileId + '/permissions',
+                    headers: { Authorization: 'Bearer ' + token },
+                    params: {
+                        sendNotificationEmails: false
+                    },
+                    data:  {
+                        role: role,
+                        type: 'user',
+                        value: email
+                    }
+                }).then(function(permResp) {
+                    // add the newly created permission into the newly
+                    // created doc result
+                    deferred.resolve(permResp.data);
+    
+                }, function(permRejection) {
+                    // TODO: This is partially successful... need to think about how to handle
+                    // this scenario
+                    deferred.reject(permRejection);
+                })
+            });
+            
             return deferred.promise;
         }
 
