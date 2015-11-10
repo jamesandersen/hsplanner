@@ -9,5 +9,6 @@ angular.module('hsp.common', []);
 angular.module('hsp.common').constant('MathUtil', require('./math-util-constant.js'));
 angular.module('hsp.common').constant('Util', require('./util-constant.js'));
 angular.module('hsp.common').constant('Events', require('./event-constant.js'));
+angular.module('hsp.common').factory('hsStorageService', require('./storage-service.js'));
 angular.module('hsp.common').factory('$exceptionHandler', require('./exception-handling.js'));
 angular.module('hsp.common').directive('onFileChange', require('./file-input-directive.js'));

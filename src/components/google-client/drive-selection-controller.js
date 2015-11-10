@@ -11,7 +11,7 @@ export default (function () {
             controller.currentTab = 'existing';
             driveService.getFileList()
                 .then(function(result) {
-                    controller.files = result.result.items;
+                    controller.files = result.data.items;
                 })
                 .catch(function(error) {
                     $exceptionHandler(error, 'Error loading drive files');
